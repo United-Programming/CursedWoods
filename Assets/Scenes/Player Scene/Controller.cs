@@ -12,7 +12,8 @@ public class Controller : MonoBehaviour {
     float x = Input.GetAxis("Horizontal");
     if (x == 0) walkDir *= 1 - 25 * Time.deltaTime;
     else {
-      walkDir += x * Time.deltaTime * .5f;
+      float mult = Mathf.Sign(walkDir) == Mathf.Sign(x) ? 1.5f : 10f;
+      walkDir += x * Time.deltaTime * mult;
       walkDir = Mathf.Clamp(walkDir, -1f, 1f);
     }
     float absSpeed = Mathf.Abs(walkDir);
@@ -26,7 +27,7 @@ public class Controller : MonoBehaviour {
     }
     else {
       anim.speed = Mathf.Lerp(anim.speed, 1, Time.deltaTime * 10);
-      player.localRotation = Quaternion.Lerp(player.localRotation, Quaternion.Euler(0, 0, 0), 10 * Time.deltaTime);
+      player.localRotation = Quaternion.Lerp(player.localRotation, Quaternion.Euler(0, 0, 0), 5 * Time.deltaTime);
     }
   }
 
