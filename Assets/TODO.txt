@@ -1,0 +1,7 @@
+Improve the movement of the character
+Impement IK for the arms/bow to aim at cursor position
+Implement world (environment/forest) where we play
+Implement monsters and define how they attack and how can you kill them
+Implement moon and night sky
+Implement rain and lightnighs (will be required by a couple of levels)
+Implement the level win dance and music
