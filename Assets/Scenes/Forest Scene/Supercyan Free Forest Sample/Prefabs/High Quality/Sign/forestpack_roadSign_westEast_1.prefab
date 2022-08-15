@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4009941363576130}
   - component: {fileID: 33968574912416820}
   - component: {fileID: 23757994219508936}
-  - component: {fileID: 64542318748531676}
   - component: {fileID: 205755823177693686}
   m_Layer: 0
   m_Name: forestpack_roadSign_westEast_1
@@ -85,20 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64542318748531676
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252687729517630}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 5b51913d07f805546855136f7b5feb44, type: 3}
 --- !u!205 &205755823177693686
 LODGroup:
   m_ObjectHideFlags: 0
