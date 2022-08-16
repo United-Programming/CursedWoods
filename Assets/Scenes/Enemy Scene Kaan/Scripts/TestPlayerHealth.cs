@@ -6,7 +6,6 @@ using UnityEngine;
 public class TestPlayerHealth : MonoBehaviour
 {
     public static int health = 100;
-
     private void Update()
     {
         if (health <= 0)
