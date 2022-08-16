@@ -11,9 +11,7 @@ GameObject:
   - component: {fileID: 4478235978383186}
   - component: {fileID: 33416355591898968}
   - component: {fileID: 23480878569182784}
-  - component: {fileID: 64209454658281450}
   - component: {fileID: 205763282677625166}
-  - component: {fileID: 136636269291330438}
   m_Layer: 0
   m_Name: forestpack_tree_fir_tall
   m_TagString: Untagged
@@ -86,20 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64209454658281450
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1210459693873458}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 1c39accf3fc812b46a89b53030f37397, type: 3}
 --- !u!205 &205763282677625166
 LODGroup:
   m_ObjectHideFlags: 0
@@ -119,17 +103,3 @@ LODGroup:
     renderers:
     - renderer: {fileID: 23480878569182784}
   m_Enabled: 1
---- !u!136 &136636269291330438
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1210459693873458}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.25
-  m_Height: 3.5331335
-  m_Direction: 1
-  m_Center: {x: 0.04, y: 1.6552377, z: -0.01}
