@@ -15,7 +15,6 @@ public class Moon : MonoBehaviour {
     transform.localScale = scalev;
   }
   private void Update() {
-
     transform.position = cam.position + direction * distance;
     transform.LookAt(cam.position);
     scalev.x = scale;

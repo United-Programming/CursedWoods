@@ -63,4 +63,9 @@ public class Controller : MonoBehaviour {
       else anim.SetBool("Run", false);
     }
   }
+
+  private void OnApplicationFocus(bool focus) {
+    Cursor.visible = !focus;
+  }
+
 }
