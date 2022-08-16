@@ -35,6 +35,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float followSpeed;
     [SerializeField] protected float observationSphereRadius;
     [SerializeField] float suspiciousTime;
+    [SerializeField] bool invertForward;
     float timeSinceLastSawPlayer;
     bool isTriggered;
     Vector3 startPosition;
@@ -223,7 +224,15 @@ public class Enemy : MonoBehaviour
     private void SetForwardToTarget(Transform target)
     {
         float rotateSpeedMultiplier = 4;
-        transform.forward = Vector3.Slerp(transform.forward, -Target(target), Time.deltaTime * rotateSpeedMultiplier);
+        if (!invertForward)
+        {
+            transform.forward = Vector3.Slerp(transform.forward, Target(target), Time.deltaTime * rotateSpeedMultiplier);
+
+        }
+        else
+        {
+            transform.forward = Vector3.Slerp(transform.forward, -Target(target), Time.deltaTime * rotateSpeedMultiplier);
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
