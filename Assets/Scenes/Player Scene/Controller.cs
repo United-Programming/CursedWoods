@@ -3,7 +3,8 @@ using UnityEngine;
 public class Controller : MonoBehaviour {
 
   public Transform player;
-  public GameObject Bow;
+  public GameObject ArrowPlayer;
+  public GameObject Arrow;
   public Animator anim;
 
 
