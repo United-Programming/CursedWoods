@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Controller : MonoBehaviour {
 
@@ -29,11 +30,11 @@ public class Controller : MonoBehaviour {
      
      */
 
-    if (Input.GetKeyDown(KeyCode.Space)) aiming = true; // FIXME here we should load the arrow with right mb or aim with rmb in case arrow is loaded, and shoot with lmb
-    if (Input.GetKeyUp(KeyCode.Space)) aiming = false;
+    if (Input.GetMouseButtonDown(1)) { aiming = true; anim.SetBool("Aim", true); }
+    if (Input.GetMouseButtonUp(1)) { aiming = false; anim.SetBool("Aim", false); }
 
     float x = Input.GetAxis("Horizontal");
-    if (x == 0) { // not moving
+    if (x == 0 || aiming) { // not moving
       // just keep the player angle and stop the run anim, but do not change the player rotation
       // Stop the rotation of the camera
       anim.SetBool("Moving", false);
@@ -63,6 +64,14 @@ public class Controller : MonoBehaviour {
       }
       else anim.SetBool("Run", false);
     }
+
+    if (aiming) {
+      float aimH = (Input.mousePosition.x - Screen.width * .5f) / Screen.width;
+      float aimV = (Input.mousePosition.y - Screen.height * .5f) / Screen.height;
+      anim.SetFloat("AimH", aimH);
+      anim.SetFloat("AimV", aimV);
+    }
+
   }
 
   private void OnApplicationFocus(bool focus) {
