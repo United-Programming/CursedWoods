@@ -9,31 +9,24 @@ public class Controller : MonoBehaviour {
   public Animator anim;
 
 
-  public float pangle = 0;
-
-
-  public float movement = 0;
-  public float angle = 0;
-  public float speed = .05f;
-  public bool aiming = false;
+  public float playerTargetAngle = 0; // public just to debug
+  public float movement = 0; // public just to debug
+  public float angle = 0; // public just to debug
+  public float speed = .05f; // public just to debug
+  public bool aiming = false; // public just to debug
 
   private void Update() {
-
-    /*
-     not aiming: lr will just change the rotation
-     aiming: we move and run
-     
-    when moving to a direction:
-      start by chaning the player rotation and start playing slowly the run anim. This for max .2 seconds
-      the start rotating the camera in the direction of the player rotation
-     
-     
-     */
-
-    if (Input.GetMouseButtonDown(1)) { aiming = true; anim.SetBool("Aim", true); }
-    if (Input.GetMouseButtonUp(1)) { aiming = false; anim.SetBool("Aim", false); }
+    if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
+      aiming = !aiming;
+      anim.SetBool("Aim", aiming);
+    }
 
     float x = Input.GetAxis("Horizontal");
+    if (x != 0) { // If we move we cannto be aiming
+      aiming = false; 
+      anim.SetBool("Aim", false);
+    }
+
     if (x == 0 || aiming) { // not moving
       // just keep the player angle and stop the run anim, but do not change the player rotation
       // Stop the rotation of the camera
@@ -44,21 +37,24 @@ public class Controller : MonoBehaviour {
       anim.speed = 1;
     }
     else { // Moving, change first player rotation, then move the camera
-      pangle = Mathf.LerpAngle(pangle, x > 0 ? 90 : -90, 6 * Time.deltaTime);
-      float ya = player.localEulerAngles.y;
-      float dist = Mathf.Abs(pangle - ya);
+      // Align the local rotation of the player to the movement
+      playerTargetAngle = Mathf.LerpAngle(playerTargetAngle, x > 0 ? 90 : -90, 6 * Time.deltaTime);
+      float playerCurrentAngle = player.localEulerAngles.y;
+      float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
+      player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 10 * Time.deltaTime), 0);
 
-      player.localRotation = Quaternion.Euler(0, Mathf.Lerp(ya, pangle, dist * 10 * Time.deltaTime), 0);
-      float absPAngle = Mathf.Abs(pangle);
+      // Depending on the angle magnitude, set the movement anim
+      float absPAngle = Mathf.Abs(playerTargetAngle);
       anim.SetBool("Moving", absPAngle > 5);
       
-
       if (absPAngle > 85) {
         anim.SetBool("Run", true);
         float mult = Mathf.Sign(movement) == Mathf.Sign(x) ? 1.5f : 10f;
         anim.speed = .25f + Mathf.Abs(movement);
         movement += x * Time.deltaTime * mult;
         movement = Mathf.Clamp(movement, -1f, 1f);
+
+        // Notate the camera and the player around the world
         angle += movement * speed;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, angle, 0), 6 * Time.deltaTime);
       }
@@ -66,12 +62,17 @@ public class Controller : MonoBehaviour {
     }
 
     if (aiming) {
-      float aimH = (Input.mousePosition.x - Screen.width * .5f) / Screen.width;
-      float aimV = (Input.mousePosition.y - Screen.height * .5f) / Screen.height;
+      float aimH = 2f * (Input.mousePosition.x - Screen.width * .5f) / Screen.width;
+      float aimV = 2f * (Input.mousePosition.y - Screen.height * .5f) / Screen.height;
       anim.SetFloat("AimH", aimH);
       anim.SetFloat("AimV", aimV);
-    }
 
+      // When aiming, the local rotation of the player should be looking to the center, and move pretty quick
+      playerTargetAngle = Mathf.LerpAngle(playerTargetAngle, aimH * 45, 8 * Time.deltaTime);
+      float playerCurrentAngle = player.localEulerAngles.y;
+      float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
+      player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
+    }
   }
 
   private void OnApplicationFocus(bool focus) {
