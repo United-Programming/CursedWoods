@@ -42,7 +42,8 @@ public class MainMenuButtonController : MonoBehaviour, ISelectHandler, IDeselect
     private IEnumerator CheckSelection()
     {
         yield return null;
-        if (eventSystem.currentSelectedGameObject != null)
+        if (eventSystem.currentSelectedGameObject != null &&
+            eventSystem.currentSelectedGameObject != MainMenuController.LastButton)
         {
             yield break;
         }
@@ -52,7 +53,6 @@ public class MainMenuButtonController : MonoBehaviour, ISelectHandler, IDeselect
 
     private void OnEnable()
     {
-        defaultButton.Select();
         StartCoroutine(CheckSelection());
     }
 }

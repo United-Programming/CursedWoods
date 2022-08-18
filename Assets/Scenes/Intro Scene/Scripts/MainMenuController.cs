@@ -1,17 +1,24 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
+    public static MainMenuButtonController CurrentlySelected { get; set; }
+
+    public static GameObject LastButton { get; private set; }
+
+    private static readonly int ShowMenu = Animator.StringToHash("showMenu");
+
+    [SerializeField] private EventSystem eventSystem;
     [SerializeField] private Animator animator;
     [SerializeField] private bool isTitleSequenceFinished;
     [SerializeField] private bool isOnMenu;
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject optionsMenu;
     [SerializeField] private Button defaultMainMenuButton;
-    private static readonly int ShowMenu = Animator.StringToHash("showMenu");
-
-    public static MainMenuButtonController CurrentlySelected { get; set; }
+    [SerializeField] private GameObject optionsButton;
+    [SerializeField] private GameObject returnButton;
 
     public void StartNewGame()
     {
@@ -21,10 +28,10 @@ public class MainMenuController : MonoBehaviour
 
     public void ShowOptions()
     {
-        Debug.Log("ShowOptions");
         CurrentlySelected.ShowSelector(false);
         mainMenu.SetActive(false);
         optionsMenu.SetActive(true);
+        LastButton = optionsButton;
     }
 
     public void QuitGame()
@@ -38,11 +45,18 @@ public class MainMenuController : MonoBehaviour
         CurrentlySelected.ShowSelector(false);
         optionsMenu.SetActive(false);
         mainMenu.SetActive(true);
+        LastButton = returnButton;
     }
 
     public void Dummy()
     {
         Debug.Log("Dummy Result!");
+    }
+
+    public void ShowMainMenu()
+    {
+        mainMenu.SetActive(true);
+        animator.Play("ShowMainMenu", 0, 0f);
     }
 
     private void Update()
