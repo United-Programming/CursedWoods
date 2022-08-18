@@ -38,11 +38,13 @@ public class Spider : Enemy
         }
         else if (!isPlayerAimingToMe)
         {
+            Debug.Log("Patrol");
             Patrol();
         }
 
         if (isPlayerAimingToMe)
         {
+            Debug.Log("GoingtoStartPosition");
             Movement(startPosition);
             if (Vector3.Distance(transform.position, startPosition.position) < 0.1)
             {
