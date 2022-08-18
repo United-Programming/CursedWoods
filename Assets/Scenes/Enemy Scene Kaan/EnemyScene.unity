@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 282135821}
   - component: {fileID: 282135820}
   - component: {fileID: 282135819}
-  - component: {fileID: 282135818}
+  - component: {fileID: 282135825}
   - component: {fileID: 282135823}
   - component: {fileID: 282135822}
   - component: {fileID: 282135824}
@@ -263,19 +263,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &282135818
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 282135817}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &282135819
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -325,7 +312,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282135817}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &282135821
 Transform:
   m_ObjectHideFlags: 0
@@ -380,8 +367,22 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!136 &282135825
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 282135817}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &302818878
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,7 +510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &519848939
 Transform:
   m_ObjectHideFlags: 0
@@ -589,7 +590,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &708161062
 Transform:
   m_ObjectHideFlags: 0
@@ -1094,7 +1095,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1029707165
 Transform:
   m_ObjectHideFlags: 0
@@ -1396,7 +1397,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1137503062
 Transform:
   m_ObjectHideFlags: 0
@@ -1556,7 +1557,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1225227314
 Transform:
   m_ObjectHideFlags: 0
@@ -1597,44 +1598,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1573826514}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 150
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 64
   m_CollisionDetection: 0
---- !u!114 &1290648750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1573826514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d012b3185a59274cac5586ad53a4477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 1290648749}
-  player: {fileID: 282135817}
-  patrolPath: {fileID: 302818880}
-  animator: {fileID: 1566563340}
-  health: 100
-  minDamage: 20
-  maxDamage: 40
-  attackRange: 13
-  cooldown: 0.3
-  forceMultiplier: 2
-  speed: 0
-  walkSpeed: 5
-  followSpeed: 9
-  observationSphereRadius: 20
-  suspiciousTime: 2
-  invertForward: 1
-  wayPointTolerance: 1
-  wayPointWaitTime: 0.2
 --- !u!1 &1291920496
 GameObject:
   m_ObjectHideFlags: 0
@@ -3270,7 +3241,7 @@ Transform:
   - {fileID: 1573467082}
   - {fileID: 1573467076}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1573467124
 Transform:
@@ -4440,14 +4411,43 @@ GameObject:
   - component: {fileID: 1573467122}
   - component: {fileID: 1566563340}
   - component: {fileID: 1290648749}
-  - component: {fileID: 1290648750}
+  - component: {fileID: 1573826515}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
+--- !u!114 &1573826515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573826514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fc020a1f40750242af3fd75736bed79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 1290648749}
+  player: {fileID: 282135817}
+  patrolPath: {fileID: 302818880}
+  animator: {fileID: 1566563340}
+  health: 100
+  minDamage: 10
+  maxDamage: 30
+  attackRange: 8.5
+  cooldown: 0.3
+  speed: 0
+  walkSpeed: 5
+  followSpeed: 9
+  observationSphereRadius: 16
+  suspiciousTime: 2
+  invertForward: 1
+  wayPointTolerance: 4
+  wayPointWaitTime: 0.25
 --- !u!1 &1573826516
 GameObject:
   m_ObjectHideFlags: 0
@@ -4641,7 +4641,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1592000419
 Transform:
   m_ObjectHideFlags: 0
@@ -6406,7 +6406,6 @@ GameObject:
   - component: {fileID: 95172607443167297}
   - component: {fileID: 136685980940053351}
   - component: {fileID: 136685980940053353}
-  - component: {fileID: 136685980940053352}
   m_Layer: 0
   m_Name: Frog/NOTOKEY
   m_TagString: Untagged
@@ -8867,7 +8866,7 @@ Transform:
   - {fileID: 4628288292466503}
   - {fileID: 4790641235184395}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4695547824909851
 Transform:
@@ -10070,36 +10069,6 @@ CapsuleCollider:
   m_Height: 0.28
   m_Direction: 2
   m_Center: {x: 0, y: 0.07, z: 0}
---- !u!114 &136685980940053352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1644373572687799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d012b3185a59274cac5586ad53a4477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 136685980940053353}
-  player: {fileID: 282135817}
-  patrolPath: {fileID: 302818880}
-  animator: {fileID: 95172607443167297}
-  health: 100
-  minDamage: 20
-  maxDamage: 40
-  attackRange: 13
-  cooldown: 0.3
-  forceMultiplier: 2
-  speed: 0
-  walkSpeed: 2
-  followSpeed: 9
-  observationSphereRadius: 20
-  suspiciousTime: 2
-  invertForward: 0
-  wayPointTolerance: 1
-  wayPointWaitTime: 0.2
 --- !u!54 &136685980940053353
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11683,7 +11652,7 @@ Transform:
   - {fileID: 8947925618793128042}
   - {fileID: 4492024443613851277}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &543450651757966123
 Transform:
@@ -11708,7 +11677,7 @@ Transform:
   - {fileID: 9222065738765647159}
   - {fileID: 6951983396154232268}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &543450652154775038
 Transform:
@@ -11725,7 +11694,7 @@ Transform:
   - {fileID: 1358209849975729806}
   - {fileID: 389180992432323344}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &543450652209058552
 Transform:
@@ -12899,7 +12868,6 @@ GameObject:
   - component: {fileID: 543450651757966123}
   - component: {fileID: 919132147750316434}
   - component: {fileID: 919132147750316436}
-  - component: {fileID: 919132147750316435}
   m_Layer: 0
   m_Name: Dragon
   m_TagString: Untagged
@@ -12927,36 +12895,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &919132147750316435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132147750316433}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d012b3185a59274cac5586ad53a4477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 919132147750316436}
-  player: {fileID: 282135817}
-  patrolPath: {fileID: 708161063}
-  animator: {fileID: 919132147750316434}
-  health: 100
-  minDamage: 20
-  maxDamage: 30
-  attackRange: 20
-  cooldown: 0.4
-  forceMultiplier: 2
-  speed: 0
-  walkSpeed: 3
-  followSpeed: 8
-  observationSphereRadius: 23
-  suspiciousTime: 0.8
-  invertForward: 0
-  wayPointTolerance: 4
-  wayPointWaitTime: 0.3
 --- !u!54 &919132147750316436
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12984,7 +12922,6 @@ GameObject:
   - component: {fileID: 543450651625502758}
   - component: {fileID: 5866666019940622940}
   - component: {fileID: 5866666019940622942}
-  - component: {fileID: 5866666019940622941}
   m_Layer: 0
   m_Name: Snake
   m_TagString: Untagged
@@ -13003,7 +12940,6 @@ GameObject:
   - component: {fileID: 543450652154775038}
   - component: {fileID: 919132148417666885}
   - component: {fileID: 919132148417666886}
-  - component: {fileID: 919132148417666887}
   m_Layer: 0
   m_Name: Ghost
   m_TagString: Untagged
@@ -13047,36 +12983,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &919132148417666887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148417666884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d012b3185a59274cac5586ad53a4477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 919132148417666886}
-  player: {fileID: 282135817}
-  patrolPath: {fileID: 1029707166}
-  animator: {fileID: 919132148417666885}
-  health: 100
-  minDamage: 20
-  maxDamage: 30
-  attackRange: 8.9
-  cooldown: 0.2
-  forceMultiplier: 2
-  speed: 2
-  walkSpeed: 3
-  followSpeed: 8
-  observationSphereRadius: 13.72
-  suspiciousTime: 0.8
-  invertForward: 0
-  wayPointTolerance: 4
-  wayPointWaitTime: 0.3
 --- !u!1 &919132148539082818
 GameObject:
   m_ObjectHideFlags: 0
@@ -13088,7 +12994,6 @@ GameObject:
   - component: {fileID: 543450652209058552}
   - component: {fileID: 919132148539082819}
   - component: {fileID: 919132148539082820}
-  - component: {fileID: 919132148539082821}
   m_Layer: 0
   m_Name: Skeleton/NOTOKEY
   m_TagString: Untagged
@@ -13132,36 +13037,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &919132148539082821
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148539082818}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d012b3185a59274cac5586ad53a4477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 919132148539082820}
-  player: {fileID: 282135817}
-  patrolPath: {fileID: 1225227315}
-  animator: {fileID: 919132148539082819}
-  health: 100
-  minDamage: 20
-  maxDamage: 30
-  attackRange: 6
-  cooldown: 0.8
-  forceMultiplier: 2
-  speed: 2
-  walkSpeed: 3
-  followSpeed: 6
-  observationSphereRadius: 8
-  suspiciousTime: 0.8
-  invertForward: 0
-  wayPointTolerance: 3
-  wayPointWaitTime: 0.3
 --- !u!1 &937826482756593218
 GameObject:
   m_ObjectHideFlags: 0
@@ -26864,36 +26739,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &5866666019940622941
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132147907289756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d012b3185a59274cac5586ad53a4477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 5866666019940622942}
-  player: {fileID: 282135817}
-  patrolPath: {fileID: 519848940}
-  animator: {fileID: 5866666019940622940}
-  health: 100
-  minDamage: 20
-  maxDamage: 30
-  attackRange: 4
-  cooldown: 0.2
-  forceMultiplier: 2
-  speed: 2
-  walkSpeed: 3
-  followSpeed: 8
-  observationSphereRadius: 12
-  suspiciousTime: 0.8
-  invertForward: 1
-  wayPointTolerance: 4
-  wayPointWaitTime: 0.3
 --- !u!54 &5866666019940622942
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -30551,7 +30396,7 @@ Transform:
   - {fileID: 1838717085977516290}
   - {fileID: 8036338751809323596}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: -203.71999, z: 0}
 --- !u!1 &7293722148770655784
 GameObject:
@@ -30814,7 +30659,7 @@ Transform:
   - {fileID: 8020765429664734052}
   - {fileID: 1218807832455506337}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!4 &7416958977401412689
 Transform:
@@ -32024,7 +31869,6 @@ GameObject:
   - component: {fileID: 7397783527935193309}
   - component: {fileID: 7917860587472710248}
   - component: {fileID: 7917860587472710250}
-  - component: {fileID: 7917860587472710249}
   m_Layer: 0
   m_Name: Bee
   m_TagString: Untagged
@@ -32052,36 +31896,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7917860587472710249
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7917860587472710247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d012b3185a59274cac5586ad53a4477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 7917860587472710250}
-  player: {fileID: 282135817}
-  patrolPath: {fileID: 1592000420}
-  animator: {fileID: 7917860587472710248}
-  health: 100
-  minDamage: 20
-  maxDamage: 30
-  attackRange: 20
-  cooldown: 0.4
-  forceMultiplier: 2
-  speed: 0
-  walkSpeed: 3
-  followSpeed: 8
-  observationSphereRadius: 23
-  suspiciousTime: 0.8
-  invertForward: 0
-  wayPointTolerance: 4
-  wayPointWaitTime: 0.3
 --- !u!54 &7917860587472710250
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -32283,14 +32097,14 @@ GameObject:
   - component: {fileID: 7292658344673298844}
   - component: {fileID: 3734775969269388262}
   - component: {fileID: 7962199819168650023}
-  - component: {fileID: 7962199819168650024}
+  - component: {fileID: 7962199819168650025}
   m_Layer: 0
   m_Name: Bear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!54 &7962199819168650023
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -32299,15 +32113,15 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7962199819168650022}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 200
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 64
   m_CollisionDetection: 0
---- !u!114 &7962199819168650024
+--- !u!114 &7962199819168650025
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -32316,7 +32130,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7962199819168650022}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d012b3185a59274cac5586ad53a4477, type: 3}
+  m_Script: {fileID: 11500000, guid: 50e206fef9279fd44ad4bdb7504147be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 7962199819168650023}
@@ -32326,17 +32140,16 @@ MonoBehaviour:
   health: 100
   minDamage: 20
   maxDamage: 30
-  attackRange: 12
-  cooldown: 0.2
-  forceMultiplier: 2
+  attackRange: 8
+  cooldown: 0.4
   speed: 2
   walkSpeed: 3
   followSpeed: 8
-  observationSphereRadius: 20
-  suspiciousTime: 0.8
+  observationSphereRadius: 12
+  suspiciousTime: 1
   invertForward: 0
-  wayPointTolerance: 4
-  wayPointWaitTime: 0.3
+  wayPointTolerance: 3
+  wayPointWaitTime: 0.2
 --- !u!1 &7970684832982991220
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
     //Encapsulation
     //Inheritance
@@ -11,9 +11,9 @@ public class Enemy : MonoBehaviour
     //references
     [Header("References")]
     [SerializeField] protected Rigidbody rb;
-    [SerializeField] public GameObject player;
-    [SerializeField] PatrolPath patrolPath;
-    [SerializeField] Animator animator;
+    [SerializeField] protected GameObject player;
+    [SerializeField] protected PatrolPath patrolPath;
+    [SerializeField] protected Animator animator;
     //[SerializeField] ParticleSystem dealDamageParticle;
 
     //Variables
@@ -24,9 +24,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected int maxDamage;
     [SerializeField] protected float attackRange;
     [SerializeField] protected float cooldown;
-    [SerializeField] protected float forceMultiplier;
-    bool canAttack;
-    bool canDealDamage = true;
+    protected bool canAttack;
+    protected bool canDealDamage = true;
+    protected float timer;
 
     [Header("Movement Variables")]
     //Movement
@@ -34,10 +34,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float walkSpeed;
     [SerializeField] protected float followSpeed;
     [SerializeField] protected float observationSphereRadius;
-    [SerializeField] float suspiciousTime;
+    [SerializeField] protected float suspiciousTime;
     [SerializeField] bool invertForward;
-    float timeSinceLastSawPlayer;
-    bool isTriggered;
+    protected float timeSinceLastSawPlayer;
+    protected bool isTriggered;
     Vector3 startPosition;
     protected Transform currentTarget;
 
@@ -47,7 +47,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float wayPointWaitTime;
     int currentWayPointIndex;
     float timeSinceArrivedWayPoint;
-    float time;
+
 
     private void Start()
     {
@@ -57,58 +57,13 @@ public class Enemy : MonoBehaviour
     {
         isTriggered = ObservationZone();
     }
-    private void FixedUpdate()
-    {
-        if (isTriggered)
-        {
-            MoveToTarget(player.transform);
-            speed = followSpeed;
-            animator.SetBool("Run", true);
-            animator.SetBool("Move", false);
-            Attack();
-            timeSinceLastSawPlayer = 0;
-        }
-        else if (timeSinceLastSawPlayer < suspiciousTime)
-        {
-            speed = walkSpeed;
-            animator.SetBool("Run", false);
-            animator.SetBool("Move", false);
-            //Wait
-        }
-        else
-        {
-            Patrol();
-        }
-        timeSinceLastSawPlayer += Time.fixedDeltaTime;
-    }
 
     //Abstractions
     //Polymorphisms
     //Encapsulations
     //General Methods
 
-    protected void MoveToTarget(Transform target)
-    {
-        rb.MovePosition(transform.position + Target(target) * speed * Time.fixedDeltaTime);
-        MoveType();
-        SetForwardToTarget(target);
-        AnimationSetValues();
-    }
-    private void AnimationSetValues()
-    {
-        if (DistanceBetweenPlayer() < 0.1f)
-        {
-            animator.SetBool("Move", false);
-        }
-        else
-        {
-            animator.SetBool("Move", true);
-        }
-    }
-    protected virtual void MoveType()
-    {
-
-    }
+    protected abstract void Movement(Transform target);
     protected float DistanceBetweenPlayer()
     {
         return Vector3.Distance(transform.position, player.transform.position);
@@ -119,7 +74,7 @@ public class Enemy : MonoBehaviour
         {
             return true;
         }
-        else return false;
+        return false;
     }
     private void OnDrawGizmosSelected()
     {
@@ -127,33 +82,24 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, observationSphereRadius);
         Gizmos.color = Color.black;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-
     }
+    protected void SetForwardToTarget(Transform target)
+    {
+        float rotateSpeedMultiplier = 4;
+        if (!invertForward)
+        {
+            transform.forward = Vector3.Slerp(transform.forward, TargetDirection(target), Time.deltaTime * rotateSpeedMultiplier);
+
+        }
+        else
+        {
+            transform.forward = Vector3.Slerp(transform.forward, -TargetDirection(target), Time.deltaTime * rotateSpeedMultiplier);
+        }
+    }
+
 
     //Attack Methods
-    void Attack()
-    {
-        SetForwardToTarget(player.transform);
-
-        if (DistanceBetweenPlayer() < attackRange && canAttack)
-        {
-            animator.SetBool("Run", false);
-            animator.SetBool("Move", false);
-            rb.AddForce(Target(player) * forceMultiplier);
-            animator.SetTrigger("Attack");
-            canAttack = false;
-        }
-        if (!canAttack)
-        {
-            time += Time.deltaTime;
-            if (time > cooldown)
-            {
-                canAttack = true;
-                canDealDamage = true;
-                time = 0;
-            }
-        }
-    }
+    protected abstract void Attack();
     protected virtual void DealDamage()
     {
         TestPlayerHealth.health -= Random.Range(minDamage, maxDamage);
@@ -165,31 +111,32 @@ public class Enemy : MonoBehaviour
             TestPlayerHealth.health = 0;
         }
     }
-    public virtual void TakeDamage(int damageAmount)
+    protected virtual void TakeDamage(int damageAmount)
     {
         health -= damageAmount;
         if (health < 0)
         {
             GetComponent<Collider>().enabled = false;
-            rb.AddForce(Vector3.up * 1500);
-            Destroy(gameObject, 3);
+            Destroy(gameObject, 1);
         }
     }
 
     //Patrol Methods
-    void Patrol()
+    protected void Patrol()
     {
-        if (patrolPath != null)
+        if (patrolPath == null)
         {
-            if (AtWayPoint())
-            {
-                timeSinceArrivedWayPoint = 0;
-                CycleWayPoint();
-            }
+            return;
         }
+        if (AtWayPoint())
+        {
+            timeSinceArrivedWayPoint = 0;
+            CycleWayPoint();
+        }
+
         if (timeSinceArrivedWayPoint > wayPointWaitTime)
         {
-            MoveToTarget(GetNextWayPoint());
+            Movement(GetNextWayPoint());
         }
         timeSinceArrivedWayPoint += Time.deltaTime;
     }
@@ -208,37 +155,24 @@ public class Enemy : MonoBehaviour
     }
 
     //Target overloads
-    //Polymorphism
 
-    protected Vector3 Target(GameObject target)
+    //Polymorphism
+    protected Vector3 TargetDirection(GameObject target)
     {
         return Vector3.Normalize(target.transform.position - transform.position);
     }
-    protected Vector3 Target(Transform target)
+    protected Vector3 TargetDirection(Transform target)
     {
         currentTarget = target;
 
         return Vector3.Normalize(target.position - transform.position);
     }
 
-    private void SetForwardToTarget(Transform target)
-    {
-        float rotateSpeedMultiplier = 4;
-        if (!invertForward)
-        {
-            transform.forward = Vector3.Slerp(transform.forward, Target(target), Time.deltaTime * rotateSpeedMultiplier);
-
-        }
-        else
-        {
-            transform.forward = Vector3.Slerp(transform.forward, -Target(target), Time.deltaTime * rotateSpeedMultiplier);
-        }
-    }
     private void OnTriggerEnter(Collider other)
     {
         transform.position = startPosition;
     }
-    protected virtual void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
