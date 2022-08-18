@@ -19,7 +19,7 @@ public class Arrow : MonoBehaviour {
     rb.velocity = vel; ;
 
     if (transform.position.y < -2) {
-      Destroy(gameObject);
+      Destroy(transform.parent.gameObject);
     }
   }
 
