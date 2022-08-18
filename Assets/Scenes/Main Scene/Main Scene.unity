@@ -3826,6 +3826,7 @@ MonoBehaviour:
   ArrowPrefab: {fileID: 4985123098868645453, guid: e003dd16fc9180348895eda69f827648,
     type: 3}
   anim: {fileID: 2083198987}
+  cam: {fileID: 1978512424}
   playerTargetAngle: 0
   movement: 0
   angle: 0
@@ -7680,7 +7681,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2005977919}
   m_LocalRotation: {x: -0.011815928, y: 0.9879529, z: -0.11932928, w: -0.097826615}
-  m_LocalPosition: {x: 40, y: 52, z: 215}
+  m_LocalPosition: {x: 40, y: 51, z: 190}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8406,7 +8407,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132147882009944}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8415,7 +8416,7 @@ Transform:
   - {fileID: 572617754045987051}
   m_Father: {fileID: 896127665}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &572617754045987051
 Transform:
   m_ObjectHideFlags: 0

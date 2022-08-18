@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class Controller : MonoBehaviour {
 
@@ -7,6 +6,7 @@ public class Controller : MonoBehaviour {
   public GameObject ArrowPlayer;
   public Transform ArrowPrefab;
   public Animator anim;
+  public Camera cam;
 
 
   public float playerTargetAngle = 0; // public just to debug
