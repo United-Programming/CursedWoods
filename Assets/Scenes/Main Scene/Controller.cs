@@ -73,6 +73,7 @@ public class Controller : MonoBehaviour {
       float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
       player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
     }
+
   }
 
   private void OnApplicationFocus(bool focus) {
