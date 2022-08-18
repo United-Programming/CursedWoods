@@ -38,7 +38,7 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] bool invertForward;
     protected float timeSinceLastSawPlayer;
     protected bool isTriggered;
-    Vector3 startPosition;
+    [SerializeField] protected Transform startPosition;
     protected Transform currentTarget;
 
     [Header("Patrol Variables")]
@@ -51,7 +51,8 @@ public abstract class Enemy : MonoBehaviour
 
     private void Start()
     {
-        startPosition = transform.position;
+        Instantiate(startPosition,transform.position,Quaternion.identity);
+        startPosition.transform.position = transform.position;
     }
     private void Update()
     {
@@ -64,6 +65,7 @@ public abstract class Enemy : MonoBehaviour
     //General Methods
 
     protected abstract void Movement(Transform target);
+
     protected float DistanceBetweenPlayer()
     {
         return Vector3.Distance(transform.position, player.transform.position);
@@ -168,10 +170,6 @@ public abstract class Enemy : MonoBehaviour
         return Vector3.Normalize(target.position - transform.position);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        transform.position = startPosition;
-    }
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))

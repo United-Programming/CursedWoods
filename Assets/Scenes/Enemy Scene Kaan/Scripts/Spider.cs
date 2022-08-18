@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class Spider : Enemy
 {
+    bool isPlayerAimingToMe;
     private void FixedUpdate()
     {
-        if (isTriggered)
+        if (isTriggered && !isPlayerAimingToMe)
         {
             //Move
             if (DistanceBetweenPlayer() > attackRange)
@@ -35,9 +36,18 @@ public class Spider : Enemy
             animator.SetBool("Run", false);
             //Wait
         }
-        else
+        else if (!isPlayerAimingToMe)
         {
             Patrol();
+        }
+
+        if (isPlayerAimingToMe)
+        {
+            Movement(startPosition);
+            if (Vector3.Distance(transform.position, startPosition.position) < 0.1)
+            {
+                isPlayerAimingToMe = false;
+            }
         }
         timeSinceLastSawPlayer += Time.fixedDeltaTime;
     }
@@ -84,5 +94,11 @@ public class Spider : Enemy
                 timer = 0;
             }
         }
+    }
+
+    public void PlayerIsAimingtoMe()
+    {
+        isPlayerAimingToMe = true;
+        Debug.Log("WorkingMovementAiming");
     }
 }
