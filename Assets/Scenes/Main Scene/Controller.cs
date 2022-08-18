@@ -5,7 +5,7 @@ public class Controller : MonoBehaviour {
 
   public Transform player;
   public GameObject ArrowPlayer;
-  public GameObject Arrow;
+  public Transform ArrowPrefab;
   public Animator anim;
 
 
@@ -17,15 +17,24 @@ public class Controller : MonoBehaviour {
 
   private void Update() {
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
+      arrowLoaded = false;
       aiming = !aiming;
       anim.SetBool("Aim", aiming);
+      if(!aiming) ArrowPlayer.SetActive(false);
     }
 
     float x = Input.GetAxis("Horizontal");
     if (x != 0) { // If we move we cannto be aiming
-      aiming = false; 
+      aiming = false;
+      arrowLoaded = false;
       anim.SetBool("Aim", false);
+      ArrowPlayer.SetActive(false);
     }
+
+    if (aiming && Input.GetMouseButtonDown(0) && arrowLoaded) { // We should eb sure the aiming anim is completed
+      anim.Play("Shoot");
+    }
+
 
     if (x == 0 || aiming) { // not moving
       // just keep the player angle and stop the run anim, but do not change the player rotation
@@ -80,4 +89,18 @@ public class Controller : MonoBehaviour {
     Cursor.visible = !focus;
   }
 
+  public bool arrowLoaded = false;
+  public float arrowforce = 100;
+
+  public void ArrowLoaded() {
+    arrowLoaded = true;
+  }
+
+  public void ArrowShoot() {
+    if (!arrowLoaded) return;
+    arrowLoaded = false;
+    if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {
+      arrow.Init(ArrowPlayer.transform.position, ArrowPlayer.transform.rotation, ArrowPlayer.transform.forward * arrowforce);
+    }
+  }
 }
