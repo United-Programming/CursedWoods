@@ -1,0 +1,659 @@
+fileFormatVersion: 2
+guid: 1a182e4eb6445fe4388ce87b57c0f66e
+ModelImporter:
+  serializedVersion: 21300
+  internalIDToNameTable:
+  - first:
+      74: 1827226128182048838
+    second: Take 001
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 1
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'Fight_Rework_:Spine_root' has translation
+      animation that will be discarded.\n\t'Fight_Rework_:Spine_root' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'Fight_Rework_:Collar'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n"
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: Skeleton(Clone)
+      parentName: 
+      position: {x: -0.003374262, y: 0.035929862, z: 0.0024998826}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Skeleton1
+      parentName: Skeleton(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Geometry
+      parentName: Skeleton1
+      position: {x: 0.003374262, y: -0.035929862, z: -0.0024998826}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:skeleton_mesh
+      parentName: Fight_Rework_:Geometry
+      position: {x: -0, y: 0.0286822, z: -0.025305111}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:jar_01
+      parentName: Fight_Rework_:Geometry
+      position: {x: -0.000012764665, y: -0.40490112, z: 5.8063855}
+      rotation: {x: -0.720301, y: -0.000002333434, z: 0.00000012421894, w: 0.6936617}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Shield
+      parentName: Fight_Rework_:Geometry
+      position: {x: -0.013452364, y: 0.02955788, z: -0.001607664}
+      rotation: {x: 0.47372162, y: 0.37304726, z: 0.49355906, w: 0.62675595}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:W_sword_01
+      parentName: Fight_Rework_:Geometry
+      position: {x: 0.014520922, y: 0.031904187, z: -0.0046971743}
+      rotation: {x: 0.25257212, y: -0.08654091, z: -0.60295, w: 0.75177747}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Joints
+      parentName: Skeleton1
+      position: {x: 0.003374262, y: -0.031097665, z: -0.0024998826}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Spine_root
+      parentName: Fight_Rework_:Joints
+      position: {x: -0, y: 0.028008735, z: -0.0026833266}
+      rotation: {x: 0.4027687, y: -0.5811862, z: -0.4027687, w: 0.5811862}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Spine_01
+      parentName: Fight_Rework_:Spine_root
+      position: {x: -0.005654119, y: 0.0003500555, z: -1.2166027e-18}
+      rotation: {x: -0, y: -0, z: -0.088860705, w: 0.99604404}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+    - name: Fight_Rework_:Spine_02
+      parentName: Fight_Rework_:Spine_01
+      position: {x: -0.005533614, y: -0.00040993563, z: -1.3133577e-18}
+      rotation: {x: -0, y: -0, z: 0.011674673, w: 0.9999319}
+      scale: {x: 1.0000004, y: 1.0000004, z: 1.0000002}
+    - name: Fight_Rework_:Spine_03
+      parentName: Fight_Rework_:Spine_02
+      position: {x: -0.00543873, y: -2.4004235e-17, z: -5.56743e-19}
+      rotation: {x: -0.9760134, y: 0.21771057, z: 0.000000032014842, w: 0.000000027411803}
+      scale: {x: 1.0000004, y: 1.0000004, z: 1.0000004}
+    - name: Fight_Rework_:Collar
+      parentName: Fight_Rework_:Spine_03
+      position: {x: -0.0047659874, y: 9.868153e-19, z: -1.0569226e-20}
+      rotation: {x: -0.0000000391696, y: 0.000000062341705, z: 0.123731, w: 0.9923158}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: Fight_Rework_:Neck
+      parentName: Fight_Rework_:Collar
+      position: {x: -0.0050905757, y: -1.110223e-18, z: -6.6441023e-19}
+      rotation: {x: 0.92015606, y: -0.391552, z: 4.2232617e-10, w: -0.00000006889825}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Head
+      parentName: Fight_Rework_:Neck
+      position: {x: -0.0042567686, y: 2.220446e-18, z: -1.1674702e-18}
+      rotation: {x: -0.52184737, y: 0.8530389, z: 0.000000019721929, w: -0.00000001153934}
+      scale: {x: 1.0000004, y: 1.0000004, z: 1.0000007}
+    - name: Fight_Rework_:Nose
+      parentName: Fight_Rework_:Head
+      position: {x: -0.0064793616, y: 5.175842e-18, z: -4.0829002e-18}
+      rotation: {x: -0.05334135, y: -0.70509195, z: -0.05334132, w: 0.705092}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: Fight_Rework_:Jaw
+      parentName: Fight_Rework_:Head
+      position: {x: -0.0034799112, y: -0.0024117026, z: -3.5937173e-11}
+      rotation: {x: 0.000000017725673, y: 0.000000038238163, z: 0.17823006, w: 0.9839888}
+      scale: {x: 1.0000001, y: 0.99999994, z: 0.9999998}
+    - name: Fight_Rework_:Teeth
+      parentName: Fight_Rework_:Jaw
+      position: {x: -0.0037405558, y: -2.7755575e-19, z: -1.955049e-11}
+      rotation: {x: -0.00000001772567, y: -0.00000003823816, z: -0.17823012, w: 0.9839888}
+      scale: {x: 1, y: 1, z: 1.0000002}
+    - name: Fight_Rework_:Belly_02
+      parentName: Fight_Rework_:Spine_03
+      position: {x: -0.0026459494, y: -0.006702464, z: -3.5096153e-18}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+    - name: Fight_Rework_:Clavicle_L
+      parentName: Fight_Rework_:Spine_03
+      position: {x: -0.003026172, y: -0.0019273717, z: -0.0037092583}
+      rotation: {x: 0.46914205, y: -0.5290612, z: 0.40540668, w: 0.5793491}
+      scale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
+    - name: Fight_Rework_:Shoulder_L
+      parentName: Fight_Rework_:Clavicle_L
+      position: {x: -0.0034642573, y: 0.0005494115, z: -3.6121997e-18}
+      rotation: {x: 0.41605568, y: 0.028950017, z: 0.061710246, w: 0.9067808}
+      scale: {x: 1.0000001, y: 0.99999994, z: 0.99999994}
+    - name: Fight_Rework_:Elbow_L
+      parentName: Fight_Rework_:Shoulder_L
+      position: {x: -0.010607094, y: 1.3877787e-18, z: 8.326672e-18}
+      rotation: {x: 0.0000591278, y: -0.0015721468, z: -0.0334411, w: 0.9994395}
+      scale: {x: 1.0000001, y: 1.0000002, z: 0.99999994}
+    - name: Fight_Rework_:Wrist_L
+      parentName: Fight_Rework_:Elbow_L
+      position: {x: -0.0094401175, y: -0.000034502496, z: 0.00048367906}
+      rotation: {x: 0.4276584, y: 0.3287419, z: -0.30334416, w: 0.7855058}
+      scale: {x: 1.0000004, y: 1.0000001, z: 1.0000002}
+    - name: Fight_Rework_:Handle_Disconnect_Point_L
+      parentName: Fight_Rework_:Wrist_L
+      position: {x: -0.0013700358, y: -0.0035195, z: 0.00006797419}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Thumb01_L
+      parentName: Fight_Rework_:Wrist_L
+      position: {x: -0.0026432695, y: 8.716985e-19, z: 1.6949581e-18}
+      rotation: {x: 0.47830978, y: -0.050121658, z: 0.18385752, w: 0.8572655}
+      scale: {x: 1.0000004, y: 0.99999994, z: 1.0000001}
+    - name: Fight_Rework_:Thumb02_L
+      parentName: Fight_Rework_:Thumb01_L
+      position: {x: -0.0023342546, y: 0.00004545045, z: -0.0009076782}
+      rotation: {x: -0.50783974, y: -0.31621268, z: -0.13246612, w: 0.7902918}
+      scale: {x: 1.0000001, y: 1.0000008, z: 1.0000004}
+    - name: Fight_Rework_:Thumb03_L
+      parentName: Fight_Rework_:Thumb02_L
+      position: {x: -0.002529503, y: -0.00072544214, z: 0.0005963436}
+      rotation: {x: -0.024693456, y: 0.27914828, z: 0.925593, w: -0.25444847}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Index01_L
+      parentName: Fight_Rework_:Wrist_L
+      position: {x: -0.0038254997, y: -0.0020866143, z: -0.001647759}
+      rotation: {x: -0.34952858, y: -0.46378, z: -0.108667, w: 0.806802}
+      scale: {x: 1, y: 1.0000004, z: 1.0000001}
+    - name: Fight_Rework_:Index02_L
+      parentName: Fight_Rework_:Index01_L
+      position: {x: -0.0017936392, y: -0.0018714137, z: -0.00034964934}
+      rotation: {x: 0.85716206, y: 0.43625897, z: -0.022161437, w: -0.2728739}
+      scale: {x: 1.0000002, y: 0.99999994, z: 1.0000004}
+    - name: Fight_Rework_:Index03_L
+      parentName: Fight_Rework_:Index02_L
+      position: {x: -0.0033285702, y: -0.00014718837, z: -0.00016134765}
+      rotation: {x: 0.41469225, y: 0.8192916, z: 0.1788216, w: -0.35329098}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Middle01_L
+      parentName: Fight_Rework_:Wrist_L
+      position: {x: -0.0029893445, y: -0.0028948637, z: -0.0018061147}
+      rotation: {x: -0.3493423, y: -0.5043879, z: -0.20082277, w: 0.7636904}
+      scale: {x: 1.0000001, y: 1.0000002, z: 1.0000002}
+    - name: Fight_Rework_:Middle02_L
+      parentName: Fight_Rework_:Middle01_L
+      position: {x: -0.0012899344, y: -0.0018908441, z: -0.00044341615}
+      rotation: {x: 0.82886064, y: 0.5384931, z: 0.03660688, w: -0.14722471}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000002}
+    - name: Fight_Rework_:Middle03_L
+      parentName: Fight_Rework_:Middle02_L
+      position: {x: -0.0034117294, y: -0.00032262306, z: -0.000078467056}
+      rotation: {x: -0.57416797, y: -0.5909921, z: -0.03340146, w: 0.5656358}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Ring01_L
+      parentName: Fight_Rework_:Wrist_L
+      position: {x: -0.0019633903, y: -0.0034337565, z: -0.0014362346}
+      rotation: {x: -0.37335745, y: -0.48093843, z: -0.14550179, w: 0.779828}
+      scale: {x: 1, y: 1.0000002, z: 1.0000002}
+    - name: Fight_Rework_:Ring02_L
+      parentName: Fight_Rework_:Ring01_L
+      position: {x: -0.0013374257, y: -0.0015088666, z: -0.00037385157}
+      rotation: {x: 0.8734073, y: 0.4803024, z: 0.05622273, w: -0.05751857}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000001}
+    - name: Fight_Rework_:Ring03_L
+      parentName: Fight_Rework_:Ring02_L
+      position: {x: -0.0031089243, y: -0.00029382596, z: 0.000044225857}
+      rotation: {x: -0.5403727, y: -0.54599446, z: -0.04365906, w: 0.6387341}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Pinky01_L
+      parentName: Fight_Rework_:Wrist_L
+      position: {x: -0.0010553092, y: -0.0039143437, z: -0.00092562725}
+      rotation: {x: -0.69258326, y: -0.36420965, z: 0.061394498, w: 0.6196051}
+      scale: {x: 1.0000002, y: 1.0000002, z: 0.9999998}
+    - name: Fight_Rework_:Pinky02_L
+      parentName: Fight_Rework_:Pinky01_L
+      position: {x: -0.0015303354, y: -0.00004887874, z: -0.00030616092}
+      rotation: {x: 0.925856, y: 0.07799903, z: 0.085838646, w: -0.35963672}
+      scale: {x: 1, y: 0.9999998, z: 1.0000004}
+    - name: Fight_Rework_:Pinky03_L
+      parentName: Fight_Rework_:Pinky02_L
+      position: {x: -0.003102046, y: 1.5543659e-18, z: 7.0663145e-20}
+      rotation: {x: -0.5954311, y: -0.5564151, z: -0.051279727, w: 0.57726467}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Elbow_Helper_L
+      parentName: Fight_Rework_:Elbow_L
+      position: {x: -0.005684707, y: 0.0000027464005, z: 0.0005161958}
+      rotation: {x: 3.6379784e-12, y: -0, z: -1.7466559e-10, w: 1}
+      scale: {x: 1, y: 0.99999994, z: 1.0000001}
+    - name: Fight_Rework_:Clavicle_R
+      parentName: Fight_Rework_:Spine_03
+      position: {x: -0.0030261248, y: -0.001927382, z: 0.00370926}
+      rotation: {x: 0.52906126, y: 0.46914205, z: 0.5793491, w: -0.40540668}
+      scale: {x: 0.99999994, y: 0.9999998, z: 0.99999994}
+    - name: Fight_Rework_:Shoulder_R
+      parentName: Fight_Rework_:Clavicle_R
+      position: {x: 0.0034642615, y: -0.00054943346, z: -3.330669e-18}
+      rotation: {x: 0.4173885, y: 0.029003114, z: 0.06168747, w: 0.9061679}
+      scale: {x: 1.0000002, y: 1, z: 1}
+    - name: Fight_Rework_:Elbow_R
+      parentName: Fight_Rework_:Shoulder_R
+      position: {x: 0.010607094, y: 0.0000000026307057, z: 0.00000000385341}
+      rotation: {x: 0.0000146925395, y: -0.0016579548, z: -0.03419258, w: 0.9994139}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000004}
+    - name: Fight_Rework_:Wrist_R
+      parentName: Fight_Rework_:Elbow_R
+      position: {x: 0.009440068, y: 0.000034470377, z: -0.00048368724}
+      rotation: {x: 0.37378588, y: 0.32123226, z: -0.3008718, w: 0.81643754}
+      scale: {x: 0.9999997, y: 0.99999994, z: 1}
+    - name: Fight_Rework_:handle_Disconnect_Point_R
+      parentName: Fight_Rework_:Wrist_R
+      position: {x: 0.0007917776, y: 0.0032168133, z: 0.00020855646}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Thumb01_R
+      parentName: Fight_Rework_:Wrist_R
+      position: {x: 0.0024568795, y: -0.0000011132314, z: -0.00042852532}
+      rotation: {x: 0.545565, y: 0.016914258, z: 0.09977749, w: 0.8319358}
+      scale: {x: 1.0000006, y: 1, z: 1}
+    - name: Fight_Rework_:Thumb02_R
+      parentName: Fight_Rework_:Thumb01_R
+      position: {x: 0.0023944606, y: 0.0004552052, z: 0.0009064922}
+      rotation: {x: -0.51394135, y: -0.35797742, z: -0.05982498, w: 0.77726275}
+      scale: {x: 1, y: 1.0000001, z: 0.9999998}
+    - name: Fight_Rework_:Thumb03_R
+      parentName: Fight_Rework_:Thumb02_R
+      position: {x: 0.002441481, y: 0.0007706364, z: -0.0005301556}
+      rotation: {x: -0.024693456, y: 0.27914828, z: 0.925593, w: -0.25444847}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Index01_R
+      parentName: Fight_Rework_:Wrist_R
+      position: {x: 0.0038255574, y: 0.002086647, z: 0.0016477058}
+      rotation: {x: -0.3428795, y: -0.47943458, z: -0.10369622, w: 0.8011387}
+      scale: {x: 0.99999994, y: 1.0000001, z: 0.9999996}
+    - name: Fight_Rework_:Index02_R
+      parentName: Fight_Rework_:Index01_R
+      position: {x: 0.0017245478, y: 0.0016354136, z: 0.00019367992}
+      rotation: {x: 0.87679845, y: 0.44430053, z: -0.042135585, w: -0.17901444}
+      scale: {x: 1.0000001, y: 1.0000005, z: 1.0000001}
+    - name: Fight_Rework_:Index03_R
+      parentName: Fight_Rework_:Index02_R
+      position: {x: 0.0035263558, y: 0.00030782365, z: -0.00020492764}
+      rotation: {x: 0.41469225, y: 0.8192916, z: 0.1788216, w: -0.35329098}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Middle01_R
+      parentName: Fight_Rework_:Wrist_R
+      position: {x: 0.0029369274, y: 0.002687872, z: 0.0019804053}
+      rotation: {x: -0.368208, y: -0.49819052, z: -0.16487715, w: 0.76749235}
+      scale: {x: 1.0000001, y: 1.0000006, z: 0.99999994}
+    - name: Fight_Rework_:Middle02_R
+      parentName: Fight_Rework_:Middle01_R
+      position: {x: 0.0016342216, y: 0.0018066114, z: 0.0003992602}
+      rotation: {x: 0.86714906, y: 0.47785157, z: 0.009802944, w: -0.14005147}
+      scale: {x: 0.9999997, y: 1.0000001, z: 1}
+    - name: Fight_Rework_:Middle03_R
+      parentName: Fight_Rework_:Middle02_R
+      position: {x: 0.0035760796, y: 0.00030128134, z: -0.00012742355}
+      rotation: {x: -0.57416797, y: -0.5909921, z: -0.03340146, w: 0.5656358}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Ring01_R
+      parentName: Fight_Rework_:Wrist_R
+      position: {x: 0.0018497107, y: 0.0034337898, z: 0.0018335629}
+      rotation: {x: -0.33909214, y: -0.52087104, z: -0.16985658, w: 0.76476055}
+      scale: {x: 0.9999998, y: 1.0000001, z: 0.99999946}
+    - name: Fight_Rework_:Ring02_R
+      parentName: Fight_Rework_:Ring01_R
+      position: {x: 0.0013541629, y: 0.0016813941, z: 0.00020289427}
+      rotation: {x: 0.85041237, y: 0.52603436, z: 0.0048158, w: -0.007971433}
+      scale: {x: 1.0000001, y: 1.0000002, z: 1.0000005}
+    - name: Fight_Rework_:Ring03_R
+      parentName: Fight_Rework_:Ring02_R
+      position: {x: 0.0030276107, y: 0.00044124847, z: -0.0002383628}
+      rotation: {x: -0.5403727, y: -0.54599446, z: -0.04365906, w: 0.6387341}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Pinky01_R
+      parentName: Fight_Rework_:Wrist_R
+      position: {x: 0.0008343324, y: 0.0038528522, z: 0.0013377673}
+      rotation: {x: -0.6773886, y: -0.39590192, z: 0.033983864, w: 0.61907315}
+      scale: {x: 1.0000001, y: 0.99999994, z: 0.9999998}
+    - name: Fight_Rework_:Pinky02_R
+      parentName: Fight_Rework_:Pinky01_R
+      position: {x: 0.0018913323, y: 0.00018047048, z: 0.0002584206}
+      rotation: {x: 0.93205655, y: 0.19275092, z: 0.043962777, w: -0.30361995}
+      scale: {x: 1.0000001, y: 0.9999998, z: 0.9999997}
+    - name: Fight_Rework_:Pinky03_R
+      parentName: Fight_Rework_:Pinky02_R
+      position: {x: 0.0027500438, y: 0.0005107691, z: -0.00023646468}
+      rotation: {x: -0.5160948, y: -0.59239715, z: -0.002904504, w: 0.61863023}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Elbow_Helper_R
+      parentName: Fight_Rework_:Elbow_R
+      position: {x: 0.0055498723, y: 0.00007249916, z: -0.0005022241}
+      rotation: {x: -0, y: -7.1054257e-15, z: -6.6613356e-15, w: 1}
+      scale: {x: 1, y: 1.0000002, z: 1}
+    - name: Fight_Rework_:Belly_01
+      parentName: Fight_Rework_:Spine_02
+      position: {x: 0.00025727227, y: 0.006885035, z: 2.5444932e-18}
+      rotation: {x: -0, y: -0, z: 0.00202821, w: 0.999998}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: Fight_Rework_:Hip_L
+      parentName: Fight_Rework_:Spine_root
+      position: {x: -0.00010255616, y: -0.0005935852, z: 0.0050427495}
+      rotation: {x: 0.038763884, y: 0.99873024, z: -0.03133859, w: 0.007296801}
+      scale: {x: 0.9999997, y: 0.9999998, z: 0.9999998}
+    - name: Fight_Rework_:Knee_L
+      parentName: Fight_Rework_:Hip_L
+      position: {x: -0.014632747, y: -0.0009380598, z: -0.000364231}
+      rotation: {x: -0.9489722, y: -0.31535977, z: -0.000000088708475, w: -0.00000005401671}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: Fight_Rework_:Foot_L
+      parentName: Fight_Rework_:Knee_L
+      position: {x: -0.0152605325, y: -0.00008224701, z: 7.476656e-18}
+      rotation: {x: 0.7985846, y: 0.5815942, z: -0.11984872, w: 0.09822005}
+      scale: {x: 1, y: 1.0000001, z: 1.0000001}
+    - name: Fight_Rework_:Toe_L
+      parentName: Fight_Rework_:Foot_L
+      position: {x: -0.004966284, y: -0.00034708634, z: -4.7797117e-19}
+      rotation: {x: 0.000000037252907, y: 0.000000108033426, z: -0.13401826, w: 0.9909789}
+      scale: {x: 1.0000004, y: 1.0000001, z: 1.0000001}
+    - name: Fight_Rework_:Toe_tip_L
+      parentName: Fight_Rework_:Toe_L
+      position: {x: -0.0050355745, y: 0.00124989, z: 6.086571e-19}
+      rotation: {x: -0.14075543, y: -0.69295603, z: -0.14075531, w: 0.692956}
+      scale: {x: 1, y: 0.9999999, z: 0.9999999}
+    - name: Fight_Rework_:Hip_R
+      parentName: Fight_Rework_:Spine_root
+      position: {x: -0.000102514634, y: -0.0005936007, z: -0.00504275}
+      rotation: {x: 0.9987302, y: -0.03876396, z: -0.007296756, w: -0.03133892}
+      scale: {x: 0.99999976, y: 0.9999998, z: 1}
+    - name: Fight_Rework_:Knee_R
+      parentName: Fight_Rework_:Hip_R
+      position: {x: 0.014632662, y: 0.00093803316, z: 0.0003642351}
+      rotation: {x: -0.9489722, y: -0.3153598, z: 0.000000046566132, w: -0.0000000326545}
+      scale: {x: 1.0000002, y: 1.0000002, z: 0.9999999}
+    - name: Fight_Rework_:Foot_R
+      parentName: Fight_Rework_:Knee_R
+      position: {x: 0.015260575, y: 0.00008226397, z: -5.335827e-10}
+      rotation: {x: 0.79858446, y: 0.58159435, z: -0.11984886, w: 0.09822022}
+      scale: {x: 1.0000002, y: 1, z: 1}
+    - name: Fight_Rework_:Toe_R
+      parentName: Fight_Rework_:Foot_R
+      position: {x: 0.0049662804, y: 0.00034708602, z: 0.0000000022876756}
+      rotation: {x: 0.000000044703484, y: 0.000000070780516, z: -0.13401821, w: 0.99097896}
+      scale: {x: 1.0000002, y: 1.0000011, z: 1.0000006}
+    - name: Fight_Rework_:Toe_tip_R
+      parentName: Fight_Rework_:Toe_R
+      position: {x: 0.0050355713, y: -0.0012498901, z: -0.0000000038286165}
+      rotation: {x: -0.14075552, y: -0.6929559, z: -0.14075534, w: 0.692956}
+      scale: {x: 1.0000004, y: 1.0000006, z: 1.0000005}
+    - name: Fight_Rework_:Handle_L
+      parentName: Fight_Rework_:Joints
+      position: {x: -0.0105924755, y: 0.028820472, z: -0.010741197}
+      rotation: {x: 0.42786947, y: 0.88804674, z: 0.11690379, w: 0.120972015}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: Fight_Rework_:Handle_End_L
+      parentName: Fight_Rework_:Handle_L
+      position: {x: -0.0024536604, y: 0.0014370916, z: -0.00041783365}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Handle_R
+      parentName: Fight_Rework_:Joints
+      position: {x: 0.009456864, y: 0.02818578, z: 0.008594508}
+      rotation: {x: 0.50733566, y: -0.21697195, z: 0.7695372, w: -0.32147515}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: Fight_Rework_:Handle_End_R
+      parentName: Fight_Rework_:Handle_R
+      position: {x: 0.0029855035, y: -0.001677973, z: -0.0004023031}
+      rotation: {x: -0, y: -0, z: 0.000000014901159, w: 1}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1}
+    - name: Fight_Rework_:MASTER
+      parentName: Skeleton1
+      position: {x: 0.003374262, y: -0.035929862, z: -0.0024998826}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:FOOT_L
+      parentName: Fight_Rework_:MASTER
+      position: {x: -0.0054506, y: 0.000027607768, z: 0.012658603}
+      rotation: {x: 0, y: 0.15626325, z: -0, w: 0.9877155}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:HEEL_L
+      parentName: Fight_Rework_:FOOT_L
+      position: {x: -0.0025368363, y: 0.0010305247, z: 0.0053537195}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:LEG_IK_L
+      parentName: Fight_Rework_:HEEL_L
+      position: {x: 0.001502959, y: 0.0032762103, z: -0.0035245009}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Foot_IK_L
+      parentName: Fight_Rework_:FOOT_L
+      position: {x: -0.0025368363, y: 0.0011281424, z: 0.0053537195}
+      rotation: {x: 0.2733405, y: 0.5622946, z: 0.18313904, w: 0.75866324}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:TOE_L
+      parentName: Fight_Rework_:FOOT_L
+      position: {x: -0.0025368363, y: 0.0011281424, z: 0.0053537195}
+      rotation: {x: -0.2453522, y: 0, z: -0, w: 0.969434}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Toe_IK_L
+      parentName: Fight_Rework_:TOE_L
+      position: {x: -0.0012843441, y: -0.0006549804, z: 0.0049840435}
+      rotation: {x: 0.1955169, y: 0.59385467, z: 0.07981219, w: 0.7763632}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:KNEE_L
+      parentName: Fight_Rework_:FOOT_L
+      position: {x: -0.00011595712, y: 0.01861348, z: 0.019371772}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:FOOT_R
+      parentName: Fight_Rework_:MASTER
+      position: {x: 0.0054506, y: 0.000027607768, z: -0.021304216}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Foot_IK_R
+      parentName: Fight_Rework_:FOOT_R
+      position: {x: 0.0025368403, y: 0.0011281422, z: 0.0053537195}
+      rotation: {x: 0.75866324, y: -0.18313904, z: 0.5622946, w: -0.2733405}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:HEEL_R
+      parentName: Fight_Rework_:FOOT_R
+      position: {x: 0.0025368363, y: 0.0010305247, z: 0.0053537195}
+      rotation: {x: 0.32907256, y: -0, z: -0, w: 0.94430465}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Leg_IK_R
+      parentName: Fight_Rework_:HEEL_R
+      position: {x: -0.0015029561, y: 0.0032762075, z: -0.0035244983}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:TOE_R
+      parentName: Fight_Rework_:FOOT_R
+      position: {x: 0.0025368403, y: 0.0011281422, z: 0.0053537195}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:Toe_IK_R
+      parentName: Fight_Rework_:TOE_R
+      position: {x: 0.00128434, y: -0.00065498, z: 0.004984042}
+      rotation: {x: 0.7763632, y: -0.07981219, z: 0.59385467, w: -0.1955169}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:KNEE_R
+      parentName: Fight_Rework_:FOOT_R
+      position: {x: 0.0053581703, y: 0.01980753, z: 0.042360764}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:SPINE_ROOT
+      parentName: Fight_Rework_:MASTER
+      position: {x: -0, y: 0.028008733, z: -0.0026833266}
+      rotation: {x: 0.1097805, y: 0.11768709, z: 0.0130915465, w: 0.9868772}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:SPINE_01
+      parentName: Fight_Rework_:SPINE_ROOT
+      position: {x: 7.772793e-20, y: 0.005417054, z: -0.0016574456}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:SPINE_02
+      parentName: Fight_Rework_:SPINE_01
+      position: {x: 2.7981623e-19, y: 0.005369704, z: -0.0013982871}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:SPINE_03
+      parentName: Fight_Rework_:SPINE_02
+      position: {x: -3.5754414e-19, y: 0.005325788, z: -0.0011026169}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:NECK
+      parentName: Fight_Rework_:SPINE_03
+      position: {x: -1.8527446e-33, y: 0.004635228, z: 0.001108739}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:HEAD
+      parentName: Fight_Rework_:NECK
+      position: {x: -0.00020556473, y: 0.004505992, z: 0.0022664934}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:JAW
+      parentName: Fight_Rework_:HEAD
+      position: {x: -1.071011e-18, y: 0.0011305455, z: 0.0017313763}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:EBLOW_L
+      parentName: Fight_Rework_:MASTER
+      position: {x: -0.009463917, y: 0.042278107, z: -0.018043032}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:EBLOW_R
+      parentName: Fight_Rework_:MASTER
+      position: {x: 0.009463917, y: 0.042278107, z: -0.018043032}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:HAND_L
+      parentName: Fight_Rework_:MASTER
+      position: {x: -0.011275694, y: 0.031208819, z: -0.008311291}
+      rotation: {x: 0.1948859, y: -0.3117976, z: 0.10936426, w: 0.92349404}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:SHIELD
+      parentName: Fight_Rework_:HAND_L
+      position: {x: -0.0011606707, y: -0.0027349433, z: -0.00074581295}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:IK_Hand_L
+      parentName: Fight_Rework_:HAND_L
+      position: {x: 0.000000034570693, y: 0.00000014305114, z: -0.0000000102072955}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:HAND_R
+      parentName: Fight_Rework_:MASTER
+      position: {x: 0.009332697, y: 0.03131048, z: 0.007867739}
+      rotation: {x: -0.3181317, y: -0.029645456, z: -0.08792067, w: 0.9434953}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:SWORD
+      parentName: Fight_Rework_:HAND_R
+      position: {x: 0.00072904583, y: -0.0029679092, z: -0.0012954933}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:IK_Hand_R
+      parentName: Fight_Rework_:HAND_R
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:ELBOW_HELP_R
+      parentName: Skeleton1
+      position: {x: 0.012223692, y: -0.0019877148, z: 0.002543642}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_:ELBOW_HELP_L
+      parentName: Skeleton1
+      position: {x: -0.00695404, y: -0.0012318618, z: -0.009793999}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Fight_Rework_RNannotation
+      parentName: Skeleton(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: Skeleton1
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
