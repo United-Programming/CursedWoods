@@ -3,6 +3,8 @@ using UnityEngine;
 public class Arrow : MonoBehaviour {
   public bool initialized = false;
   public Rigidbody rb;
+  public Transform ArrowHead;
+  private Terrain ground;
 
 
   private void FixedUpdate() {
@@ -18,8 +20,12 @@ public class Arrow : MonoBehaviour {
     vel.y = vely;
     rb.velocity = vel; ;
 
-    if (transform.position.y < -2) {
-      Destroy(transform.parent.gameObject);
+    if (ArrowHead.position.y < ground.SampleHeight(ArrowHead.position) + .05f) {
+      rb.velocity = Vector3.zero;
+      rb.useGravity = false;
+      rb.detectCollisions = false;
+      initialized = false;
+      //Destroy(transform.parent.gameObject, 3);
     }
   }
 
@@ -28,9 +34,10 @@ public class Arrow : MonoBehaviour {
     Debug.Log("Arrow hit: " + other.gameObject.name);
   }
 
-  internal void Init(Vector3 position, Quaternion rotation, Vector3 velocity) {
+  internal void Init(Vector3 position, Quaternion rotation, Vector3 velocity, Terrain ground) {
     transform.parent.SetPositionAndRotation(position, rotation);
     rb.velocity = velocity;
     initialized = true;
+    this.ground = ground;
   }
 }

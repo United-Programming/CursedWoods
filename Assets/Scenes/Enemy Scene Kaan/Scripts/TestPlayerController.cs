@@ -130,7 +130,7 @@ public class TestPlayerController : MonoBehaviour
         arrowLoaded = false;
         if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow))
         {
-            arrow.Init(ArrowPlayer.transform.position, ArrowPlayer.transform.rotation, ArrowPlayer.transform.forward * arrowforce);
+            arrow.Init(ArrowPlayer.transform.position, ArrowPlayer.transform.rotation, ArrowPlayer.transform.forward * arrowforce, null);
         }
     }
 }

@@ -7,6 +7,7 @@ public class Controller : MonoBehaviour {
   public Transform ArrowPrefab;
   public Animator anim;
   public Camera cam;
+  public Terrain Ground;
 
 
   public float playerTargetAngle = 0; // public just to debug
@@ -14,6 +15,10 @@ public class Controller : MonoBehaviour {
   public float angle = 0; // public just to debug
   public float speed = .05f; // public just to debug
   public bool aiming = false; // public just to debug
+
+  private void Awake() {
+    Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
+  }
 
   private void Update() {
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
@@ -71,8 +76,8 @@ public class Controller : MonoBehaviour {
     }
 
     if (aiming) {
-      float aimH = 2f * (Input.mousePosition.x - Screen.width * .5f) / Screen.width;
-      float aimV = 2f * (Input.mousePosition.y - Screen.height * .5f) / Screen.height;
+      float aimH = 2f * (Input.mousePosition.x - Screen.width * .5f) / Screen.width - .09f;
+      aimV = 2f * (Input.mousePosition.y - Screen.height * .5f) / Screen.height;
       anim.SetFloat("AimH", aimH);
       anim.SetFloat("AimV", aimV);
 
@@ -81,9 +86,14 @@ public class Controller : MonoBehaviour {
       float playerCurrentAngle = player.localEulerAngles.y;
       float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
       player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
-    }
 
+// FIXME this is just to debug
+      Debug.DrawLine(HandRefR.position, (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized * 120, Color.red);
+    }
   }
+
+  public Transform HandRefR, HandRefL;
+  public float aimV;
 
   private void OnApplicationFocus(bool focus) {
     Cursor.visible = !focus;
@@ -100,7 +110,12 @@ public class Controller : MonoBehaviour {
     if (!arrowLoaded) return;
     arrowLoaded = false;
     if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {
-      arrow.Init(ArrowPlayer.transform.position, ArrowPlayer.transform.rotation, ArrowPlayer.transform.forward * arrowforce);
+      Vector3 start = HandRefR.position;
+      Vector3 dir = (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized;
+      Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
+      float extraForce = 1;
+      if (aimV >= 0) extraForce = -4 * aimV * aimV + 4 * aimV + 1;
+      arrow.Init(start, rot, arrowforce * extraForce * dir, Ground);
     }
   }
 }
