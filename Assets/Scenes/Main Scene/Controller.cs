@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Controller : MonoBehaviour {
@@ -15,12 +16,15 @@ public class Controller : MonoBehaviour {
   public float angle = 0; // public just to debug
   public float speed = .05f; // public just to debug
   public bool aiming = false; // public just to debug
+  public bool dead = false; // public just to debug
 
   private void Awake() {
     Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
   }
 
   private void Update() {
+    if (dead) return;
+
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
       arrowLoaded = false;
       aiming = !aiming;
@@ -90,6 +94,13 @@ public class Controller : MonoBehaviour {
 // FIXME this is just to debug
       Debug.DrawLine(HandRefR.position, (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized * 120, Color.red);
     }
+  }
+
+  public void PlayerDeath() {
+    ArrowPlayer.SetActive(false);
+    if (Random.Range(0, 2) == 0) anim.Play("Death1");
+    else anim.Play("Death2");
+    dead = true;
   }
 
   public Transform HandRefR, HandRefL;

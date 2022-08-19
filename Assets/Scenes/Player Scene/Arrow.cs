@@ -25,7 +25,7 @@ public class Arrow : MonoBehaviour {
       rb.useGravity = false;
       rb.detectCollisions = false;
       initialized = false;
-      //Destroy(transform.parent.gameObject, 3);
+      Destroy(transform.parent.gameObject, 10);
     }
   }
 

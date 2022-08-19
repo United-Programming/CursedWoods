@@ -15,6 +15,10 @@ public class Level1 : MonoBehaviour {
     Debug.Log("Destroying: " + enemy.name);
   }
 
+  internal void PlayerDeath() {
+    CenterOfWorld.PlayerDeath();
+  }
+
   private void Start() {
     Forest = GameObject.FindObjectOfType<Terrain>();
     CenterOfWorld = GameObject.FindObjectOfType<Controller>();
