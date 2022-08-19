@@ -9,6 +9,7 @@ public class Controller : MonoBehaviour {
   public Animator anim;
   public Camera cam;
   public Terrain Ground;
+  public AudioSource audioSrc;
 
 
   public float playerTargetAngle = 0; // public just to debug
@@ -101,6 +102,14 @@ public class Controller : MonoBehaviour {
     if (Random.Range(0, 2) == 0) anim.Play("Death1");
     else anim.Play("Death2");
     dead = true;
+  }
+
+  public void PlayWinDance() {
+    ArrowPlayer.SetActive(false);
+    dead = true;
+    anim.Play("WinDance");
+    audioSrc.Play();
+    // Wait for mouse press or key press or end of anim
   }
 
   public Transform HandRefR, HandRefL;

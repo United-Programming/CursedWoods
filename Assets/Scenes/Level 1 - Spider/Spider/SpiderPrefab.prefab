@@ -1478,6 +1478,7 @@ GameObject:
   - component: {fileID: 5404940784975523399}
   - component: {fileID: 5404940784982704569}
   - component: {fileID: 6181297908530233960}
+  - component: {fileID: 3828178518767348781}
   m_Layer: 9
   m_Name: SpiderPrefab
   m_TagString: Untagged
@@ -1540,7 +1541,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   anim: {fileID: 5404940784982704569}
   BodyCenter: {fileID: 5404940784975523419}
-  speed: 5
+  speed: 2
   ArrowMask:
     serializedVersion: 2
     m_Bits: 128
@@ -1548,6 +1549,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   attack: 0
+--- !u!135 &3828178518767348781
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5404940784975426151}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2.8
+  m_Center: {x: 0, y: 2.5, z: 0}
 --- !u!1 &5404940784975426153
 GameObject:
   m_ObjectHideFlags: 0
