@@ -1541,7 +1541,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   anim: {fileID: 5404940784982704569}
   BodyCenter: {fileID: 5404940784975523419}
-  speed: 2
+  speed: 0.1
   ArrowMask:
     serializedVersion: 2
     m_Bits: 128

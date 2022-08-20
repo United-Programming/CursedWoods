@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,7 +10,12 @@ public class Controller : MonoBehaviour {
   public Animator anim;
   public Camera cam;
   public Terrain Ground;
-  public AudioSource audioSrc;
+  public AudioSource audioBow;
+  public AudioSource audioGlobal;
+  public AudioClip WindDanceMusic;
+  public AudioClip Crickets;
+  public AudioClip BowDraw;
+  public AudioClip ThrowArrow;
 
 
   public float playerTargetAngle = 0; // public just to debug
@@ -19,18 +25,26 @@ public class Controller : MonoBehaviour {
   public bool aiming = false; // public just to debug
   public bool dead = false; // public just to debug
 
-  private void Awake() {
+  private IEnumerator Start() {
+    yield return new WaitForSeconds(.2f);
     Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
   }
 
   private void Update() {
     if (dead) return;
 
+
+    if (Input.GetKeyDown(KeyCode.P)) PlayWinDance();
+
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
       arrowLoaded = false;
       aiming = !aiming;
       anim.SetBool("Aim", aiming);
-      if(!aiming) ArrowPlayer.SetActive(false);
+      if (!aiming) ArrowPlayer.SetActive(false);
+      else {
+        audioBow.clip = BowDraw;
+        audioBow.Play();
+      }
     }
 
     float x = Input.GetAxis("Horizontal");
@@ -42,6 +56,8 @@ public class Controller : MonoBehaviour {
     }
 
     if (aiming && Input.GetMouseButtonDown(0) && arrowLoaded) { // We should eb sure the aiming anim is completed
+      audioBow.clip = ThrowArrow;
+      audioBow.Play();
       anim.Play("Shoot");
     }
 
@@ -91,9 +107,6 @@ public class Controller : MonoBehaviour {
       float playerCurrentAngle = player.localEulerAngles.y;
       float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
       player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
-
-// FIXME this is just to debug
-      Debug.DrawLine(HandRefR.position, (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized * 120, Color.red);
     }
   }
 
@@ -108,7 +121,8 @@ public class Controller : MonoBehaviour {
     ArrowPlayer.SetActive(false);
     dead = true;
     anim.Play("WinDance");
-    audioSrc.Play();
+    audioGlobal.clip = WindDanceMusic;
+    audioGlobal.Play();
     // Wait for mouse press or key press or end of anim
   }
 
@@ -129,6 +143,8 @@ public class Controller : MonoBehaviour {
   public void ArrowShoot() {
     if (!arrowLoaded) return;
     arrowLoaded = false;
+    audioBow.clip = BowDraw;
+    audioBow.Play();
     if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {
       Vector3 start = HandRefR.position;
       Vector3 dir = (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized;
