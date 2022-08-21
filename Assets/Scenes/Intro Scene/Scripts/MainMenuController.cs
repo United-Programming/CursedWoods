@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -21,7 +22,20 @@ public class MainMenuController : MonoBehaviour {
   [SerializeField] private GameObject creditsButton;
   [SerializeField] private GameObject returnButton;
 
-  public void StartNewGame() {
+  [SerializeField] private Slider volumeMusic;
+  [SerializeField] private Slider volumeSound;
+  [SerializeField] private AudioSource testSound;
+
+  private void Start() {
+    float music = PlayerPrefs.GetFloat("VolumeMusic", .7f);
+    MasterMixer.SetFloat("VolumeMusic", music * 70 - 60);
+    volumeMusic.SetValueWithoutNotify(music);
+    float sounds = PlayerPrefs.GetFloat("VolumeSounds", .7f);
+    volumeSound.SetValueWithoutNotify(sounds);
+    MasterMixer.SetFloat("VolumeSounds", sounds);
+  }
+
+public void StartNewGame() {
     Debug.Log("Start a new game!");
     // starts a new game
   }
@@ -59,6 +73,20 @@ public class MainMenuController : MonoBehaviour {
   public void ShowMainMenu() {
     mainMenu.SetActive(true);
     animator.Play("ShowMainMenu", 0, 0f);
+  }
+
+  public AudioMixer MasterMixer;
+
+  public void AlterVolume(bool music) {
+    if (music) {
+      MasterMixer.SetFloat("VolumeMusic", volumeMusic.value * 70 - 60);
+      PlayerPrefs.SetFloat("VolumeMusic", volumeMusic.value);
+    }
+    else {
+      if (!testSound.isPlaying) testSound.Play();
+      MasterMixer.SetFloat("VolumeSounds", volumeSound.value * 70 - 60);
+      PlayerPrefs.SetFloat("VolumeSounds", volumeSound.value);
+    }
   }
 
   private void Update() {

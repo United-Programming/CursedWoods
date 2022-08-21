@@ -53,7 +53,7 @@ public class MainMenuButtonController : MonoBehaviour, ISelectHandler, IDeselect
             yield break;
         }
 
-        defaultButton.Select();
+        if (defaultButton!=null) defaultButton.Select();
     }
 
     private void OnEnable()
