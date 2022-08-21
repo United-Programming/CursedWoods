@@ -40,6 +40,7 @@ public abstract class Enemy : MonoBehaviour
     protected bool isTriggered;
     [SerializeField] protected Transform startPosition;
     protected Transform currentTarget;
+    [SerializeField] protected float rotateSpeedMultiplier = 4;
 
     [Header("Patrol Variables")]
     //Patrol
@@ -51,7 +52,7 @@ public abstract class Enemy : MonoBehaviour
 
     private void Start()
     {
-        Instantiate(startPosition,transform.position,Quaternion.identity);
+        Instantiate(startPosition, transform.position, Quaternion.identity);
         startPosition.transform.position = transform.position;
     }
     private void Update()
@@ -87,7 +88,6 @@ public abstract class Enemy : MonoBehaviour
     }
     protected void SetForwardToTarget(Transform target)
     {
-        float rotateSpeedMultiplier = 4;
         if (!invertForward)
         {
             transform.forward = Vector3.Slerp(transform.forward, TargetDirection(target), Time.deltaTime * rotateSpeedMultiplier);
