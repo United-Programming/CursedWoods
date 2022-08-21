@@ -41,13 +41,13 @@ public class MainMenuController : MonoBehaviour {
   }
 
   public void QuitGame() {
-    Debug.Log("Quit game!");
     Application.Quit();
   }
 
   public void ReturnToMainMenu() {
     CurrentlySelected.ShowSelector(false);
     optionsMenu.SetActive(false);
+    creditsMenu.SetActive(false);
     mainMenu.SetActive(true);
     LastButton = returnButton;
   }
