@@ -28,6 +28,10 @@ public class Controller : MonoBehaviour {
   public float speed = .05f; // public just to debug
   public bool aiming = false; // public just to debug
   public bool dead = false; // public just to debug
+  public bool win = false; // public just to debug
+
+  Level level;
+  public Level[] Levels;
 
   private IEnumerator Start() {
     yield return new WaitForSeconds(.2f);
@@ -36,9 +40,22 @@ public class Controller : MonoBehaviour {
     for (int i = 0; i < Lives.Length; i++) {
       Lives[i].enabled = i < numLives;
     }
+
+    level = Levels[0];
+    level.Init(Ground, this);
   }
 
   private void Update() {
+    if (win) {
+      if ((audioGlobal.clip == WindDanceMusic && !audioGlobal.isPlaying) || Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonUp(0)) {
+        win = false;
+        dead = false;
+        anim.SetBool("Aim", false);
+        anim.Play("Idle");
+        level.Init(Ground, this);
+      }
+      return;
+    }
     if (dead) return;
 
 
@@ -141,12 +158,12 @@ public class Controller : MonoBehaviour {
     yield return new WaitForSeconds(2);
     dead = false;
     anim.Play("Idle");
-    // FIXME we need a reference to the level and a way to restart it
+    level.Init(Ground, this);
   }
 
   public void PlayWinDance() {
     ArrowPlayer.SetActive(false);
-    dead = true;
+    win = true;
     anim.Play("WinDance");
     audioGlobal.clip = WindDanceMusic;
     audioGlobal.Play();

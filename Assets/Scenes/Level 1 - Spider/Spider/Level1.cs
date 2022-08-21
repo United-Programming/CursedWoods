@@ -1,11 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class Level1 : MonoBehaviour {
+public class Level1 : Level {
+  public override string ToString() {
+    return "Level 1 - Spider";
+  }
   public Transform Player;
   public Controller CenterOfWorld;
-  public GameObject SpiderPrefab;
   public Terrain Forest;
+  public GameObject SpiderPrefab;
 
   public float Horiz = 5;
   public float Dist = 1.5f;
@@ -13,9 +16,27 @@ public class Level1 : MonoBehaviour {
 
   GameObject spider;
 
-  internal void DestroyEnemyAndRespawn(GameObject enemy, bool killedByPlayer) {
-    StartCoroutine(DestroyAndRespawnAsync(killedByPlayer));
+  public override void Init(Terrain forest, Controller controller) {
+    if (spider != null) Destroy(spider);
+    Forest = forest;
+    CenterOfWorld = controller;
+    Player = CenterOfWorld.transform.GetChild(1);
+    StartCoroutine(DestroyAndRespawnAsync(false));
   }
+
+
+  public override void PlayerDeath() {
+    CenterOfWorld.PlayerDeath();
+  }
+
+  public override void KillEnemy(GameObject enemy) {
+    StartCoroutine(DestroyAndRespawnAsync(true));
+  }
+
+  public override void DestroyEnemy(GameObject enemy) {
+    StartCoroutine(DestroyAndRespawnAsync(false));
+  }
+
   IEnumerator DestroyAndRespawnAsync(bool killedByPlayer) {
     if (killedByPlayer) {
       yield return new WaitForSeconds(2.5f);
@@ -54,26 +75,12 @@ public class Level1 : MonoBehaviour {
       Vector3 spawnPosition = Dist * Player.position - CenterOfWorld.transform.position + Random.insideUnitSphere * Random.Range(1f, 2f) + (Random.Range(0, 2) * 2 - 1) * Horiz * Player.right;
       spawnPosition.y = Forest.SampleHeight(spawnPosition);
       spider = Instantiate(SpiderPrefab, spawnPosition, Quaternion.LookRotation(spawnPosition - Player.position));
-      if (spider.TryGetComponent(out Enemy1Spider script)) {
-        script.controller = this;
+      if (spider.TryGetComponent(out Spider script)) {
+        script.level = this;
         script.speed += (5 - toWin) * .25f;
       }
     }
   }
 
-  internal void PlayerDeath() {
-    CenterOfWorld.PlayerDeath();
-  }
 
-  private void Start() {
-    Forest = GameObject.FindObjectOfType<Terrain>();
-    CenterOfWorld = GameObject.FindObjectOfType<Controller>();
-    Player = CenterOfWorld.transform.GetChild(1);
-
-    StartCoroutine(DestroyAndRespawnAsync(false));
-  }
-
-
-  void SpawnEnemy() {
-  }
 }

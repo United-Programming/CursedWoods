@@ -1285,7 +1285,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &243248868
 GameObject:
@@ -2711,6 +2711,58 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 605279997}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &605365083
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 605365085}
+  - component: {fileID: 605365084}
+  m_Layer: 0
+  m_Name: Level 1 Controller (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &605365084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605365083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f661035c3865a9c47b87594f90a5bd20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  CenterOfWorld: {fileID: 0}
+  Forest: {fileID: 0}
+  SpiderPrefab: {fileID: 5404940784975426151, guid: 49eac070033cf3c48a4d1e5a6dd25a4e,
+    type: 3}
+  Horiz: 20
+  Dist: 2
+  toWin: 5
+--- !u!4 &605365085
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605365083}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &606895965
 GameObject:
   m_ObjectHideFlags: 0
@@ -4340,6 +4392,8 @@ MonoBehaviour:
   speed: 0.15
   aiming: 0
   dead: 0
+  Levels:
+  - {fileID: 605365084}
   HandRefR: {fileID: 1784070947}
   HandRefL: {fileID: 1519146841}
   aimV: 0
@@ -4558,7 +4612,7 @@ RectTransform:
   - {fileID: 1515711008}
   - {fileID: 1986088812}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -9192,7 +9246,7 @@ Transform:
   m_Children:
   - {fileID: 2092506091}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 43.279, z: 0}
 --- !u!114 &2005977922
 MonoBehaviour:

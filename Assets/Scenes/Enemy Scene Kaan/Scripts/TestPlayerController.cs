@@ -112,10 +112,6 @@ public class TestPlayerController : MonoBehaviour
         {
             Debug.Log("WorkingScareTheEnemy");
 
-            if (hit.transform.TryGetComponent(out Spider spider))
-            {
-                spider.PlayerIsAimingtoMe();
-            }
         }
         Debug.DrawRay(ArrowPlayer.transform.TransformPoint(ArrowPlayer.transform.position), ArrowPlayer.transform.forward * hit.distance, Color.red,3);
     }
