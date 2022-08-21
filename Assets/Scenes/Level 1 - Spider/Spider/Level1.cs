@@ -5,28 +5,34 @@ public class Level1 : Level {
   public override string ToString() {
     return "Level 1 - Spider";
   }
+
+  public override int GetToWin() { return ToWin; }
+  public override string GetName() { return "Level 1"; }
+
+  public int ToWin = 5;
   public Transform Player;
-  public Controller CenterOfWorld;
+  public Controller controller;
   public Terrain Forest;
   public GameObject SpiderPrefab;
 
   public float Horiz = 5;
   public float Dist = 1.5f;
-  public int toWin = 5;
+  public int done = 0;
 
   GameObject spider;
 
   public override void Init(Terrain forest, Controller controller) {
     if (spider != null) Destroy(spider);
     Forest = forest;
-    CenterOfWorld = controller;
-    Player = CenterOfWorld.transform.GetChild(1);
+    this.controller = controller;
+    Player = this.controller.transform.GetChild(1);
     StartCoroutine(DestroyAndRespawnAsync(false));
+    done = 0;
   }
 
 
   public override void PlayerDeath() {
-    CenterOfWorld.PlayerDeath();
+    controller.PlayerDeath();
   }
 
   public override void KillEnemy(GameObject enemy) {
@@ -40,9 +46,10 @@ public class Level1 : Level {
   IEnumerator DestroyAndRespawnAsync(bool killedByPlayer) {
     if (killedByPlayer) {
       yield return new WaitForSeconds(2.5f);
-      toWin--;
+      done++;
+      controller.EnemyKilled(done, ToWin);
     }
-    if (toWin == 0) {
+    if (ToWin == done) {
       // Destroy spider immediate and play win dance and music.
       if (spider != null) {
         float stumpTime = 1;
@@ -56,7 +63,7 @@ public class Level1 : Level {
         Destroy(spider);
       }
       spider = null;
-      CenterOfWorld.PlayWinDance();
+      controller.PlayWinDance();
     }
     else {
       yield return new WaitForSeconds(Random.Range(2f, 5f));
@@ -72,12 +79,12 @@ public class Level1 : Level {
         }
         Destroy(spider);
       }
-      Vector3 spawnPosition = Dist * Player.position - CenterOfWorld.transform.position + Random.insideUnitSphere * Random.Range(1f, 2f) + (Random.Range(0, 2) * 2 - 1) * Horiz * Player.right;
+      Vector3 spawnPosition = Dist * Player.position - controller.transform.position + Random.insideUnitSphere * Random.Range(1f, 2f) + (Random.Range(0, 2) * 2 - 1) * Horiz * Player.right;
       spawnPosition.y = Forest.SampleHeight(spawnPosition);
       spider = Instantiate(SpiderPrefab, spawnPosition, Quaternion.LookRotation(spawnPosition - Player.position));
       if (spider.TryGetComponent(out Spider script)) {
         script.level = this;
-        script.speed += (5 - toWin) * .25f;
+        script.speed += done * .25f;
       }
     }
   }

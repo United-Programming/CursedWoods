@@ -577,7 +577,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Game Over
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6ceb4408e9c1a534193efb25c158c709, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 235424035d0302c41b8fbd63994d80d8, type: 2}
   m_sharedMaterial: {fileID: 7143091638015072022, guid: 6ceb4408e9c1a534193efb25c158c709,
     type: 2}
   m_fontSharedMaterials: []
@@ -642,7 +642,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &92969243
@@ -2356,7 +2356,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Game Over
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6ceb4408e9c1a534193efb25c158c709, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 235424035d0302c41b8fbd63994d80d8, type: 2}
   m_sharedMaterial: {fileID: 7143091638015072022, guid: 6ceb4408e9c1a534193efb25c158c709,
     type: 2}
   m_fontSharedMaterials: []
@@ -2421,7 +2421,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &467069340
@@ -2740,14 +2740,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f661035c3865a9c47b87594f90a5bd20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ToWin: 5
   Player: {fileID: 0}
-  CenterOfWorld: {fileID: 0}
+  controller: {fileID: 0}
   Forest: {fileID: 0}
   SpiderPrefab: {fileID: 5404940784975426151, guid: 49eac070033cf3c48a4d1e5a6dd25a4e,
     type: 3}
   Horiz: 20
   Dist: 2
-  toWin: 5
+  done: 0
 --- !u!4 &605365085
 Transform:
   m_ObjectHideFlags: 0
@@ -4386,12 +4387,14 @@ MonoBehaviour:
   - {fileID: 189069846}
   - {fileID: 1471562745}
   GameOver: {fileID: 1986088811}
+  LevelProgress: {fileID: 1515711009}
   playerTargetAngle: 0
   movement: 0
   angle: 0
   speed: 0.15
   aiming: 0
   dead: 0
+  win: 0
   Levels:
   - {fileID: 605365084}
   HandRefR: {fileID: 1784070947}
@@ -6330,8 +6333,8 @@ MonoBehaviour:
 
     0/5'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6ceb4408e9c1a534193efb25c158c709, type: 2}
-  m_sharedMaterial: {fileID: 7143091638015072022, guid: 6ceb4408e9c1a534193efb25c158c709,
+  m_fontAsset: {fileID: 11400000, guid: 235424035d0302c41b8fbd63994d80d8, type: 2}
+  m_sharedMaterial: {fileID: -6879733605267511076, guid: 235424035d0302c41b8fbd63994d80d8,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6672,7 +6675,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Game Over
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6ceb4408e9c1a534193efb25c158c709, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 235424035d0302c41b8fbd63994d80d8, type: 2}
   m_sharedMaterial: {fileID: 7143091638015072022, guid: 6ceb4408e9c1a534193efb25c158c709,
     type: 2}
   m_fontSharedMaterials: []
@@ -6737,7 +6740,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1625318918
@@ -9014,6 +9017,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1986088812}
   - component: {fileID: 1986088813}
+  - component: {fileID: 1986088814}
   m_Layer: 5
   m_Name: Game Over
   m_TagString: Untagged
@@ -9064,6 +9068,102 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!82 &1986088814
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986088811}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 72dfe4744ae79b9448548a82fe76b3ff, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2004491359
 GameObject:
   m_ObjectHideFlags: 0

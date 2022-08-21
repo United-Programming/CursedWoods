@@ -32,15 +32,15 @@ public class Spider : MonoBehaviour {
     }
 
     // Move to the player
-    if (dist < 2f && !attack) {
+    if (dist < 2.2f && !attack) {
       transform.rotation = Quaternion.LookRotation(transform.position - level.Player.position, Vector3.up);
       anim.SetTrigger("Attack");
       anim.SetBool("Run", false);
       attack = true;
     }
-    else if (level.CenterOfWorld.aiming && level.CenterOfWorld.arrowLoaded) { // Is the player is aiming?
+    else if (level.controller.aiming && level.controller.arrowLoaded) { // Is the player is aiming?
       // Flee
-      Vector3 dir = (transform.position + level.CenterOfWorld.cam.transform.forward * 2.5f - level.Player.position).normalized;
+      Vector3 dir = (transform.position + level.controller.cam.transform.forward * 2f - level.Player.position).normalized;
       Vector3 pos = transform.position;
       pos += dir;
       pos.y = level.Forest.SampleHeight(pos);
@@ -56,7 +56,7 @@ public class Spider : MonoBehaviour {
     }
     else {
       transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.position - level.Player.position, Vector3.up), 4 * Time.deltaTime);
-      Vector3 dir = (level.Player.position + level.CenterOfWorld.cam.transform.forward * 1.75f - transform.position).normalized;
+      Vector3 dir = (level.Player.position + level.controller.cam.transform.forward * 1.75f - transform.position).normalized;
       Vector3 pos = transform.position;
       pos += dir;
       pos.y = level.Forest.SampleHeight(pos);

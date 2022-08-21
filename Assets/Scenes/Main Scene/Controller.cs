@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ public class Controller : MonoBehaviour {
   public int numLives = 3;
   public Image[] Lives;
   public GameObject GameOver;
+  public TextMeshProUGUI LevelProgress;
 
   public float playerTargetAngle = 0; // public just to debug
   public float movement = 0; // public just to debug
@@ -43,6 +45,7 @@ public class Controller : MonoBehaviour {
 
     level = Levels[0];
     level.Init(Ground, this);
+    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
   }
 
   private void Update() {
@@ -52,6 +55,9 @@ public class Controller : MonoBehaviour {
         dead = false;
         anim.SetBool("Aim", false);
         anim.Play("Idle");
+        audioGlobal.clip = Crickets;
+        audioGlobal.loop = true;
+        audioGlobal.Play();
         level.Init(Ground, this);
       }
       return;
@@ -143,7 +149,7 @@ public class Controller : MonoBehaviour {
 
     // Reduce the numebr of lives.
     numLives--;
-    if (numLives == -1) { // If -1 then show the game over
+    if (numLives == 0) { // If -1 then show the game over
       GameOver.SetActive(true);
       return;
     }
@@ -155,7 +161,7 @@ public class Controller : MonoBehaviour {
   }
 
   IEnumerator RestartLevel() {
-    yield return new WaitForSeconds(2);
+    yield return new WaitForSeconds(4);
     dead = false;
     anim.Play("Idle");
     level.Init(Ground, this);
@@ -166,6 +172,7 @@ public class Controller : MonoBehaviour {
     win = true;
     anim.Play("WinDance");
     audioGlobal.clip = WindDanceMusic;
+    audioGlobal.loop = false;
     audioGlobal.Play();
     // Wait for mouse press or key press or end of anim
   }
@@ -197,5 +204,9 @@ public class Controller : MonoBehaviour {
       if (aimV >= 0) extraForce = -4 * aimV * aimV + 4 * aimV + 1;
       arrow.Init(start, rot, arrowforce * extraForce * dir, Ground);
     }
+  }
+
+  internal void EnemyKilled(int done, int toWin) {
+    LevelProgress.text = $"{level.GetName()}\n{done}/{level.GetToWin()}";
   }
 }
