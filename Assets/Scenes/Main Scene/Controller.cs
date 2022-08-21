@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Controller : MonoBehaviour {
 
@@ -17,6 +18,9 @@ public class Controller : MonoBehaviour {
   public AudioClip BowDraw;
   public AudioClip ThrowArrow;
 
+  public int numLives = 3;
+  public Image[] Lives;
+  public GameObject GameOver;
 
   public float playerTargetAngle = 0; // public just to debug
   public float movement = 0; // public just to debug
@@ -28,6 +32,10 @@ public class Controller : MonoBehaviour {
   private IEnumerator Start() {
     yield return new WaitForSeconds(.2f);
     Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
+
+    for (int i = 0; i < Lives.Length; i++) {
+      Lives[i].enabled = i < numLives;
+    }
   }
 
   private void Update() {
@@ -115,6 +123,25 @@ public class Controller : MonoBehaviour {
     if (Random.Range(0, 2) == 0) anim.Play("Death1");
     else anim.Play("Death2");
     dead = true;
+
+    // Reduce the numebr of lives.
+    numLives--;
+    if (numLives == -1) { // If -1 then show the game over
+      GameOver.SetActive(true);
+      return;
+    }
+    // If not, pause for a while, update UI, and restart the level
+    for (int i = 0; i < Lives.Length; i++) {
+      Lives[i].enabled = i < numLives;
+    }
+    StartCoroutine(RestartLevel());
+  }
+
+  IEnumerator RestartLevel() {
+    yield return new WaitForSeconds(2);
+    dead = false;
+    anim.Play("Idle");
+    // FIXME we need a reference to the level and a way to restart it
   }
 
   public void PlayWinDance() {
