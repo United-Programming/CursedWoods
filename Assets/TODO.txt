@@ -1,1 +1,2 @@
 Improve env sound, it changes volume
+Add pause with Escape, dim the volume

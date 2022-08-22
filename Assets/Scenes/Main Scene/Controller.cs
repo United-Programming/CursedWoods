@@ -43,7 +43,7 @@ public class Controller : MonoBehaviour {
       Lives[i].enabled = i < numLives;
     }
 
-    level = Levels[0];
+    level = Levels[1]; // FIXME
     level.Init(Ground, this);
     LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
   }
