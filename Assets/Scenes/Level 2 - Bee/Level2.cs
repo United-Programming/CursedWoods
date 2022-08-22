@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Level2 : Level {
@@ -9,7 +10,7 @@ public class Level2 : Level {
   public override int GetToWin() { return ToWin; }
   public override string GetName() { return "Level 2"; }
 
-  public int ToWin = 5;
+  public int ToWin = 3;
   public Transform Player;
   public Controller controller;
   public Terrain Forest;
@@ -19,7 +20,7 @@ public class Level2 : Level {
   public float Dist = 1.5f;
   public int done = 0;
 
-  GameObject bee;
+  GameObject[] bees = new GameObject[8];
 
   // At init, spawn 8 bees around the player circle
   // They move randomly but will never goo too far away from spawn position
@@ -29,12 +30,30 @@ public class Level2 : Level {
 
 
   public override void Init(Terrain forest, Controller controller) {
-    if (bee != null) Destroy(bee);
+    foreach (var bee in bees)
+      if (bee != null) Destroy(bee);
     Forest = forest;
     this.controller = controller;
     Player = this.controller.transform.GetChild(1);
-    StartCoroutine(DestroyAndRespawnAsync(false));
     done = 0;
+
+    SpawnBees();
+  }
+
+  void SpawnBees() {
+    for (int i = 0; i < bees.Length; i++) {
+      float angle = Random.Range(0, 2 * Mathf.PI);
+      Vector3 spawnPosition = controller.transform.position +
+        new Vector3(Random.Range(-1f, 1f) + Mathf.Sin(angle) * Random.Range(32f, 34f),
+                    Random.Range(1.35f, 5f),
+                    Random.Range(-1f, 1f) + Mathf.Cos(angle) * Random.Range(32f, 34f));
+      spawnPosition.y += Forest.SampleHeight(spawnPosition);
+      bees[i] = Instantiate(BeePrefab, spawnPosition, Quaternion.Euler(0, angle * Mathf.Rad2Deg + 180 + Random.Range(-15, 15), 0));
+      if (bees[i].TryGetComponent(out Bee script)) {
+        script.level = this;
+        script.speed += i * .15f;
+      }
+    }
   }
 
 
@@ -43,56 +62,52 @@ public class Level2 : Level {
   }
 
   public override void KillEnemy(GameObject enemy) {
-    StartCoroutine(DestroyAndRespawnAsync(true));
+    StartCoroutine(DestroyAsync(enemy, true));
   }
 
   public override void DestroyEnemy(GameObject enemy) {
-    StartCoroutine(DestroyAndRespawnAsync(false));
+    // Level 2 will not have bees to be removed automatically
   }
 
-  IEnumerator DestroyAndRespawnAsync(bool killedByPlayer) {
+  IEnumerator DestroyAsync(GameObject enemy, bool killedByPlayer) {
     if (killedByPlayer) {
       yield return new WaitForSeconds(2.5f);
-      done++;
+      if (ToWin > done) done++;
       controller.EnemyKilled(done, ToWin);
     }
-    if (ToWin == done) {
-      // Destroy spider immediate and play win dance and music.
-      if (bee != null) {
-        float stumpTime = 1;
-        Vector3 stumpScale = Vector3.one * .2f;
-        while (stumpTime > 0) {
-          stumpTime -= Time.deltaTime * 2;
-          stumpScale.y = .2f * stumpTime;
-          bee.transform.localScale = stumpScale;
-          yield return null;
-        }
-        Destroy(bee);
+    int pos = -1;
+    for (int i = 0; i < bees.Length; i++) {
+      if (bees[i] == enemy) {
+        pos = i;
+        break;
       }
-      bee = null;
+    }
+    if (pos == -1 || enemy == null) yield break; // Should never happen
+
+    if (ToWin == done) {
+      // Destroy bee immediate and play win dance and music.
+      float stumpTime = 1;
+      Vector3 stumpScale = Vector3.one * .1f;
+      while (stumpTime > 0) {
+        stumpTime -= Time.deltaTime * 2;
+        stumpScale.y = .1f * stumpTime;
+        enemy.transform.localScale = stumpScale;
+        yield return null;
+      }
+      Destroy(enemy);
       controller.PlayWinDance();
     }
     else {
       yield return new WaitForSeconds(Random.Range(2f, 5f));
-      // Spawn Enemy
-      if (bee != null) {
-        float stumpTime = 1;
-        Vector3 stumpScale = Vector3.one * .2f;
-        while (stumpTime > 0) {
-          stumpTime -= Time.deltaTime * 2;
-          stumpScale.y = .2f * stumpTime;
-          bee.transform.localScale = stumpScale;
-          yield return null;
-        }
-        Destroy(bee);
+      float stumpTime = 1;
+      Vector3 stumpScale = Vector3.one * .1f;
+      while (stumpTime > 0) {
+        stumpTime -= Time.deltaTime * 2;
+        stumpScale.y = .1f * stumpTime;
+        enemy.transform.localScale = stumpScale;
+        yield return null;
       }
-      Vector3 spawnPosition = Dist * Player.position - controller.transform.position + Random.insideUnitSphere * Random.Range(1f, 2f) + (Random.Range(0, 2) * 2 - 1) * Horiz * Player.right;
-      spawnPosition.y = Forest.SampleHeight(spawnPosition);
-      bee = Instantiate(BeePrefab, spawnPosition, Quaternion.LookRotation(spawnPosition - Player.position));
-      if (bee.TryGetComponent(out Bee script)) {
-        script.level = this;
-        script.speed += done * .25f;
-      }
+      Destroy(enemy);
     }
   }
 

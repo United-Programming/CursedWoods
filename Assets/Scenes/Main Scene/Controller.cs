@@ -18,6 +18,7 @@ public class Controller : MonoBehaviour {
   public AudioClip Crickets;
   public AudioClip BowDraw;
   public AudioClip ThrowArrow;
+  public CursorPointer cursorPointer;
 
   public int numLives = 3;
   public Image[] Lives;
@@ -69,6 +70,7 @@ public class Controller : MonoBehaviour {
 
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
       arrowLoaded = false;
+      cursorPointer.aimingCursor = false;
       aiming = !aiming;
       anim.SetBool("Aim", aiming);
       if (!aiming) ArrowPlayer.SetActive(false);
@@ -82,6 +84,7 @@ public class Controller : MonoBehaviour {
     if (x != 0) { // If we move we cannto be aiming
       aiming = false;
       arrowLoaded = false;
+      cursorPointer.aimingCursor = false;
       anim.SetBool("Aim", false);
       ArrowPlayer.SetActive(false);
     }
@@ -138,6 +141,16 @@ public class Controller : MonoBehaviour {
       float playerCurrentAngle = player.localEulerAngles.y;
       float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
       player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
+
+
+      if (arrowLoaded) {
+        Vector3 start = HandRefR.position;
+        Vector3 dest = start + (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized * 5;
+        cursorPointer.cursorPosition = dest;
+        start.y = Ground.SampleHeight(start);
+        dest.y = Ground.SampleHeight(dest);
+        Debug.DrawLine(start, dest, Color.red);
+      }
     }
   }
 
@@ -189,11 +202,13 @@ public class Controller : MonoBehaviour {
 
   public void ArrowLoaded() {
     arrowLoaded = true;
+    cursorPointer.aimingCursor = true;
   }
 
   public void ArrowShoot() {
     if (!arrowLoaded) return;
     arrowLoaded = false;
+    cursorPointer.aimingCursor = false;
     audioBow.clip = BowDraw;
     audioBow.Play();
     if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {

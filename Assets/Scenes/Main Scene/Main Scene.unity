@@ -2962,6 +2962,8 @@ MonoBehaviour:
   cursorLayer:
     serializedVersion: 2
     m_Bits: 64
+  cursorPosition: {x: 0, y: 0, z: 0}
+  aimingCursor: 0
 --- !u!1 &614525133
 GameObject:
   m_ObjectHideFlags: 0
@@ -4366,7 +4368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdb19fd9ef482f49bd25c81af929b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToWin: 5
+  ToWin: 3
   Player: {fileID: 0}
   controller: {fileID: 0}
   Forest: {fileID: 0}
@@ -4432,6 +4434,7 @@ MonoBehaviour:
   Crickets: {fileID: 8300000, guid: 630e849b37ccfd24a8dd46322e00e2cb, type: 3}
   BowDraw: {fileID: 8300000, guid: bce48cf202e4c9649a3ffe8ac678d900, type: 3}
   ThrowArrow: {fileID: 8300000, guid: 711d0df99984f1244930f1d6d034e43a, type: 3}
+  cursorPointer: {fileID: 608034601}
   numLives: 3
   Lives:
   - {fileID: 1911771886}

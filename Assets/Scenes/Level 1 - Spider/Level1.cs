@@ -46,7 +46,7 @@ public class Level1 : Level {
   IEnumerator DestroyAndRespawnAsync(bool killedByPlayer) {
     if (killedByPlayer) {
       yield return new WaitForSeconds(2.5f);
-      done++;
+      if (ToWin > done) done++;
       controller.EnemyKilled(done, ToWin);
     }
     if (ToWin == done) {
