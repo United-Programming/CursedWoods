@@ -7,6 +7,8 @@ public class MainMenuButtonController : MonoBehaviour, ISelectHandler, IDeselect
 {
     [SerializeField] private EventSystem eventSystem;
     [SerializeField] private Button button;
+    [SerializeField] private Toggle toggle;
+    [SerializeField] private Slider slider;
     [SerializeField] private GameObject selector;
     [SerializeField] private Button defaultButton;
 
@@ -24,13 +26,17 @@ public class MainMenuButtonController : MonoBehaviour, ISelectHandler, IDeselect
 
     public void OnDeselect(BaseEventData eventData)
     {
-        defaultButton.Select();
-        ShowSelector(false);
+        if (defaultButton == null) return;
+
+        if (defaultButton != button) ShowSelector(false);
+        StartCoroutine(CheckSelection());
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        button.Select();
+        if (button != null) button.Select();
+        if (toggle != null) toggle.Select();
+        if (slider != null) slider.Select();
     }
 
     public void ShowSelector(bool boolean)
@@ -47,7 +53,7 @@ public class MainMenuButtonController : MonoBehaviour, ISelectHandler, IDeselect
             yield break;
         }
 
-        defaultButton.Select();
+        if (defaultButton!=null) defaultButton.Select();
     }
 
     private void OnEnable()

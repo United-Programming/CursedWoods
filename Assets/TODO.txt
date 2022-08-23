@@ -1,13 +1,2 @@
-!Improve the movement of the character
-!Impement IK for the arms/bow to aim at cursor position
-Implement world (environment/forest) where we play
-Implement monsters and define how they attack and how can you kill them
-Implement moon and night sky
-Implement rain and lightnighs (will be required by a couple of levels)
-Implement the level win dance and music
-
-Improve aiming anims and add rotation while aiming
-
-Set camera and skybox in a separate scene
-
-
+Improve env sound, it changes volume
+Add pause with Escape, dim the volume

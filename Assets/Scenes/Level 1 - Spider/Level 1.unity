@@ -175,4 +175,4 @@ MonoBehaviour:
   Forest: {fileID: 0}
   Horiz: 20
   Dist: 2
-  toWin: 2
+  toWin: 5
