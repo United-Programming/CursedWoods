@@ -19,6 +19,7 @@ public class Controller : MonoBehaviour {
   public AudioClip BowDraw;
   public AudioClip ThrowArrow;
   public CursorPointer cursorPointer;
+  public LineRenderer lineRenderer;
 
   public int numLives = 3;
   public Image[] Lives;
@@ -65,8 +66,6 @@ public class Controller : MonoBehaviour {
     }
     if (dead) return;
 
-
-    if (Input.GetKeyDown(KeyCode.P)) PlayWinDance();
 
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
       arrowLoaded = false;
@@ -150,9 +149,16 @@ public class Controller : MonoBehaviour {
         start.y = Ground.SampleHeight(start);
         dest.y = Ground.SampleHeight(dest);
         Debug.DrawLine(start, dest, Color.red);
+
+        aimLine[0] = start;
+        aimLine[1] = dest;
+        lineRenderer.SetPositions(aimLine);
+
       }
     }
   }
+
+  Vector3[] aimLine = new Vector3[2];
 
   public void PlayerDeath() {
     ArrowPlayer.SetActive(false);

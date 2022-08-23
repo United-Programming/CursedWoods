@@ -19,8 +19,7 @@ public class Level2 : Level {
   public float Horiz = 5;
   public float Dist = 1.5f;
   public int done = 0;
-
-  GameObject[] bees = new GameObject[8];
+  readonly GameObject[] bees = new GameObject[1];
 
   // At init, spawn 8 bees around the player circle
   // They move randomly but will never goo too far away from spawn position
@@ -48,7 +47,8 @@ public class Level2 : Level {
                     Random.Range(1.35f, 5f),
                     Random.Range(-1f, 1f) + Mathf.Cos(angle) * Random.Range(32f, 34f));
       spawnPosition.y += Forest.SampleHeight(spawnPosition);
-      bees[i] = Instantiate(BeePrefab, spawnPosition, Quaternion.Euler(0, angle * Mathf.Rad2Deg + 180 + Random.Range(-15, 15), 0));
+      bees[i] = Instantiate(BeePrefab, transform);
+      bees[i].transform.SetPositionAndRotation(spawnPosition, Quaternion.Euler(0, angle * Mathf.Rad2Deg + 180 + Random.Range(-15, 15), 0));
       if (bees[i].TryGetComponent(out Bee script)) {
         script.level = this;
         script.speed += i * .15f;

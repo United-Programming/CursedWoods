@@ -9,10 +9,17 @@ public class Bee : MonoBehaviour {
   bool dead = false;
   public bool attack = false;
   public AudioSource sounds;
+  public AudioSource soundAttack;
   public AudioClip WalkSound;
-  public AudioClip AttakSound;
   public AudioClip DeathSound;
   Vector3 startPos, endPos;
+
+
+  public enum DebugStatus {
+    None, Random, GoToPlayer, PrepareAttak, Attack, Resetting
+  };
+  public DebugStatus debugStatus = DebugStatus.None;
+
 
   private void Start() {
     startPos = transform.position;
@@ -32,38 +39,54 @@ public class Bee : MonoBehaviour {
 
     dist = Vector3.Distance(transform.position, level.Player.position);
     float dest = Vector3.Distance(transform.position, endPos);
+    float statusSpeed = .2f;
     if (dest < .5f && !attack) {
+      debugStatus = DebugStatus.Random;
       if (dist > 10) { // Random movement
         endPos = startPos + Random.Range(-5f, 5f) * Vector3.forward + Random.Range(-5f, 5f) * Vector3.right + Random.Range(-.5f, .5f) * Vector3.up;
         anim.SetBool("Run", true);
       }
       else if (dist > 3.5f) { // Random but try to go closer to the player
+        debugStatus = DebugStatus.GoToPlayer;
         endPos = level.Player.position + Random.Range(-2f, 2f) * Vector3.forward + Random.Range(-2f, 2f) * Vector3.right + Random.Range(1.15f, 1.25f) * Vector3.up;
         Vector3 playerPos = level.Player.position + (transform.position - level.Player.position).normalized * 1.5f;
         Vector3 playerForwardPos = level.Player.position + (level.Player.position - level.controller.transform.position).normalized * 2.5f;
         endPos = (3 * playerPos + 2 * playerForwardPos + endPos) * .1666667f;
         endPos.y = level.Forest.SampleHeight(endPos) + Random.Range(1.15f, 1.35f);
+        statusSpeed = .5f;
         anim.SetBool("Run", true);
       }
-      else if (dist > 2f) { // Prepare for attak
-        endPos = level.Player.position + (transform.position - level.Player.position).normalized * 1.9f;
+      else if (dist > 2.2f) { // Prepare for attak
+        debugStatus = DebugStatus.PrepareAttak;
+        endPos = level.Player.position + (transform.position - level.Player.position).normalized * 2.1f;
         endPos.y = level.Forest.SampleHeight(endPos) + Random.Range(1.5f, 2f);
+        statusSpeed = 1f;
         anim.SetBool("Run", true);
       }
       else {
+        debugStatus = DebugStatus.Attack;
         anim.SetTrigger("Attack");
         anim.SetBool("Run", false);
+        soundAttack.Play();
         attack = true;
       }
     }
     if (attack && dist > 5) {
+      debugStatus = DebugStatus.Resetting;
       attack = false;
       endPos = transform.position;
     }
     Quaternion look = (endPos == transform.position) ? transform.rotation : Quaternion.Euler(0, Quaternion.LookRotation(endPos - transform.position, Vector3.up).eulerAngles.y, 0);
 
+    if (Input.GetKeyDown(KeyCode.P)) {
+      endPos = level.Player.position + (transform.position - level.Player.position).normalized * 2.1f;
+      endPos.y = level.Forest.SampleHeight(endPos) + Random.Range(1.5f, 2f);
+      transform.position = endPos;
+    }
+
+
     transform.SetPositionAndRotation(
-      Vector3.Lerp(transform.position, endPos, Time.deltaTime * .2f * speed),
+      Vector3.Lerp(transform.position, endPos, Time.deltaTime * statusSpeed * speed),
       Quaternion.Slerp(transform.rotation, look, Time.deltaTime * 15));
 
     if (attack) {
@@ -79,13 +102,11 @@ public class Bee : MonoBehaviour {
 
   public void AttackCompleted() {
     attack = false;
-  }
-
-  public void PlayAttackSound() {
-    sounds.clip = AttakSound;
-    sounds.loop = false;
+    sounds.clip = WalkSound;
+    sounds.loop = true;
     sounds.Play();
   }
+
 
   private void OnTriggerEnter(Collider other) {
     int layer = 1 << other.gameObject.layer;
