@@ -19,7 +19,7 @@ public class Level2 : Level {
   public float Horiz = 5;
   public float Dist = 1.5f;
   public int done = 0;
-  readonly GameObject[] bees = new GameObject[1];
+  readonly GameObject[] bees = new GameObject[3];
 
   // At init, spawn 8 bees around the player circle
   // They move randomly but will never goo too far away from spawn position

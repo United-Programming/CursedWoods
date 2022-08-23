@@ -1,6 +1,5 @@
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,6 +68,7 @@ public class Controller : MonoBehaviour {
 
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
       arrowLoaded = false;
+      lineRenderer.enabled = false;
       cursorPointer.aimingCursor = false;
       aiming = !aiming;
       anim.SetBool("Aim", aiming);
@@ -83,6 +83,7 @@ public class Controller : MonoBehaviour {
     if (x != 0) { // If we move we cannto be aiming
       aiming = false;
       arrowLoaded = false;
+      lineRenderer.enabled = false;
       cursorPointer.aimingCursor = false;
       anim.SetBool("Aim", false);
       ArrowPlayer.SetActive(false);
@@ -91,7 +92,10 @@ public class Controller : MonoBehaviour {
     if (aiming && Input.GetMouseButtonDown(0) && arrowLoaded) { // We should eb sure the aiming anim is completed
       audioBow.clip = ThrowArrow;
       audioBow.Play();
+      arrowStart = HandRefR.position;
+      arrowDir = (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized;
       anim.Play("Shoot");
+      return;
     }
 
 
@@ -136,29 +140,44 @@ public class Controller : MonoBehaviour {
       anim.SetFloat("AimV", aimV);
 
       // When aiming, the local rotation of the player should be looking to the center, and move pretty quick
-      playerTargetAngle = Mathf.LerpAngle(playerTargetAngle, aimH * 45, 8 * Time.deltaTime);
+      playerTargetAngle = Mathf.LerpAngle(playerTargetAngle, aimH * 85, 8 * Time.deltaTime);
       float playerCurrentAngle = player.localEulerAngles.y;
       float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
       player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
 
-
       if (arrowLoaded) {
-        Vector3 start = HandRefR.position;
-        Vector3 dest = start + (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized * 5;
-        cursorPointer.cursorPosition = dest;
-        start.y = Ground.SampleHeight(start);
-        dest.y = Ground.SampleHeight(dest);
-        Debug.DrawLine(start, dest, Color.red);
-
-        aimLine[0] = start;
-        aimLine[1] = dest;
+        Vector3 pos = HandRefR.position;
+        Vector3 vel = (HandRefL.position - HandRefR.position + Vector3.up * .00995f).normalized * arrowforce;
+        Vector3 acc = Physics.gravity;
+        Vector3 cursor = Vector3.zero;
+        float dt = Time.fixedDeltaTime / Physics.defaultSolverVelocityIterations;
+        int count = 0;
+        for (int i = 0; i < aimLine.Length; i++) {
+          count++;
+          aimLine[i] = pos;
+          float t = 0;
+          while (t < (aimV > 0 ? 2 : .8f) * Time.fixedDeltaTime) {
+            vel += acc * dt;
+            pos += vel * dt;
+            t += dt;
+          }
+          if (pos.y < Ground.SampleHeight(pos) + .1f) {
+            for (int j = i+1; j < aimLine.Length; j++) {
+              aimLine[j] = pos;
+            }
+            break;
+          }
+          if (cursor == Vector3.zero && (Vector3.Distance(pos, HandRefR.position) > 2 || pos.y < Ground.SampleHeight(pos) + .2f)) cursor = pos;
+        }
         lineRenderer.SetPositions(aimLine);
+        lineRenderer.positionCount = count;
 
+        cursorPointer.cursorPosition = cursor;
       }
     }
   }
 
-  Vector3[] aimLine = new Vector3[2];
+  readonly Vector3[] aimLine = new Vector3[48];
 
   public void PlayerDeath() {
     ArrowPlayer.SetActive(false);
@@ -208,22 +227,23 @@ public class Controller : MonoBehaviour {
 
   public void ArrowLoaded() {
     arrowLoaded = true;
+    lineRenderer.enabled = true;
     cursorPointer.aimingCursor = true;
   }
+
+  Vector3 arrowStart;
+  Vector3 arrowDir;
 
   public void ArrowShoot() {
     if (!arrowLoaded) return;
     arrowLoaded = false;
+    lineRenderer.enabled = false;
     cursorPointer.aimingCursor = false;
     audioBow.clip = BowDraw;
     audioBow.Play();
     if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {
-      Vector3 start = HandRefR.position;
-      Vector3 dir = (HandRefL.position - HandRefR.position + Vector3.up * .01f).normalized;
-      Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
-      float extraForce = 1;
-      if (aimV >= 0) extraForce = -4 * aimV * aimV + 4 * aimV + 1;
-      arrow.Init(start, rot, arrowforce * extraForce * dir, Ground);
+      Quaternion rot = Quaternion.LookRotation(arrowDir, Vector3.up);
+      arrow.Init(arrowStart, rot, arrowforce * arrowDir, Ground);
     }
   }
 

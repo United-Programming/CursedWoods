@@ -10,15 +10,15 @@ public class Arrow : MonoBehaviour {
   private void FixedUpdate() {
     if (!initialized) return;
 
-    Vector3 vel = rb.velocity;
-    transform.rotation = Quaternion.LookRotation(vel);
-    float vely = vel.y;
-    vel.y = 0;
-    float magn = vel.magnitude;
-    magn *= 1 - 1.5f * Time.fixedDeltaTime;
-    vel = vel.normalized * magn;
-    vel.y = vely;
-    rb.velocity = vel; ;
+    transform.rotation = Quaternion.LookRotation(rb.velocity);
+    //Vector3 vel = rb.velocity;
+    //float vely = vel.y;
+    //vel.y = 0;
+    //float magn = vel.magnitude;
+    //magn *= 1 - 1.5f * Time.fixedDeltaTime;
+    //vel = vel.normalized * magn;
+    //vel.y = vely;
+    //rb.velocity = vel;
 
     if (ArrowHead.position.y < ground.SampleHeight(ArrowHead.position) + .05f) {
       rb.velocity = Vector3.zero;
