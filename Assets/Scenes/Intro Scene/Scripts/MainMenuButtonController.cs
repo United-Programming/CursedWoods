@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class MainMenuButtonController : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointerEnterHandler
 {
-    [SerializeField] private EventSystem eventSystem;
     [SerializeField] private Button button;
     [SerializeField] private Toggle toggle;
     [SerializeField] private Slider slider;
@@ -46,9 +45,10 @@ public class MainMenuButtonController : MonoBehaviour, ISelectHandler, IDeselect
 
     private IEnumerator CheckSelection()
     {
+    
         yield return null;
-        if (eventSystem.currentSelectedGameObject != null &&
-            eventSystem.currentSelectedGameObject != MainMenuController.LastButton)
+        if (EventSystem.current.currentSelectedGameObject != null &&
+            EventSystem.current.currentSelectedGameObject != MainMenuController.LastButton)
         {
             yield break;
         }

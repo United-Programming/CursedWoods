@@ -1,2 +1,3 @@
-Improve env sound, it changes volume
 Add pause with Escape, dim the volume
+Merge all scenes into one
+Improve the forest to work better with the different enemies

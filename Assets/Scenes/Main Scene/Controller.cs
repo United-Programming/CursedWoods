@@ -33,6 +33,8 @@ public class Controller : MonoBehaviour {
   public bool dead = false; // public just to debug
   public bool win = false; // public just to debug
 
+  [SerializeField] GameObject PauseMenu;
+
   Level level;
   public Level[] Levels;
 
@@ -50,6 +52,18 @@ public class Controller : MonoBehaviour {
   }
 
   private void Update() {
+    if (Input.GetKeyDown(KeyCode.Escape)) {
+      if (Time.timeScale == 0) {
+        PauseMenu.SetActive(false);
+        Time.timeScale = 1;
+      }
+      else {
+        PauseMenu.SetActive(true);
+        Time.timeScale = 0;
+      }
+    }
+    if (Time.timeScale == 0) return;
+
     if (win) {
       if ((audioGlobal.clip == WindDanceMusic && !audioGlobal.isPlaying) || Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonUp(0)) {
         win = false;
@@ -118,7 +132,7 @@ public class Controller : MonoBehaviour {
       // Depending on the angle magnitude, set the movement anim
       float absPAngle = Mathf.Abs(playerTargetAngle);
       anim.SetBool("Moving", absPAngle > 5);
-      
+
       if (absPAngle > 85) {
         anim.SetBool("Run", true);
         float mult = Mathf.Sign(movement) == Mathf.Sign(x) ? 1.5f : 10f;
@@ -162,7 +176,7 @@ public class Controller : MonoBehaviour {
             t += dt;
           }
           if (pos.y < Ground.SampleHeight(pos) + .1f) {
-            for (int j = i+1; j < aimLine.Length; j++) {
+            for (int j = i + 1; j < aimLine.Length; j++) {
               aimLine[j] = pos;
             }
             break;
@@ -249,5 +263,10 @@ public class Controller : MonoBehaviour {
 
   internal void EnemyKilled(int done, int toWin) {
     LevelProgress.text = $"{level.GetName()}\n{done}/{level.GetToWin()}";
+  }
+
+  public void ClosePauseManu() {
+    PauseMenu.SetActive(false);
+    Time.timeScale = 1;
   }
 }

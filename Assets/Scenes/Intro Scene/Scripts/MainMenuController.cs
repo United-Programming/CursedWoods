@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.EventSystems;
@@ -26,6 +27,8 @@ public class MainMenuController : MonoBehaviour {
   [SerializeField] private Slider volumeSound;
   [SerializeField] private AudioSource testSound;
 
+  [SerializeField] private GameObject GamePlay, Intro;
+
   private void Start() {
     float music = PlayerPrefs.GetFloat("VolumeMusic", .7f);
     MasterMixer.SetFloat("VolumeMusic", music * 70 - 60);
@@ -33,11 +36,14 @@ public class MainMenuController : MonoBehaviour {
     float sounds = PlayerPrefs.GetFloat("VolumeSounds", .7f);
     volumeSound.SetValueWithoutNotify(sounds);
     MasterMixer.SetFloat("VolumeSounds", sounds);
+    FullScreenToggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt("FullScreen") == 1);
+    Screen.fullScreen = FullScreenToggle.isOn;
   }
 
-public void StartNewGame() {
-    Debug.Log("Start a new game!");
-    // starts a new game
+  public void StartNewGame() {
+    PlayerData.ResetStats();
+    Intro.SetActive(false);
+    GamePlay.SetActive(true);
   }
 
   public void ShowOptions() {
@@ -108,5 +114,11 @@ public void StartNewGame() {
   public Toggle FullScreenToggle;
   public void ToggleFullScreen() {
     Screen.fullScreen = FullScreenToggle.isOn;
+    PlayerPrefs.SetInt("FullScreen", FullScreenToggle.isOn ? 1 : 0);
+  }
+
+  public TMP_Dropdown DifficultyDD;
+  public void ChangeDifficulty() {
+    PlayerData.Difficulty = DifficultyDD.value;
   }
 }
