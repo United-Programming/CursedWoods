@@ -18,7 +18,8 @@ public class Spider : MonoBehaviour {
 
     // Are we far away from player? Destroy and tell controller to respawn
     float dist = Vector3.Distance(transform.position, level.Player.position);
-    if (dist > 135) {
+    float fromCenter = Vector3.Distance(transform.position, level.transform.position);
+    if (dist > 135 || fromCenter < 17) {
       level.DestroyEnemy(gameObject);
       Destroy(gameObject);
     }
@@ -60,7 +61,7 @@ public class Spider : MonoBehaviour {
       Vector3 pos = transform.position;
       pos += dir;
       pos.y = level.Forest.SampleHeight(pos);
-      float speedMultiplier = (dist - 2) * .05f + 1;
+      float speedMultiplier = PlayerData.DifficultyMultiplier * (dist - 2) * .05f + 1;
       transform.position = Vector3.Lerp(transform.position, pos, speedMultiplier * speed * Time.deltaTime);
       anim.SetBool("Run", true);
       if (sounds.clip != WalkSound || !sounds.isPlaying) {

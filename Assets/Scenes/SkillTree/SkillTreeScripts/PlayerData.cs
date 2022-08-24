@@ -76,7 +76,7 @@ public static class PlayerData {
   }
 
 
-  private static int _difficulty;
+  private static int _difficulty = 1;
   /// <summary>
   /// Gets and sets the Difficulty value
   /// </summary>
@@ -85,6 +85,12 @@ public static class PlayerData {
     set {
       _difficulty = value;
     }
+  }
+  /// <summary>
+  /// Returns the difficulty multiplies (.9, 1, 1.1) used to change the speed of monsters
+  /// </summary>
+  public static float DifficultyMultiplier {
+    get => .9f + _difficulty * .1f;
   }
 
 

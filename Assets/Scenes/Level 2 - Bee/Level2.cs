@@ -84,7 +84,7 @@ public class Level2 : Level {
     }
     if (pos == -1 || enemy == null) yield break; // Should never happen
 
-    if (ToWin == done) {
+    if (ToWin == done && killedByPlayer) {
       // Destroy bee immediate and play win dance and music.
       float stumpTime = 1;
       Vector3 stumpScale = Vector3.one * .1f;
@@ -95,7 +95,7 @@ public class Level2 : Level {
         yield return null;
       }
       Destroy(enemy);
-      controller.PlayWinDance();
+      controller.WinLevel();
     }
     else {
       yield return new WaitForSeconds(Random.Range(2f, 5f));

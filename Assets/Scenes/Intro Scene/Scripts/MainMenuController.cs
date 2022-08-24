@@ -27,8 +27,6 @@ public class MainMenuController : MonoBehaviour {
   [SerializeField] private Slider volumeSound;
   [SerializeField] private AudioSource testSound;
 
-  [SerializeField] private GameObject GamePlay, Intro;
-
   private void Start() {
     float music = PlayerPrefs.GetFloat("VolumeMusic", .7f);
     MasterMixer.SetFloat("VolumeMusic", music * 70 - 60);
@@ -38,13 +36,10 @@ public class MainMenuController : MonoBehaviour {
     MasterMixer.SetFloat("VolumeSounds", sounds);
     FullScreenToggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt("FullScreen") == 1);
     Screen.fullScreen = FullScreenToggle.isOn;
+    PlayerData.Difficulty = PlayerPrefs.GetInt("Difficulty", 1);
+    DifficultyDD.SetValueWithoutNotify(PlayerData.Difficulty);
   }
 
-  public void StartNewGame() {
-    PlayerData.ResetStats();
-    Intro.SetActive(false);
-    GamePlay.SetActive(true);
-  }
 
   public void ShowOptions() {
     CurrentlySelected.ShowSelector(false);
@@ -89,7 +84,7 @@ public class MainMenuController : MonoBehaviour {
       PlayerPrefs.SetFloat("VolumeMusic", volumeMusic.value);
     }
     else {
-      if (!testSound.isPlaying) testSound.Play();
+      if (Time.timeScale != 0 && testSound.enabled && !testSound.isPlaying) testSound.Play();
       MasterMixer.SetFloat("VolumeSounds", volumeSound.value * 70 - 60);
       PlayerPrefs.SetFloat("VolumeSounds", volumeSound.value);
     }
@@ -120,5 +115,6 @@ public class MainMenuController : MonoBehaviour {
   public TMP_Dropdown DifficultyDD;
   public void ChangeDifficulty() {
     PlayerData.Difficulty = DifficultyDD.value;
+    PlayerPrefs.SetInt("Difficulty", PlayerData.Difficulty);
   }
 }

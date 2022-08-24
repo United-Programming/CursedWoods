@@ -86,7 +86,7 @@ public class Bee : MonoBehaviour {
 
 
     transform.SetPositionAndRotation(
-      Vector3.Lerp(transform.position, endPos, Time.deltaTime * statusSpeed * speed),
+      Vector3.Lerp(transform.position, endPos, Time.deltaTime * PlayerData.DifficultyMultiplier * statusSpeed * speed),
       Quaternion.Slerp(transform.rotation, look, Time.deltaTime * 15));
 
     if (attack) {

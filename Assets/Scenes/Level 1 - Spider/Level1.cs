@@ -16,7 +16,7 @@ public class Level1 : Level {
   public GameObject SpiderPrefab;
 
   public float Horiz = 5;
-  public float Dist = 1.5f;
+  public float Dist = 2f;
   public int done = 0;
 
   GameObject spider;
@@ -45,11 +45,12 @@ public class Level1 : Level {
 
   IEnumerator DestroyAndRespawnAsync(bool killedByPlayer) {
     if (killedByPlayer) {
+      if (spider == null) yield break;
       yield return new WaitForSeconds(2.5f);
       if (ToWin > done) done++;
       controller.EnemyKilled(done, ToWin);
     }
-    if (ToWin == done) {
+    if (ToWin == done && killedByPlayer) {
       // Destroy spider immediate and play win dance and music.
       if (spider != null) {
         float stumpTime = 1;
@@ -63,7 +64,7 @@ public class Level1 : Level {
         Destroy(spider);
       }
       spider = null;
-      controller.PlayWinDance();
+      controller.WinLevel();
     }
     else {
       yield return new WaitForSeconds(Random.Range(2f, 5f));
@@ -79,7 +80,7 @@ public class Level1 : Level {
         }
         Destroy(spider);
       }
-      Vector3 spawnPosition = Dist * Player.position - controller.transform.position + Random.insideUnitSphere * Random.Range(1f, 2f) + (Random.Range(0, 2) * 2 - 1) * Horiz * Player.right;
+      Vector3 spawnPosition = Player.position + Dist * (Player.position - controller.transform.position) + Random.insideUnitSphere * Random.Range(1f, 2f) + (Random.Range(0, 2) * 2 - 1) * Horiz * controller.transform.right;
       spawnPosition.y = Forest.SampleHeight(spawnPosition);
       spider = Instantiate(SpiderPrefab, spawnPosition, Quaternion.LookRotation(spawnPosition - Player.position));
       if (spider.TryGetComponent(out Spider script)) {
