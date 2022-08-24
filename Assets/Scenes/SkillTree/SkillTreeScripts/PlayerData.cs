@@ -112,22 +112,25 @@ public static class PlayerData {
 
   private static int _gameShoots, _gameKills;
   /// <summary>
-  /// Gets and sets the Difficulty value
+  /// Gets the number of shoots in the game or global
   /// </summary>
-  public static int GameNumberOfShoots {
-    get => _gameShoots;
-    set {
-      _gameShoots = value;
-    }
+  public static int GetNumberOfShoots(bool global) {
+    if (global) return PlayerPrefs.GetInt("NumberOfShoots", 0);
+    return _gameShoots;
   }
   /// <summary>
-  /// Gets and sets the Difficulty value
+  /// Gets the number of kills in the game or global
   /// </summary>
-  public static int GameNumberOfKills {
-    get => _gameKills;
-    set {
-      _gameKills = value;
-    }
+  public static int GetNumberOfKills(bool global) {
+    if (global) return PlayerPrefs.GetInt("NumberOfKills", 0);
+    return _gameKills;
+  }
+
+  /// <summary>
+  /// Gets the number of games played
+  /// </summary>
+  public static int GetNumberPlays() {
+    return PlayerPrefs.GetInt("NumberOfPlays", 0);
   }
 
 

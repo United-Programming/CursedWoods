@@ -26,6 +26,13 @@ public class Controller : MonoBehaviour {
   public Image[] Lives;
   public GameObject GameOver;
   public TextMeshProUGUI LevelProgress;
+  public TextMeshProUGUI NumOfPlay;
+  public TextMeshProUGUI NumOfKillsG;
+  public TextMeshProUGUI NumOfKillsT;
+  public TextMeshProUGUI NumOfShootsG;
+  public TextMeshProUGUI NumOfShootsT;
+  public TextMeshProUGUI NumOfAccuracyG;
+  public TextMeshProUGUI NumOfAccuracyT;
 
   float playerTargetAngle = 0;
   float movement = 0;
@@ -47,12 +54,13 @@ public class Controller : MonoBehaviour {
 
   private IEnumerator Start() {
     yield return new WaitForSeconds(.2f);
-    Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
+    if(Ground==null) Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
     SetGameStatus(GameStatus.Intro);
   }
 
   public void StartNewGame() {
     PlayerData.ResetStats();
+    PlayerData.PlayAnotherGame();
     SetGameStatus(GameStatus.Play);
   }
 
@@ -81,6 +89,7 @@ public class Controller : MonoBehaviour {
         Intro.SetActive(true);
         PauseMenu.SetActive(false);
         Ground.gameObject.SetActive(false);
+        GameOver.SetActive(false);
         gameStatus = GameStatus.Intro;
         Cursor.visible = true;
         break;
@@ -93,6 +102,7 @@ public class Controller : MonoBehaviour {
         Intro.SetActive(false);
         PauseMenu.SetActive(false);
         Ground.gameObject.SetActive(true);
+        GameOver.SetActive(false);
         if (gameStatus == GameStatus.Pause) {
           PauseMenu.SetActive(false);
           Time.timeScale = 1;
@@ -111,6 +121,19 @@ public class Controller : MonoBehaviour {
         PauseMenu.SetActive(true);
         Time.timeScale = 0;
         Cursor.visible = true;
+
+        NumOfPlay.text = PlayerData.GetNumberPlays().ToString();
+        int numKG = PlayerData.GetNumberOfKills(false);
+        int numKT = PlayerData.GetNumberOfKills(true);
+        int numSG = PlayerData.GetNumberOfShoots(false);
+        int numST = PlayerData.GetNumberOfShoots(true);
+        NumOfKillsG.text = numKG.ToString();
+        NumOfKillsT.text = numKT.ToString();
+        NumOfShootsG.text = numSG.ToString();
+        NumOfShootsT.text = numST.ToString();
+        NumOfAccuracyG.text = (int)((numKG * 1f / (numSG == 0 ? 1 : numSG)) * 100) + "%";
+        NumOfAccuracyT.text = (int)((numKT * 1f / (numST == 0 ? 1 : numST)) * 100) + "%";
+
         gameStatus = GameStatus.Pause;
         break;
 
@@ -170,6 +193,13 @@ public class Controller : MonoBehaviour {
   }
 
   private void Update() {
+    if (Input.GetKeyDown(KeyCode.F11)) {
+      bool full = !FullScreenToggle.isOn;
+      FullScreenToggle.SetIsOnWithoutNotify(full);
+      Screen.fullScreen = full;
+      PlayerPrefs.SetInt("FullScreen", full ? 1 : 0);
+    }
+
     switch (gameStatus) {
       case GameStatus.Intro: break;
 
@@ -361,6 +391,7 @@ public class Controller : MonoBehaviour {
 
   public void ArrowShoot() {
     if (!arrowLoaded) return;
+    PlayerData.AddAShoot();
     arrowLoaded = false;
     lineRenderer.enabled = false;
     cursorPointer.aimingCursor = false;
@@ -373,12 +404,14 @@ public class Controller : MonoBehaviour {
   }
 
   internal void EnemyKilled(int done, int toWin) {
+    PlayerData.AddAKill();
     LevelProgress.text = $"{level.GetName()}\n{done}/{level.GetToWin()}";
   }
 
   public void ClosePauseManu() {
     PauseMenu.SetActive(false);
     Time.timeScale = 1;
+    SetGameStatus(GameStatus.Play);
   }
 
   [SerializeField] private Slider volumeMusic;
