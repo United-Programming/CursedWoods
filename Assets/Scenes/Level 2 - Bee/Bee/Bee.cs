@@ -78,13 +78,6 @@ public class Bee : MonoBehaviour {
     }
     Quaternion look = (endPos == transform.position) ? transform.rotation : Quaternion.Euler(0, Quaternion.LookRotation(endPos - transform.position, Vector3.up).eulerAngles.y, 0);
 
-    if (Input.GetKeyDown(KeyCode.P)) {
-      endPos = level.Player.position + (transform.position - level.Player.position).normalized * 2.1f;
-      endPos.y = level.Forest.SampleHeight(endPos) + Random.Range(1.5f, 2f);
-      transform.position = endPos;
-    }
-
-
     transform.SetPositionAndRotation(
       Vector3.Lerp(transform.position, endPos, Time.deltaTime * PlayerData.DifficultyMultiplier * statusSpeed * speed),
       Quaternion.Slerp(transform.rotation, look, Time.deltaTime * 15));

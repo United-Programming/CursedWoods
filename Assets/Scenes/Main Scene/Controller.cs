@@ -72,6 +72,9 @@ public class Controller : MonoBehaviour {
       return true;
     }
     if (level != null) level.gameObject.SetActive(false);
+
+    currentLevel = 2; // FIXME <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
     level = Levels[currentLevel];
     level.gameObject.SetActive(true);
     level.Init(Ground, this);
@@ -226,6 +229,11 @@ public class Controller : MonoBehaviour {
 
       case GameStatus.GameOver:
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonUp(0)) {
+          if (level != null) {
+            level.RemoveAllEnemies();
+            level.gameObject.SetActive(false);
+          }
+
           SetGameStatus(GameStatus.Intro);
         }
         break;
@@ -357,8 +365,9 @@ public class Controller : MonoBehaviour {
 
   readonly Vector3[] aimLine = new Vector3[48];
 
-  public void PlayerDeath() {
+  public void PlayerDeath(bool crush = false) {
     SetGameStatus(GameStatus.Death);
+    anim.Play("DeathCrush");
   }
 
   IEnumerator RestartLevel() {

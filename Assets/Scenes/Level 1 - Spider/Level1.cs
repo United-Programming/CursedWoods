@@ -90,5 +90,8 @@ public class Level1 : Level {
     }
   }
 
-
+  public override void RemoveAllEnemies() {
+    if (spider != null) Destroy(spider);
+    spider = null;
+  }
 }

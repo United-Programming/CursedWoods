@@ -16,8 +16,6 @@ public class Level2 : Level {
   public Terrain Forest;
   public GameObject BeePrefab;
 
-  public float Horiz = 5;
-  public float Dist = 1.5f;
   public int done = 0;
   readonly GameObject[] bees = new GameObject[8];
 
@@ -111,5 +109,11 @@ public class Level2 : Level {
     }
   }
 
+  public override void RemoveAllEnemies() {
+    for (int i = 0; i < bees.Length; i++) {
+      if (bees[i] != null) Destroy(bees[i]);
+      bees[i] = null;
+    }
+  }
 
 }
