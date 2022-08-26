@@ -9,8 +9,8 @@ public class Bear : MonoBehaviour {
   public float speed = 5;
   public LayerMask ArrowMask, PlayerMask;
   public AudioSource sounds;
-  public AudioSource sounds2;
-  public AudioSource soundAttack;
+  public AudioSource soundsL;
+  public AudioSource soundsR;
   public AudioClip[] WalkSounds;
   public AudioClip RoarSound;
   public AudioClip DeathSound;
@@ -43,7 +43,7 @@ public class Bear : MonoBehaviour {
 
   /*
     Walk around, including the center of the area, max distance 50 from center
-    If the player is close enoug, and the distance from the center is > the player distance from center:
+    If the player is close enough, and the distance from the center is > the player distance from center:
     - roar
     - run against the player
     - if close enough hit
@@ -159,12 +159,12 @@ public class Bear : MonoBehaviour {
   public void PlayStepSound() {
     soundEmitter = !soundEmitter;
     if (soundEmitter) {
-      sounds.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
-      sounds.Play();
+      soundsL.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
+      soundsL.Play();
     }
     else {
-      sounds2.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
-      sounds2.Play();
+      soundsR.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
+      soundsR.Play();
     }
   }
 
