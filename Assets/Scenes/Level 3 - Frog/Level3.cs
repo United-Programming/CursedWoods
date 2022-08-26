@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Level3 : Level {
   public override string ToString() {
-    return "Level 3 - Frog";
+    return "Level 3 - Frogs";
   }
 
   public override int GetToWin() { return ToWin; }
