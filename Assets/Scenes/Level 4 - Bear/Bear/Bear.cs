@@ -7,10 +7,12 @@ public class Bear : MonoBehaviour {
   public float speed = 5;
   public LayerMask ArrowMask, PlayerMask;
   public AudioSource sounds;
+  public AudioSource sounds2;
   public AudioSource soundAttack;
-  public AudioClip WalkSound;
+  public AudioClip[] WalkSounds;
   public AudioClip RoarSound;
   public AudioClip DeathSound;
+  public AudioClip HitSound;
   Vector3 startPos, endPos;
 
 
@@ -90,6 +92,8 @@ public class Bear : MonoBehaviour {
           anim.Play("Buff");
           anim.SetBool("Run", false);
           anim.SetBool("Move", false);
+          sounds.clip = RoarSound;
+          sounds.Play();
         }
       }
     }
@@ -124,8 +128,6 @@ public class Bear : MonoBehaviour {
         Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position), 2.5f * Time.deltaTime));
 
     }
-    
-
   }
 
 
@@ -135,10 +137,20 @@ public class Bear : MonoBehaviour {
     anim.SetBool("Move", false);
   }
 
+  bool soundEmitter = false;
+  public void PlayStepSound() {
+    soundEmitter = !soundEmitter;
+    if (soundEmitter) {
+      sounds.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
+      sounds.Play();
+    }
+    else {
+      sounds2.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
+      sounds2.Play();
+    }
+  }
+
   public void AttackCompleted() {
-    sounds.clip = WalkSound;
-    sounds.loop = true;
-    sounds.Play();
   }
 
 
