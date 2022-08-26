@@ -36,14 +36,13 @@ public class Level3 : Level {
     for (int i = 0; i < frogs.Length; i++) {
       float angle = Mathf.PI * 2 * i / frogs.Length + Random.Range(-.025f, .025f);
       Vector3 spawnPosition = controller.transform.position +
-        new Vector3(Mathf.Sin(angle) * Random.Range(9.5f, 60.5f), 0, Mathf.Cos(angle) * Random.Range(59.5f, 60.5f));
+        new Vector3(Mathf.Sin(angle) * Random.Range(59.5f, 60.5f), 0, Mathf.Cos(angle) * Random.Range(59.5f, 60.5f));
       spawnPosition.y += Forest.SampleHeight(spawnPosition);
       frogs[i] = Instantiate(FrogPrefab, transform);
       frogs[i].transform.SetPositionAndRotation(spawnPosition, Quaternion.Euler(0, angle * Mathf.Rad2Deg + 180 + Random.Range(-1f, 1f), 0));
       if (frogs[i].TryGetComponent(out Frog script)) {
         script.Init(this, i * .15f, spawnPosition);
       }
-      break;
     }
   }
 

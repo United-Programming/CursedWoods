@@ -10174,6 +10174,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4106474134417913746}
     m_Modifications:
+    - target: {fileID: 3020446609820940435, guid: e003dd16fc9180348895eda69f827648,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3771158127790030787, guid: e003dd16fc9180348895eda69f827648,
         type: 3}
       propertyPath: PlayerStaticArrow
@@ -10187,7 +10192,7 @@ PrefabInstance:
     - target: {fileID: 4438459701761834537, guid: e003dd16fc9180348895eda69f827648,
         type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4438459701761834537, guid: e003dd16fc9180348895eda69f827648,
         type: 3}
@@ -10197,7 +10202,7 @@ PrefabInstance:
     - target: {fileID: 4946908062695424621, guid: e003dd16fc9180348895eda69f827648,
         type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4985123098868645453, guid: e003dd16fc9180348895eda69f827648,
         type: 3}
@@ -12486,8 +12491,6 @@ MonoBehaviour:
   Forest: {fileID: 0}
   BeePrefab: {fileID: 3685000895112479753, guid: a952aa660a8d2bb42a5fb828ab1390ba,
     type: 3}
-  Horiz: 5
-  Dist: 1.5
   done: 0
 --- !u!4 &874819296
 Transform:
@@ -23440,8 +23443,6 @@ MonoBehaviour:
   FrogPrefab: {fileID: 1644373995442134, guid: 0187bdd962557471faee34c9b592135c, type: 3}
   BloodPrefab: {fileID: 1387908168178666, guid: b0dea9a92e04b412daeb449ac74853bd,
     type: 3}
-  Horiz: 5
-  Dist: 1.5
   done: 0
 --- !u!1 &1784070946
 GameObject:

@@ -3391,17 +3391,17 @@ MonoBehaviour:
   - {fileID: 8300000, guid: aa3511ae57127bb48927cd50c0594ed8, type: 3}
   - {fileID: 8300000, guid: 2dff90e8f6c60754ba5a330120ba4d10, type: 3}
   - {fileID: 8300000, guid: cfe02ba2816e6be4c94f21fb54a720d4, type: 3}
-  JumpSound: {fileID: 0}
-  landSound: {fileID: 0}
+  jumpSound: {fileID: 8300000, guid: 7bd7426acc9d119478a0f914e7a7e8bc, type: 3}
+  landSound: {fileID: 8300000, guid: c0374b12c1ed637468db074a9e5e0b34, type: 3}
   DeathSound: {fileID: 8300000, guid: 2d01fad5a524b064184a3ae7e9f437cb, type: 3}
   status: 0
-  dist: 0
   forward: 7.74
   up: 3.15
   jumpTime: 0
   playerCheck: 3
   croack: 0
-  angle: 0
+  da: 0
+  dd: 0
 --- !u!82 &5091132778356263792
 AudioSource:
   m_ObjectHideFlags: 0
