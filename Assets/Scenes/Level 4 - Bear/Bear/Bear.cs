@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using static Frog;
 
 public class Bear : MonoBehaviour {
   public Level4 level;
@@ -13,8 +15,10 @@ public class Bear : MonoBehaviour {
   public AudioClip RoarSound;
   public AudioClip DeathSound;
   public AudioClip HitSound;
+  public Material[] SkinMaterials;
+  public SkinnedMeshRenderer Skin;
   Vector3 startPos, endPos;
-
+  int hits = 0;
 
   public enum BearStatus {
     Waiting, Walking, Buffing, Chasing, Attack, Dead
@@ -32,6 +36,8 @@ public class Bear : MonoBehaviour {
     speed = v;
     level = l;
     anim.SetBool("Move", true);
+    hits = 0;
+    Skin.sharedMaterial = SkinMaterials[hits];
   }
 
 
@@ -54,12 +60,6 @@ public class Bear : MonoBehaviour {
     if (status == BearStatus.Walking) {
       float dist, angle;
       if (Vector3.Distance(transform.position, endPos) < 1) {
-        angle = Random.Range(0, Mathf.PI * 2);
-        dist = 25 + Random.Range(0, 30f);
-        startPos = endPos;
-        endPos = level.controller.transform.position + Vector3.forward * Mathf.Sin(angle) * dist + Vector3.right * Mathf.Cos(angle) * dist;
-        endPos.y = level.Forest.SampleHeight(endPos);
-
         // make the standard wait for a few random seconds
         status = BearStatus.Waiting;
         waitTime = Random.Range(1, 2.5f);
@@ -85,7 +85,7 @@ public class Bear : MonoBehaviour {
 
 
       // do we see the player (and are we more far away from the center than the player)?
-      if (Vector3.Distance(level.controller.transform.position, transform.position) > 20) {
+      if (Vector3.Distance(level.controller.transform.position, transform.position) > 18) {
         angle = Vector3.SignedAngle(transform.forward, level.Player.position - transform.position, Vector3.up);
         if (-35f < angle && angle < 35) { // Yes -> roar and run
           status = BearStatus.Buffing;
@@ -101,16 +101,19 @@ public class Bear : MonoBehaviour {
     if (status == BearStatus.Waiting) {
       waitTime -= Time.deltaTime;
       if (waitTime < 0) {
+        float angle = Random.Range(0, Mathf.PI * 2);
+        float dist = 25 + Random.Range(0, 30f);
+        startPos = endPos;
+        endPos = level.controller.transform.position + Vector3.forward * Mathf.Sin(angle) * dist + Vector3.right * Mathf.Cos(angle) * dist;
+        endPos.y = level.Forest.SampleHeight(endPos);
         status = BearStatus.Walking;
         anim.SetBool("Move", true);
       }
     }
-    
+
     if (status == BearStatus.Chasing) {
       endPos = level.controller.player.position;
       float dist;
-      if (Vector3.Distance(transform.position, endPos) < 1) { // Attack
-      }
       Vector3 pos = transform.position;
       pos.y = level.Forest.SampleHeight(pos);
       transform.position = pos;
@@ -119,14 +122,29 @@ public class Bear : MonoBehaviour {
       dist = Vector3.Distance(transform.position, startPos);
       if (dist < 2) walkMultiplier = dist * .5f; // If we just started ramp up the speed
       dist = Vector3.Distance(transform.position, endPos);
-      if (dist < 2) walkMultiplier = dist * .5f; // If we are close to the target, slow down the speed
+      if (dist < 2.1f) { // Attack
+        status = BearStatus.Attack;
+        sounds.clip = RoarSound;
+        sounds.Play();
+        anim.SetBool("Run", false);
+        anim.SetBool("Move", false);
+        anim.Play("Attack");
+      }
+      if (dist < 3) walkMultiplier = dist * .3f; // If we are close to the target, slow down the speed
       if (walkMultiplier == 0) walkMultiplier = 1;
       anim.speed = walkMultiplier;
 
       transform.SetPositionAndRotation(
         Vector3.MoveTowards(transform.position, endPos, 2 * walkMultiplier * speed * Time.deltaTime),
         Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position), 2.5f * Time.deltaTime));
+    }
 
+    if (status == BearStatus.Attack) {
+      if (Physics.CheckSphere(BodyCenter.position, .7f, PlayerMask)) {
+        status = BearStatus.Waiting;
+        waitTime = 10;
+        level.PlayerDeath();
+      }
     }
   }
 
@@ -151,19 +169,32 @@ public class Bear : MonoBehaviour {
   }
 
   public void AttackCompleted() {
+    status = BearStatus.Waiting;
+    waitTime = 10;
   }
 
 
   private void OnTriggerEnter(Collider other) {
     int layer = 1 << other.gameObject.layer;
+
     if (status != BearStatus.Dead && (ArrowMask.value & layer) != 0) { // Have 3 levels of hits, and change the material at every hit
+      hits++;
+      if (hits < 4) {
+        level.KillEnemy(null);
+        sounds.clip = HitSound;
+        sounds.Play();
+        Skin.sharedMaterial = SkinMaterials[hits];
+        anim.Play("Stunned");
+        status = BearStatus.Waiting;
+        waitTime = 2;
+        return;
+      }
+
       status = BearStatus.Dead;
       anim.Play("Death");
-      gameObject.AddComponent<Rigidbody>();
       Destroy(other.transform.parent.gameObject); // Remove the arrow immediately
       level.KillEnemy(gameObject);
       sounds.clip = DeathSound;
-      sounds.loop = false;
       sounds.Play();
     }
   }

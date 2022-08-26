@@ -50,14 +50,15 @@ public class Level4 : Level {
 
   IEnumerator DestroyAsync(GameObject enemy, bool killedByPlayer) {
     if (killedByPlayer) {
-      yield return new WaitForSeconds(2.5f);
+      yield return new WaitForSeconds(.5f);
       if (ToWin > done) done++;
       controller.EnemyKilled(done, ToWin);
     }
 
-    if (bear == null || enemy == null) yield break; // Should never happen
+    if (bear == null || enemy == null) yield break; // This will happen when the bear is not yet fully killed
 
     if (ToWin == done && killedByPlayer) {
+      yield return new WaitForSeconds(2.5f);
       // Destroy bee immediate and play win dance and music.
       float stumpTime = 1;
       Vector3 stumpScale = Vector3.one * .1f;
@@ -69,18 +70,6 @@ public class Level4 : Level {
       }
       Destroy(enemy);
       controller.WinLevel();
-    }
-    else {
-      yield return new WaitForSeconds(Random.Range(2f, 5f));
-      float stumpTime = 1;
-      Vector3 stumpScale = Vector3.one * .1f;
-      while (stumpTime > 0) {
-        stumpTime -= Time.deltaTime * 2;
-        stumpScale.y = .1f * stumpTime;
-        enemy.transform.localScale = stumpScale;
-        yield return null;
-      }
-      Destroy(enemy);
     }
   }
 

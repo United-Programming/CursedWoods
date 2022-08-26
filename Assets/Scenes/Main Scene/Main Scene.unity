@@ -17884,7 +17884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70fdcebdb48279f46a4b00c3b36550e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToWin: 1
+  ToWin: 4
   Player: {fileID: 0}
   controller: {fileID: 0}
   Forest: {fileID: 0}
