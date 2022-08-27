@@ -12965,7 +12965,6 @@ MonoBehaviour:
   HandRefR: {fileID: 1784070947}
   HandRefL: {fileID: 1519146841}
   aimV: 0
-  arrowLoaded: 0
   arrowforce: 25
   volumeMusic: {fileID: 400563482}
   volumeSound: {fileID: 874934549}
