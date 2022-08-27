@@ -9560,6 +9560,7 @@ Transform:
   - {fileID: 874819296}
   - {fileID: 1781841945}
   - {fileID: 1344590901}
+  - {fileID: 925287529}
   m_Father: {fileID: 884653654}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12957,6 +12958,7 @@ MonoBehaviour:
   - {fileID: 874819295}
   - {fileID: 1781841946}
   - {fileID: 1344590902}
+  - {fileID: 925287530}
   gameStatus: 5
   GamePlay: {fileID: 884653653}
   Intro: {fileID: 1956088240}
@@ -13364,6 +13366,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 924916052}
   m_CullTransparentMesh: 1
+--- !u!1 &925287528
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 925287529}
+  - component: {fileID: 925287530}
+  m_Layer: 0
+  m_Name: Level 5 Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &925287529
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925287528}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 612076848}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &925287530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925287528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0149764ac9adc0a4dbb3b8773837d067, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ToWin: 3
+  Player: {fileID: 0}
+  controller: {fileID: 0}
+  Forest: {fileID: 0}
+  SkeletonPrefab: {fileID: 517194769535344155, guid: ba6d9150a11863244aa2a1d6330ee8f3,
+    type: 3}
+  done: 0
 --- !u!1 &930187843
 GameObject:
   m_ObjectHideFlags: 0

@@ -79,7 +79,7 @@ public class Controller : MonoBehaviour {
     }
     if (level != null) level.gameObject.SetActive(false);
 
-// FIXME    currentLevel = 3;
+    currentLevel = 4;
 
     level = Levels[currentLevel];
     level.gameObject.SetActive(true);
@@ -360,7 +360,6 @@ public class Controller : MonoBehaviour {
   readonly Vector3[] aimLine = new Vector3[48];
 
   public void PlayerDeath(bool crush = false) {
-    Debug.Log(">>>>>>>>>>>>>>>>>>>>>>>>>>>> death");
     crushed = crush;
     SetGameStatus(GameStatus.Death);
   }

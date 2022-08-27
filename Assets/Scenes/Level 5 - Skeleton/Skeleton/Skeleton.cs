@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Skeleton : MonoBehaviour {
@@ -13,53 +14,51 @@ public class Skeleton : MonoBehaviour {
   public AudioClip RoarSound;
   public AudioClip DeathSound;
   public AudioClip HitSound;
-  public Material[] SkinMaterials;
-  public SkinnedMeshRenderer Skin;
-  Vector3 startPos, endPos;
-  int hits = 0;
+  public SkeletonAnimEvents skelAnimEvent;
+  Vector3 startPos, endPos, spawnPosition;
 
-  public enum BearStatus {
-    Waiting, Walking, Buffing, Chasing, Attack, Dead
+  public enum SkeletonStatus {
+    Waiting, Walking, Chasing, Attack, Hitting, Defending, Dead
   };
-  public BearStatus status = BearStatus.Waiting;
+  public SkeletonStatus status = SkeletonStatus.Waiting;
 
   internal void Init(Level5 l, float v, Vector3 spawnPosition) {
+    skelAnimEvent.skeleton = this;
+    this.spawnPosition = spawnPosition;
     startPos = spawnPosition;
     float angle = Random.Range(0, Mathf.PI * 2);
-    float dist = 25 + Random.Range(0, 30f);
-    endPos = l.controller.transform.position + Vector3.forward * Mathf.Sin(angle) * dist + Vector3.right * Mathf.Cos(angle) * dist;
+    float dist = Random.Range(5, 10f);
+    endPos = spawnPosition + dist * Mathf.Sin(angle) * Vector3.forward + dist * Mathf.Cos(angle) * Vector3.right;
     endPos.y = l.Forest.SampleHeight(endPos);
     transform.position = spawnPosition;
-    status = BearStatus.Walking;
+    transform.LookAt(transform.position - l.controller.transform.position);
+    status = SkeletonStatus.Walking;
     speed = v;
     level = l;
     anim.SetBool("Move", true);
-    hits = 0;
-    Skin.sharedMaterial = SkinMaterials[hits];
   }
 
 
   /*
-    Walk around, including the center of the area, max distance 50 from center
-    If the player is close enough, and the distance from the center is > the player distance from center:
-    - roar
-    - run against the player
-    - if close enough hit
-    - if hit by arrow stun and change material
+    !Walk around the spawn position, not much far away in radious, do a movement like the bear
+    !If player is visible, run to it and attack
+    In case player shoot, draw the shield and stop. Shield will block arrows
+    In case player shoots while not visible (and not hit) get alerted and attack the player.
    
    
    */
 
   float waitTime = 0;
+  float chaseTime = 0;
 
   private void Update() {
     if (level == null) return;
 
-    if (status == BearStatus.Walking) {
+    if (status == SkeletonStatus.Walking) {
       float dist, angle;
       if (Vector3.Distance(transform.position, endPos) < 1) {
         // make the standard wait for a few random seconds
-        status = BearStatus.Waiting;
+        status = SkeletonStatus.Waiting;
         waitTime = Random.Range(1, 2.5f);
         anim.SetBool("Move", false);
         anim.SetBool("Run", false);
@@ -71,9 +70,9 @@ public class Skeleton : MonoBehaviour {
 
       float walkMultiplier = 1;
       dist = Vector3.Distance(transform.position, startPos);
-      if (dist < 3) walkMultiplier = dist * .33333334f; // If we just started ramp up the speed
+      if (dist < 1) walkMultiplier = dist; // If we just started ramp up the speed
       dist = Vector3.Distance(transform.position, endPos);
-      if (dist < 5) walkMultiplier = dist * .2f; // If we are close to the target, slow down the speed
+      if (dist < 2) walkMultiplier = dist * .5f; // If we are close to the target, slow down the speed
       if (walkMultiplier == 0) walkMultiplier = 1;
       anim.speed = walkMultiplier;
 
@@ -83,33 +82,47 @@ public class Skeleton : MonoBehaviour {
 
 
       // do we see the player (and are we more far away from the center than the player)?
-      if (Vector3.Distance(level.controller.transform.position, transform.position) > 18) {
+      if (Vector3.Distance(level.controller.player.position, transform.position) < 10) {
         angle = Vector3.SignedAngle(transform.forward, level.Player.position - transform.position, Vector3.up);
-        if (-35f < angle && angle < 35) { // Yes -> roar and run
-          status = BearStatus.Buffing;
-          anim.Play("Buff");
-          anim.SetBool("Run", false);
-          anim.SetBool("Move", false);
-          sounds.clip = RoarSound;
-          sounds.Play();
+        if (-35f < angle && angle < 35) { // Yes -> chase
+          status = SkeletonStatus.Chasing;
+          chaseTime = 0;
         }
       }
     }
 
-    if (status == BearStatus.Waiting) {
+    if (status == SkeletonStatus.Waiting) {
       waitTime -= Time.deltaTime;
       if (waitTime < 0) {
-        float angle = Random.Range(0, Mathf.PI * 2);
-        float dist = 25 + Random.Range(0, 30f);
         startPos = endPos;
-        endPos = level.controller.transform.position + Vector3.forward * Mathf.Sin(angle) * dist + Vector3.right * Mathf.Cos(angle) * dist;
+        float angle = Random.Range(0, Mathf.PI * 2);
+        float dist = Random.Range(5, 10f);
+        endPos = spawnPosition + dist * Mathf.Sin(angle) * Vector3.forward + dist * Mathf.Cos(angle) * Vector3.right;
         endPos.y = level.Forest.SampleHeight(endPos);
-        status = BearStatus.Walking;
+        status = SkeletonStatus.Walking;
         anim.SetBool("Move", true);
       }
     }
 
-    if (status == BearStatus.Chasing) {
+    if (status == SkeletonStatus.Chasing) {
+      chaseTime += Time.deltaTime;
+      if (chaseTime > 5) status = SkeletonStatus.Waiting;
+
+
+      // Check if we are aiming at the skeleton
+      if (level.controller.aiming == Controller.Aiming.ArrowReady) {
+        float angle = Vector3.SignedAngle(level.Player.forward, transform.position - level.Player.position, Vector3.up);
+        if (-35f < angle && angle < 35) { // Yes -> defend
+          anim.SetTrigger("Defend");
+          status = SkeletonStatus.Waiting;
+          waitTime = 2;
+          anim.SetBool("Run", false);
+          anim.SetBool("Move", false);
+          return;
+        }
+      }
+
+
       endPos = level.controller.player.position;
       float dist;
       Vector3 pos = transform.position;
@@ -118,17 +131,18 @@ public class Skeleton : MonoBehaviour {
 
       float walkMultiplier = 1;
       dist = Vector3.Distance(transform.position, startPos);
-      if (dist < 2) walkMultiplier = dist * .5f; // If we just started ramp up the speed
+      if (dist < 1) walkMultiplier = dist; // If we just started ramp up the speed
       dist = Vector3.Distance(transform.position, endPos);
       if (dist < 2.1f) { // Attack
-        status = BearStatus.Attack;
+        status = SkeletonStatus.Attack;
         sounds.clip = RoarSound;
         sounds.Play();
         anim.SetBool("Run", false);
         anim.SetBool("Move", false);
-        anim.Play("Attack");
+        if (Random.Range(0, 2) == 0) anim.Play("Light Attack");
+        else anim.Play("Heavy Attack");
       }
-      if (dist < 3) walkMultiplier = dist * .3f; // If we are close to the target, slow down the speed
+      if (dist < 2) walkMultiplier = dist * .5f; // If we are close to the target, slow down the speed
       if (walkMultiplier == 0) walkMultiplier = 1;
       anim.speed = walkMultiplier;
 
@@ -137,19 +151,37 @@ public class Skeleton : MonoBehaviour {
         Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position), 2.5f * Time.deltaTime));
     }
 
-    if (status == BearStatus.Attack) {
-      if (Physics.CheckSphere(BodyCenter.position, .7f, PlayerMask)) {
-        status = BearStatus.Waiting;
+    if (status == SkeletonStatus.Hitting) {
+      if (Physics.CheckSphere(BodyCenter.position, .5f, PlayerMask)) {
+        status = SkeletonStatus.Waiting;
         waitTime = 10;
         level.PlayerDeath();
+      }
+    }
+
+    if (status == SkeletonStatus.Defending) {
+      if (level.controller.aiming != Controller.Aiming.ArrowReady) {
+        startPos = transform.position;
+        endPos = transform.position + transform.forward;
+        endPos.y = level.Forest.SampleHeight(endPos);
+        status = SkeletonStatus.Walking;
+        anim.Play("Idle");
+        anim.SetBool("Move", true);
       }
     }
   }
 
 
   public void StartChasing() {
-    status = BearStatus.Chasing;
+    status = SkeletonStatus.Chasing;
+    chaseTime = 0;
     anim.SetBool("Run", true);
+    anim.SetBool("Move", false);
+  }
+
+  public void StartDefending() {
+    status = SkeletonStatus.Defending;
+    anim.SetBool("Run", false);
     anim.SetBool("Move", false);
   }
 
@@ -166,8 +198,11 @@ public class Skeleton : MonoBehaviour {
     }
   }
 
+  public void AttackStarted() {
+    status = SkeletonStatus.Hitting;
+  }
   public void AttackCompleted() {
-    status = BearStatus.Waiting;
+    status = SkeletonStatus.Waiting;
     waitTime = 10;
   }
 
@@ -175,20 +210,8 @@ public class Skeleton : MonoBehaviour {
   private void OnTriggerEnter(Collider other) {
     int layer = 1 << other.gameObject.layer;
 
-    if (status != BearStatus.Dead && (ArrowMask.value & layer) != 0) { // Have 3 levels of hits, and change the material at every hit
-      hits++;
-      if (hits < 4) {
-        level.KillEnemy(null);
-        sounds.clip = HitSound;
-        sounds.Play();
-        Skin.sharedMaterial = SkinMaterials[hits];
-        anim.Play("Stunned");
-        status = BearStatus.Waiting;
-        waitTime = 2;
-        return;
-      }
-
-      status = BearStatus.Dead;
+    if (status != SkeletonStatus.Dead && status != SkeletonStatus.Defending && (ArrowMask.value & layer) != 0) { // Have 3 levels of hits, and change the material at every hit
+      status = SkeletonStatus.Dead;
       anim.Play("Death");
       Destroy(other.transform.parent.gameObject); // Remove the arrow immediately
       level.KillEnemy(gameObject);
