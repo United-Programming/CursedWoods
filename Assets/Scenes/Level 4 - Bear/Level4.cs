@@ -77,5 +77,12 @@ public class Level4 : Level {
     if (bear != null) Destroy(bear);
     bear = null;
   }
+  
+  public override void FadeIn() {
+    throw new System.NotImplementedException();
+  }
 
+  public override void FadeOut() {
+    throw new System.NotImplementedException();
+  }
 }

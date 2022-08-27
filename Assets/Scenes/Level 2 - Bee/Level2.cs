@@ -115,5 +115,12 @@ public class Level2 : Level {
       bees[i] = null;
     }
   }
+  
+  public override void FadeIn() {
+    throw new System.NotImplementedException();
+  }
 
+  public override void FadeOut() {
+    throw new System.NotImplementedException();
+  }
 }

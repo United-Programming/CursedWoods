@@ -11,4 +11,7 @@ public abstract class Level : MonoBehaviour {
   public abstract void DestroyEnemy(GameObject enemy);
 
   public abstract void RemoveAllEnemies();
+
+  public abstract void FadeIn();
+  public abstract void FadeOut();
 }
