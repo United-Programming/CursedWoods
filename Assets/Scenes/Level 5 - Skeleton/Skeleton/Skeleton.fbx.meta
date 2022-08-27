@@ -21,7 +21,22 @@ ModelImporter:
   - first:
       74: -4630339522487117836
     second: Die
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fight_Rework__Shield_MAT
+    second: {fileID: 2100000, guid: 941d1c06a44577b42ab1cd16b7f8c499, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fight_Rework__Sword_MAT
+    second: {fileID: 2100000, guid: 2ec3de98f398afe4497e2cb74d6aa698, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fight_Rework__skeleton_MAT1
+    second: {fileID: 2100000, guid: 4af0fed6ec83ef04188ba5df8c68ab69, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

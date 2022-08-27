@@ -345,6 +345,7 @@ public class Controller : MonoBehaviour {
           if (cursor == Vector3.zero && (Vector3.Distance(pos, HandRefR.position) > 2 || pos.y < Ground.SampleHeight(pos) + .2f)) cursor = pos;
         }
         if (PlayerData.Difficulty == 0) {
+          lineRenderer.enabled = aiming == Aiming.ArrowReady;
           lineRenderer.positionCount = count;
           lineRenderer.SetPositions(aimLine);
         }
@@ -392,9 +393,7 @@ public class Controller : MonoBehaviour {
   public void ArrowShoot() {
     if (aiming != Aiming.ArrowReady) return;
     PlayerData.AddAShoot();
-    SetAiming(Aiming.NotAiming);
-    audioBow.clip = BowDraw;
-    audioBow.Play();
+    SetAiming(Aiming.Loading);
     if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {
       Quaternion rot = Quaternion.LookRotation(arrowDir, Vector3.up);
       arrow.Init(arrowStart, rot, arrowforce * arrowDir, Ground);
@@ -437,9 +436,9 @@ public class Controller : MonoBehaviour {
 
   void SetAiming(Aiming a) {
     aiming = a;
-    lineRenderer.enabled = (PlayerData.Difficulty == 0 && aiming == Aiming.ArrowReady);
+    lineRenderer.enabled = false;
     cursorPointer.aimingCursor = (PlayerData.Difficulty < 2 && aiming == Aiming.ArrowReady);
-    anim.SetBool("Aim", a == Aiming.Loading);
+    anim.SetBool("Aim", a != Aiming.NotAiming);
     ArrowPlayer.SetActive(a == Aiming.ArrowReady);
     if (a == Aiming.Loading) {
       audioBow.clip = BowDraw;

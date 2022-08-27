@@ -1,7 +1,7 @@
 using UnityEngine;
 
-public class Bear : MonoBehaviour {
-  public Level4 level;
+public class Skeleton : MonoBehaviour {
+  public Level5 level;
   public Animator anim;
   public Transform BodyCenter;
   public float speed = 5;
@@ -23,7 +23,7 @@ public class Bear : MonoBehaviour {
   };
   public BearStatus status = BearStatus.Waiting;
 
-  internal void Init(Level4 l, float v, Vector3 spawnPosition) {
+  internal void Init(Level5 l, float v, Vector3 spawnPosition) {
     startPos = spawnPosition;
     float angle = Random.Range(0, Mathf.PI * 2);
     float dist = 25 + Random.Range(0, 30f);

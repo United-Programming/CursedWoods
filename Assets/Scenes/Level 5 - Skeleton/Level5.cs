@@ -1,13 +1,13 @@
 using System.Collections;
 using UnityEngine;
 
-public class Level4 : Level {
+public class Level5 : Level {
   public override string ToString() {
-    return "Level 4 - Bear";
+    return "Level 5 - Skeletons";
   }
 
   public override int GetToWin() { return ToWin; }
-  public override string GetName() { return "Level 4 - Bear"; }
+  public override string GetName() { return "Level 5 - Skeletons"; }
 
   public int ToWin = 3;
   public Transform Player;
@@ -16,21 +16,21 @@ public class Level4 : Level {
   public GameObject BearPrefab;
 
   public int done = 0;
-  GameObject bear = null;
+  GameObject skeleton = null;
 
 
   public override void Init(Terrain forest, Controller controller, bool sameLevel) {
-    if (bear != null) Destroy(bear);
+    if (skeleton != null) Destroy(skeleton);
     Forest = forest;
     this.controller = controller;
     Player = this.controller.transform.GetChild(1);
     if (!sameLevel) done = 0;
-    SpawnBear();
+    SpawnSkeletons();
   }
 
-  void SpawnBear() {
-    bear = Instantiate(BearPrefab, transform);
-    if (bear.TryGetComponent(out Bear script)) {
+  void SpawnSkeletons() {
+    skeleton = Instantiate(BearPrefab, transform);
+    if (skeleton.TryGetComponent(out Skeleton script)) {
       script.Init(this, 2.5f, Vector3.zero);
     }
   }
@@ -55,7 +55,7 @@ public class Level4 : Level {
       controller.EnemyKilled(done, ToWin);
     }
 
-    if (bear == null || enemy == null) yield break; // This will happen when the bear is not yet fully killed
+    if (skeleton == null || enemy == null) yield break; // This will happen when the bear is not yet fully killed
 
     if (ToWin == done && killedByPlayer) {
       yield return new WaitForSeconds(2.5f);
@@ -74,8 +74,8 @@ public class Level4 : Level {
   }
 
   public override void RemoveAllEnemies() {
-    if (bear != null) Destroy(bear);
-    bear = null;
+    if (skeleton != null) Destroy(skeleton);
+    skeleton = null;
   }
 
 }
