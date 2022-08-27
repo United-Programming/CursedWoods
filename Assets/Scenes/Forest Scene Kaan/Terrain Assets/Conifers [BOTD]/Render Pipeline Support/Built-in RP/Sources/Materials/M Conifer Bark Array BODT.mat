@@ -2,14 +2,18 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M Conifer Bark Array BODT
-  m_Shader: {fileID: 4800000, guid: 00baf766089b44ee3b05e340b19c821c, type: 3}
-  m_ShaderKeywords: _METALLICGLOSSMAP
+  m_Shader: {fileID: 4800000, guid: 49f652e41ab8434499aeb0ebfe6b56a7, type: 3}
+  m_ValidKeywords:
+  - _NORMALINDEPTHNORMALPASS
+  - _NORMALMAP
+  m_InvalidKeywords:
+  - _METALLICGLOSSMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -19,7 +23,15 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpOcclusionMapArray:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -79,7 +91,22 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
+    - _ApplyNormal: 1
+    - _ApplyNormalDepthNormal: 1
     - _BranchWind: 0
     - _BumpScale: 1
     - _ColorContrast: 1
@@ -107,6 +134,9 @@ Material:
     - _NormalLerp: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _ReceiveDecals: 0
+    - _ReceiveShadows: 1
+    - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -119,6 +149,7 @@ Material:
     - _UVSec: 0
     - _UseArrays: 1
     - _UseDetails: 0
+    - _WindVariation: 0
     - _ZWrite: 1
     m_Colors:
     - _AdvancedEdgeBending: {r: 0.1, g: 5, b: 0, a: 0}
@@ -127,3 +158,5 @@ Material:
     - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HueVariation: {r: 0, g: 0.9, b: 0.8255172, a: 0.1}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+  m_BuildTextureStacks: []
