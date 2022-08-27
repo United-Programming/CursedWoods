@@ -2014,7 +2014,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 6
+  m_Radius: 7
   m_Center: {x: 0, y: 11, z: 0}
 --- !u!82 &8854300768151342709
 AudioSource:

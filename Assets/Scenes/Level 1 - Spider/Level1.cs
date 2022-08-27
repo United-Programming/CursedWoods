@@ -7,7 +7,7 @@ public class Level1 : Level {
   }
 
   public override int GetToWin() { return ToWin; }
-  public override string GetName() { return "Level 1"; }
+  public override string GetName() { return "Level 1 - Spiders"; }
 
   public int ToWin = 5;
   public Transform Player;
@@ -21,13 +21,13 @@ public class Level1 : Level {
 
   GameObject spider;
 
-  public override void Init(Terrain forest, Controller controller) {
+  public override void Init(Terrain forest, Controller controller, bool sameLevel) {
     if (spider != null) Destroy(spider);
     Forest = forest;
     this.controller = controller;
     Player = this.controller.transform.GetChild(1);
     StartCoroutine(DestroyAndRespawnAsync(false));
-    done = 0;
+    if (!sameLevel) done = 0;
   }
 
 
@@ -46,9 +46,10 @@ public class Level1 : Level {
   IEnumerator DestroyAndRespawnAsync(bool killedByPlayer) {
     if (killedByPlayer) {
       if (spider == null) yield break;
-      yield return new WaitForSeconds(2.5f);
+      yield return new WaitForSeconds(.5f);
       if (ToWin > done) done++;
       controller.EnemyKilled(done, ToWin);
+      yield return new WaitForSeconds(2f);
     }
     if (ToWin == done && killedByPlayer) {
       // Destroy spider immediate and play win dance and music.

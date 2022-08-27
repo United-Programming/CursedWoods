@@ -7,7 +7,7 @@ public class Level4 : Level {
   }
 
   public override int GetToWin() { return ToWin; }
-  public override string GetName() { return "Level 3"; }
+  public override string GetName() { return "Level 4 - Bear"; }
 
   public int ToWin = 3;
   public Transform Player;
@@ -19,12 +19,12 @@ public class Level4 : Level {
   GameObject bear = null;
 
 
-  public override void Init(Terrain forest, Controller controller) {
+  public override void Init(Terrain forest, Controller controller, bool sameLevel) {
     if (bear != null) Destroy(bear);
     Forest = forest;
     this.controller = controller;
     Player = this.controller.transform.GetChild(1);
-    done = 0;
+    if (!sameLevel) done = 0;
     SpawnFrogs();
   }
 

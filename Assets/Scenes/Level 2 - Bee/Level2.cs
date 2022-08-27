@@ -8,7 +8,7 @@ public class Level2 : Level {
   }
 
   public override int GetToWin() { return ToWin; }
-  public override string GetName() { return "Level 2"; }
+  public override string GetName() { return "Level 2 - Bees"; }
 
   public int ToWin = 3;
   public Transform Player;
@@ -26,14 +26,13 @@ public class Level2 : Level {
   // We have to hit 3 of them
 
 
-  public override void Init(Terrain forest, Controller controller) {
+  public override void Init(Terrain forest, Controller controller, bool sameLevel) {
     foreach (var bee in bees)
       if (bee != null) Destroy(bee);
     Forest = forest;
     this.controller = controller;
     Player = this.controller.transform.GetChild(1);
-    done = 0;
-
+    if (!sameLevel) done = 0;
     SpawnBees();
   }
 
@@ -69,9 +68,10 @@ public class Level2 : Level {
 
   IEnumerator DestroyAsync(GameObject enemy, bool killedByPlayer) {
     if (killedByPlayer) {
-      yield return new WaitForSeconds(2.5f);
+      yield return new WaitForSeconds(.5f);
       if (ToWin > done) done++;
       controller.EnemyKilled(done, ToWin);
+      yield return new WaitForSeconds(2f);
     }
     int pos = -1;
     for (int i = 0; i < bees.Length; i++) {

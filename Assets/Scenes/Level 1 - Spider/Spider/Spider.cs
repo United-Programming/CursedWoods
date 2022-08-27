@@ -39,7 +39,7 @@ public class Spider : MonoBehaviour {
       anim.SetBool("Run", false);
       attack = true;
     }
-    else if (level.controller.aiming && level.controller.arrowLoaded) { // Is the player is aiming?
+    else if (level.controller.aiming == Controller.Aiming.ArrowReady) { // Is the player is aiming?
       // Flee
       Vector3 dir = (transform.position + level.controller.cam.transform.forward * 2f - level.Player.position).normalized;
       Vector3 pos = transform.position;

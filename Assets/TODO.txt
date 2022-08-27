@@ -1,3 +1,6 @@
-Add pause with Escape, dim the volume
-Merge all scenes into one
-Improve the forest to work better with the different enemies
+Bug fix on existing levels
+Level skeleton
+Level owl
+Level ghost
+Level spider
+Level dragon

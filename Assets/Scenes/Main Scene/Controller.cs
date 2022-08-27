@@ -38,7 +38,12 @@ public class Controller : MonoBehaviour {
   float movement = 0;
   float angle = 0;
   public float speed = .18f;
-  [HideInInspector] public bool aiming = false;
+
+  // no aiming, loading, aiming with arrow ready
+  public enum Aiming { NotAiming, Loading, ArrowReady };
+  public Aiming aiming = Aiming.NotAiming;
+
+  bool crushed = false;
 
   int currentLevel;
   Level level;
@@ -54,7 +59,7 @@ public class Controller : MonoBehaviour {
 
   private IEnumerator Start() {
     yield return new WaitForSeconds(.2f);
-    if(Ground==null) Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
+    if (Ground == null) Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
     SetGameStatus(GameStatus.Intro);
   }
 
@@ -67,17 +72,19 @@ public class Controller : MonoBehaviour {
   bool GoNextlevel() {
     currentLevel++;
     if (currentLevel >= Levels.Length) {
+      LevelProgress.text = $"No more available levels!";
       SetGameStatus(GameStatus.Intro);
       Debug.Log("--------------------------------------- No more available levels!");
       return true;
     }
     if (level != null) level.gameObject.SetActive(false);
 
-//    currentLevel = 3; // FIXME <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    currentLevel = 3;
 
     level = Levels[currentLevel];
     level.gameObject.SetActive(true);
-    level.Init(Ground, this);
+    level.Init(Ground, this, false);
+    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
     return false;
   }
 
@@ -86,6 +93,7 @@ public class Controller : MonoBehaviour {
 
     switch (status) {
       case GameStatus.Intro:
+        lineRenderer.enabled = false;
         player.gameObject.SetActive(false);
         GamePlay.SetActive(false);
         GameCanvas.SetActive(false);
@@ -99,6 +107,7 @@ public class Controller : MonoBehaviour {
 
       case GameStatus.Play:
         Cursor.visible = false;
+        lineRenderer.enabled = false;
         player.gameObject.SetActive(true);
         GamePlay.SetActive(true);
         GameCanvas.SetActive(true);
@@ -112,7 +121,7 @@ public class Controller : MonoBehaviour {
         }
         else if (gameStatus == GameStatus.Death) {
           anim.Play("Idle");
-          level.Init(Ground, this);
+          level.Init(Ground, this, true);
         }
         else if (gameStatus == GameStatus.Intro) {
           StartCoroutine(StartGame());
@@ -142,9 +151,7 @@ public class Controller : MonoBehaviour {
 
       case GameStatus.WinDance:
         level.gameObject.SetActive(false);
-        lineRenderer.enabled = false;
-        cursorPointer.aimingCursor = false;
-        ArrowPlayer.SetActive(false);
+        SetAiming(Aiming.NotAiming);
         anim.Play("WinDance");
         audioGlobal.clip = WindDanceMusic;
         audioGlobal.loop = false;
@@ -154,10 +161,12 @@ public class Controller : MonoBehaviour {
 
       case GameStatus.Death:
         gameStatus = GameStatus.Death;
-        ArrowPlayer.SetActive(false);
-        lineRenderer.enabled = false;
-        cursorPointer.aimingCursor = false;
-        if (Random.Range(0, 2) == 0) anim.Play("Death1");
+        SetAiming(Aiming.NotAiming);
+        if (crushed) {
+          crushed = false;
+          anim.Play("DeathCrush");
+        }
+        else if (Random.Range(0, 2) == 0) anim.Play("Death1");
         else anim.Play("Death2");
 
         // Reduce the numebr of lives.
@@ -175,15 +184,14 @@ public class Controller : MonoBehaviour {
 
       case GameStatus.GameOver:
         gameStatus = GameStatus.GameOver;
-        lineRenderer.enabled = false;
-        cursorPointer.aimingCursor = false;
-        ArrowPlayer.SetActive(false);
+        SetAiming(Aiming.NotAiming);
         GameOver.SetActive(true);
         break;
     }
   }
 
   private IEnumerator StartGame() {
+    SetAiming(Aiming.NotAiming);
     yield return new WaitForSeconds(.2f);
     Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
 
@@ -192,7 +200,6 @@ public class Controller : MonoBehaviour {
     }
     currentLevel = -1;
     GoNextlevel();
-    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
   }
 
   private void Update() {
@@ -206,7 +213,8 @@ public class Controller : MonoBehaviour {
     switch (gameStatus) {
       case GameStatus.Intro: break;
 
-      case GameStatus.Play: PlayUpdate();
+      case GameStatus.Play:
+        PlayUpdate();
         break;
 
       case GameStatus.Pause:
@@ -247,29 +255,16 @@ public class Controller : MonoBehaviour {
     }
 
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
-      arrowLoaded = false;
-      lineRenderer.enabled = false;
-      cursorPointer.aimingCursor = false;
-      aiming = !aiming;
-      anim.SetBool("Aim", aiming);
-      if (!aiming) ArrowPlayer.SetActive(false);
-      else {
-        audioBow.clip = BowDraw;
-        audioBow.Play();
-      }
+      if (aiming == Aiming.NotAiming) SetAiming(Aiming.Loading);
+      else SetAiming(Aiming.NotAiming);
     }
 
     float x = Input.GetAxis("Horizontal");
-    if (x != 0) { // If we move we cannto be aiming
-      aiming = false;
-      arrowLoaded = false;
-      lineRenderer.enabled = false;
-      cursorPointer.aimingCursor = false;
-      anim.SetBool("Aim", false);
-      ArrowPlayer.SetActive(false);
+    if (x != 0) { // If we move we cannot be aiming
+      SetAiming(Aiming.NotAiming);
     }
 
-    if (aiming && Input.GetMouseButtonDown(0) && arrowLoaded) { // We should eb sure the aiming anim is completed
+    if (aiming == Aiming.ArrowReady && Input.GetMouseButtonDown(0)) { // We should eb sure the aiming anim is completed
       audioBow.clip = ThrowArrow;
       audioBow.Play();
       arrowStart = HandRefR.position;
@@ -279,7 +274,7 @@ public class Controller : MonoBehaviour {
     }
 
 
-    if (x == 0 || aiming) { // not moving
+    if (x == 0 || aiming == Aiming.ArrowReady) { // not moving
       // just keep the player angle and stop the run anim, but do not change the player rotation
       // Stop the rotation of the camera
       anim.SetBool("Moving", false);
@@ -313,7 +308,7 @@ public class Controller : MonoBehaviour {
       else anim.SetBool("Run", false);
     }
 
-    if (aiming) {
+    if (aiming != Aiming.NotAiming) {
       float aimH = 2f * (Input.mousePosition.x - Screen.width * .5f) / Screen.width - .09f;
       aimV = 2f * (Input.mousePosition.y - Screen.height * .5f) / Screen.height;
       anim.SetFloat("AimH", aimH);
@@ -325,7 +320,7 @@ public class Controller : MonoBehaviour {
       float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
       player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
 
-      if (arrowLoaded) {
+      if (aiming == Aiming.ArrowReady) {
         Vector3 pos = HandRefR.position;
         Vector3 vel = (HandRefL.position - HandRefR.position + Vector3.up * .00995f).normalized * arrowforce;
         Vector3 acc = Physics.gravity;
@@ -352,9 +347,7 @@ public class Controller : MonoBehaviour {
         if (PlayerData.Difficulty == 0) {
           lineRenderer.positionCount = count;
           lineRenderer.SetPositions(aimLine);
-          lineRenderer.enabled = true;
         }
-        else lineRenderer.enabled = false;
         if (PlayerData.Difficulty < 2)
           cursorPointer.cursorPosition = cursor;
         else
@@ -366,8 +359,9 @@ public class Controller : MonoBehaviour {
   readonly Vector3[] aimLine = new Vector3[48];
 
   public void PlayerDeath(bool crush = false) {
+    Debug.Log(">>>>>>>>>>>>>>>>>>>>>>>>>>>> death");
+    crushed = crush;
     SetGameStatus(GameStatus.Death);
-    anim.Play("DeathCrush");
   }
 
   IEnumerator RestartLevel() {
@@ -386,24 +380,19 @@ public class Controller : MonoBehaviour {
     Cursor.visible = !focus || gameStatus == GameStatus.Pause || gameStatus == GameStatus.Intro || gameStatus == GameStatus.GameOver;
   }
 
-  public bool arrowLoaded = false;
   public float arrowforce = 100;
 
   public void ArrowLoaded() {
-    arrowLoaded = true;
-    lineRenderer.enabled = true;
-    cursorPointer.aimingCursor = true;
+    SetAiming(Aiming.ArrowReady);
   }
 
   Vector3 arrowStart;
   Vector3 arrowDir;
 
   public void ArrowShoot() {
-    if (!arrowLoaded) return;
+    if (aiming != Aiming.ArrowReady) return;
     PlayerData.AddAShoot();
-    arrowLoaded = false;
-    lineRenderer.enabled = false;
-    cursorPointer.aimingCursor = false;
+    SetAiming(Aiming.NotAiming);
     audioBow.clip = BowDraw;
     audioBow.Play();
     if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {
@@ -446,4 +435,15 @@ public class Controller : MonoBehaviour {
     PlayerData.Difficulty = DifficultyDD.value;
   }
 
+  void SetAiming(Aiming a) {
+    aiming = a;
+    lineRenderer.enabled = (PlayerData.Difficulty == 0 && aiming == Aiming.ArrowReady);
+    cursorPointer.aimingCursor = (PlayerData.Difficulty < 2 && aiming == Aiming.ArrowReady);
+    anim.SetBool("Aim", a == Aiming.Loading);
+    ArrowPlayer.SetActive(a == Aiming.ArrowReady);
+    if (a == Aiming.Loading) {
+      audioBow.clip = BowDraw;
+      audioBow.Play();
+    }
+  }
 }

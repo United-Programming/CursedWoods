@@ -7,7 +7,7 @@ public class Level3 : Level {
   }
 
   public override int GetToWin() { return ToWin; }
-  public override string GetName() { return "Level 3"; }
+  public override string GetName() { return "Level 3 - Frogs"; }
 
   public int ToWin = 3;
   public Transform Player;
@@ -21,14 +21,14 @@ public class Level3 : Level {
   GameObject blood = null;
 
 
-  public override void Init(Terrain forest, Controller controller) {
+  public override void Init(Terrain forest, Controller controller, bool sameLevel) {
     foreach (var frog in frogs)
       if (frog != null) Destroy(frog);
     if (blood != null) Destroy(blood);
     Forest = forest;
     this.controller = controller;
     Player = this.controller.transform.GetChild(1);
-    done = 0;
+    if (!sameLevel) done = 0;
     SpawnFrogs();
   }
 
@@ -84,9 +84,10 @@ public class Level3 : Level {
 
   IEnumerator DestroyAsync(GameObject enemy, bool killedByPlayer) {
     if (killedByPlayer) {
-      yield return new WaitForSeconds(2.5f);
+      yield return new WaitForSeconds(.5f);
       if (ToWin > done) done++;
       controller.EnemyKilled(done, ToWin);
+      yield return new WaitForSeconds(2f);
     }
     int pos = -1;
     for (int i = 0; i < frogs.Length; i++) {
