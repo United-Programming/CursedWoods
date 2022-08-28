@@ -105,6 +105,7 @@ public class Level3 : Level {
       float stumpTime = 1;
       Vector3 stumpScale = Vector3.one * .1f;
       while (stumpTime > 0) {
+        if (enemy == null) yield break;
         stumpTime -= Time.deltaTime * 2;
         stumpScale.y = .1f * stumpTime;
         enemy.transform.localScale = stumpScale;
@@ -118,6 +119,7 @@ public class Level3 : Level {
       float stumpTime = 1;
       Vector3 stumpScale = Vector3.one * .1f;
       while (stumpTime > 0) {
+        if (enemy == null) yield break;
         stumpTime -= Time.deltaTime * 2;
         stumpScale.y = .1f * stumpTime;
         enemy.transform.localScale = stumpScale;

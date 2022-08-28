@@ -1,0 +1,9 @@
+
+
+Ghost - we need some fog, vision will be blurred more and more, until player dies. To kill the ghost (that will randomly teleport around the scene) we need to hit a glowing small orb that will teleport around the map
+Owl - we need fog and rain and clouds, owl will be almost never visible except when lightthing, it will make player petrified after a while, can be hit normally but it is not visible with ease
+
+Zombie - ? not yet decided
+Snake - need to watch original
+Dragon - need to watch original
+Final boss - ? not yet decided

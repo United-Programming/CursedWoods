@@ -80,10 +80,10 @@ public class Frog : MonoBehaviour {
       lastStatusChange = 0;
     }
     if (playerCheck < 0) {
-      playerCheck = Random.Range(.5f, 2f);
+      playerCheck = Random.Range(1f, 3f);
       float angle = Vector3.SignedAngle(level.Center.position - transform.position, level.Player.position - transform.position, Vector3.up);
       float dist = Vector3.Distance(level.Player.position, transform.position);
-      if (-7f < angle && angle < 7f && 35 < dist && dist < 45) {
+      if (-5f < angle && angle < 5f && 35 < dist && dist < 45) {
         dd = dist;
         da = angle;
         Vector3 force = CalculateJumpForce(level.Player.position);
