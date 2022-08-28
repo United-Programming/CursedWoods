@@ -107,13 +107,11 @@ public class TestPlayerController : MonoBehaviour
 
     private void ScareTheEnemy()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(ArrowPlayer.transform.TransformPoint(ArrowPlayer.transform.position), ArrowPlayer.transform.forward, out hit, Mathf.Infinity, enemyLayer))
-        {
-            Debug.Log("WorkingScareTheEnemy");
+    if (Physics.Raycast(ArrowPlayer.transform.TransformPoint(ArrowPlayer.transform.position), ArrowPlayer.transform.forward, out RaycastHit hit, Mathf.Infinity, enemyLayer)) {
+      Debug.Log("WorkingScareTheEnemy");
 
-        }
-        Debug.DrawRay(ArrowPlayer.transform.TransformPoint(ArrowPlayer.transform.position), ArrowPlayer.transform.forward * hit.distance, Color.red,3);
+    }
+    Debug.DrawRay(ArrowPlayer.transform.TransformPoint(ArrowPlayer.transform.position), ArrowPlayer.transform.forward * hit.distance, Color.red,3);
     }
     public void ArrowLoaded()
     {
@@ -126,7 +124,7 @@ public class TestPlayerController : MonoBehaviour
         arrowLoaded = false;
         if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow))
         {
-            arrow.Init(ArrowPlayer.transform.position, ArrowPlayer.transform.rotation, ArrowPlayer.transform.forward * arrowforce, null);
+            arrow.Init(ArrowPlayer.transform.position, ArrowPlayer.transform.rotation, ArrowPlayer.transform.forward * arrowforce, null, null);
         }
     }
 }

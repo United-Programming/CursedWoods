@@ -11,7 +11,8 @@ public class Level1 : Level {
 
   public int ToWin = 5;
   public Transform Player;
-  public Controller controller;
+  public Transform Center;
+  public Controller Game;
   public Terrain Forest;
   public GameObject SpiderPrefab;
 
@@ -24,15 +25,16 @@ public class Level1 : Level {
   public override void Init(Terrain forest, Controller controller, bool sameLevel) {
     if (spider != null) Destroy(spider);
     Forest = forest;
-    this.controller = controller;
-    Player = this.controller.transform.GetChild(1);
+    Game = controller;
+    Center = controller.transform;
+    Player = controller.transform.GetChild(1);
     StartCoroutine(DestroyAndRespawnAsync(false));
     if (!sameLevel) done = 0;
   }
 
 
   public override void PlayerDeath() {
-    controller.PlayerDeath();
+    Game.PlayerDeath();
   }
 
   public override void KillEnemy(GameObject enemy) {
@@ -48,7 +50,7 @@ public class Level1 : Level {
       if (spider == null) yield break;
       yield return new WaitForSeconds(.5f);
       if (ToWin > done) done++;
-      controller.EnemyKilled(done, ToWin);
+      Game.EnemyKilled(done);
       yield return new WaitForSeconds(2f);
     }
     if (ToWin == done && killedByPlayer) {
@@ -65,7 +67,7 @@ public class Level1 : Level {
         Destroy(spider);
       }
       spider = null;
-      controller.WinLevel();
+      Game.WinLevel();
     }
     else {
       yield return new WaitForSeconds(Random.Range(2f, 5f));
@@ -81,7 +83,7 @@ public class Level1 : Level {
         }
         Destroy(spider);
       }
-      Vector3 spawnPosition = Player.position + Dist * (Player.position - controller.transform.position) + Random.insideUnitSphere * Random.Range(1f, 2f) + (Random.Range(0, 2) * 2 - 1) * Horiz * controller.transform.right;
+      Vector3 spawnPosition = Player.position + Dist * (Player.position - Center.position) + Random.insideUnitSphere * Random.Range(1f, 2f) + (Random.Range(0, 2) * 2 - 1) * Horiz * Center.right;
       spawnPosition.y = Forest.SampleHeight(spawnPosition);
       spider = Instantiate(SpiderPrefab, spawnPosition, Quaternion.LookRotation(spawnPosition - Player.position));
       if (spider.TryGetComponent(out Spider script)) {
@@ -94,5 +96,8 @@ public class Level1 : Level {
   public override void RemoveAllEnemies() {
     if (spider != null) Destroy(spider);
     spider = null;
+  }
+
+  public override void ArrowhitAlert(Vector3 hitPoint) { // Not used here
   }
 }

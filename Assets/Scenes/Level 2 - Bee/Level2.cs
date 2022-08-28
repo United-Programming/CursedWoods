@@ -12,7 +12,8 @@ public class Level2 : Level {
 
   public int ToWin = 3;
   public Transform Player;
-  public Controller controller;
+  public Transform Center;
+  public Controller Game;
   public Terrain Forest;
   public GameObject BeePrefab;
 
@@ -30,8 +31,9 @@ public class Level2 : Level {
     foreach (var bee in bees)
       if (bee != null) Destroy(bee);
     Forest = forest;
-    this.controller = controller;
-    Player = this.controller.transform.GetChild(1);
+    Game = controller;
+    Center = controller.transform;
+    Player = controller.transform.GetChild(1);
     if (!sameLevel) done = 0;
     SpawnBees();
   }
@@ -39,7 +41,7 @@ public class Level2 : Level {
   void SpawnBees() {
     for (int i = 0; i < bees.Length; i++) {
       float angle = Random.Range(0, 2 * Mathf.PI);
-      Vector3 spawnPosition = controller.transform.position +
+      Vector3 spawnPosition = Center.position +
         new Vector3(Random.Range(-1f, 1f) + Mathf.Sin(angle) * Random.Range(32f, 34f),
                     Random.Range(1.35f, 5f),
                     Random.Range(-1f, 1f) + Mathf.Cos(angle) * Random.Range(32f, 34f));
@@ -55,7 +57,7 @@ public class Level2 : Level {
 
 
   public override void PlayerDeath() {
-    controller.PlayerDeath();
+    Game.PlayerDeath();
   }
 
   public override void KillEnemy(GameObject enemy) {
@@ -70,7 +72,7 @@ public class Level2 : Level {
     if (killedByPlayer) {
       yield return new WaitForSeconds(.5f);
       if (ToWin > done) done++;
-      controller.EnemyKilled(done, ToWin);
+      Game.EnemyKilled(done);
       yield return new WaitForSeconds(2f);
     }
     int pos = -1;
@@ -93,7 +95,7 @@ public class Level2 : Level {
         yield return null;
       }
       Destroy(enemy);
-      controller.WinLevel();
+      Game.WinLevel();
     }
     else {
       yield return new WaitForSeconds(Random.Range(2f, 5f));
@@ -116,4 +118,6 @@ public class Level2 : Level {
     }
   }
 
+  public override void ArrowhitAlert(Vector3 hitPoint) { // Not used here
+  }
 }

@@ -9171,7 +9171,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ToWin: 5
   Player: {fileID: 0}
-  controller: {fileID: 0}
+  Center: {fileID: 0}
+  Game: {fileID: 0}
   Forest: {fileID: 0}
   SpiderPrefab: {fileID: 5404940784975426151, guid: 49eac070033cf3c48a4d1e5a6dd25a4e,
     type: 3}
@@ -12489,7 +12490,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ToWin: 3
   Player: {fileID: 0}
-  controller: {fileID: 0}
+  Center: {fileID: 0}
+  Game: {fileID: 0}
   Forest: {fileID: 0}
   BeePrefab: {fileID: 3685000895112479753, guid: a952aa660a8d2bb42a5fb828ab1390ba,
     type: 3}
@@ -13412,9 +13414,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ToWin: 3
   Player: {fileID: 0}
-  controller: {fileID: 0}
+  Center: {fileID: 0}
+  Game: {fileID: 0}
   Forest: {fileID: 0}
-  SkeletonPrefab: {fileID: 517194769535344155, guid: ba6d9150a11863244aa2a1d6330ee8f3,
+  SkeletonPrefab: {fileID: 517194769535344157, guid: ba6d9150a11863244aa2a1d6330ee8f3,
     type: 3}
   done: 0
 --- !u!1 &930187843
@@ -17938,9 +17941,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ToWin: 4
   Player: {fileID: 0}
-  controller: {fileID: 0}
+  Center: {fileID: 0}
+  Game: {fileID: 0}
   Forest: {fileID: 0}
-  BearPrefab: {fileID: 7962199819078159310, guid: f5b41ba4c79702547a89de7544b80656,
+  BearPrefab: {fileID: 5581798614602650576, guid: f5b41ba4c79702547a89de7544b80656,
     type: 3}
   done: 0
 --- !u!4 &1349774753 stripped
@@ -23543,7 +23547,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ToWin: 5
   Player: {fileID: 0}
-  controller: {fileID: 0}
+  Center: {fileID: 0}
+  Game: {fileID: 0}
   Forest: {fileID: 0}
   FrogPrefab: {fileID: 1644373995442134, guid: 0187bdd962557471faee34c9b592135c, type: 3}
   BloodPrefab: {fileID: 1387908168178666, guid: b0dea9a92e04b412daeb449ac74853bd,

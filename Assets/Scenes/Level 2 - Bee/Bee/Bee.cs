@@ -50,7 +50,7 @@ public class Bee : MonoBehaviour {
         debugStatus = DebugStatus.GoToPlayer;
         endPos = level.Player.position + Random.Range(-2f, 2f) * Vector3.forward + Random.Range(-2f, 2f) * Vector3.right + Random.Range(1.15f, 1.25f) * Vector3.up;
         Vector3 playerPos = level.Player.position + (transform.position - level.Player.position).normalized * 1.5f;
-        Vector3 playerForwardPos = level.Player.position + (level.Player.position - level.controller.transform.position).normalized * 2.5f;
+        Vector3 playerForwardPos = level.Player.position + (level.Player.position - level.Center.position).normalized * 2.5f;
         endPos = (3 * playerPos + 2 * playerForwardPos + endPos) * .1666667f;
         endPos.y = level.Forest.SampleHeight(endPos) + Random.Range(1.15f, 1.35f);
         statusSpeed = .5f;

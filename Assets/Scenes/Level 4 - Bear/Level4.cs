@@ -11,33 +11,33 @@ public class Level4 : Level {
 
   public int ToWin = 3;
   public Transform Player;
-  public Controller controller;
+  public Transform Center;
+  public Controller Game;
   public Terrain Forest;
-  public GameObject BearPrefab;
+  public Bear BearPrefab;
 
   public int done = 0;
-  GameObject bear = null;
+  Bear bear = null;
 
 
   public override void Init(Terrain forest, Controller controller, bool sameLevel) {
-    if (bear != null) Destroy(bear);
+    if (bear != null) Destroy(bear.gameObject);
     Forest = forest;
-    this.controller = controller;
-    Player = this.controller.transform.GetChild(1);
+    Game = controller;
+    Center = controller.transform;
+    Player = controller.transform.GetChild(1);
     if (!sameLevel) done = 0;
     SpawnBear();
   }
 
   void SpawnBear() {
     bear = Instantiate(BearPrefab, transform);
-    if (bear.TryGetComponent(out Bear script)) {
-      script.Init(this, 2.5f, Vector3.zero);
-    }
+    bear.Init(this, 2.5f, Vector3.zero);
   }
 
 
   public override void PlayerDeath() {
-    controller.PlayerDeath(true);
+    Game.PlayerDeath(true);
   }
 
   public override void KillEnemy(GameObject enemy) {
@@ -52,7 +52,7 @@ public class Level4 : Level {
     if (killedByPlayer) {
       yield return new WaitForSeconds(.5f);
       if (ToWin > done) done++;
-      controller.EnemyKilled(done, ToWin);
+      Game.EnemyKilled(done);
     }
 
     if (bear == null || enemy == null) yield break; // This will happen when the bear is not yet fully killed
@@ -69,13 +69,20 @@ public class Level4 : Level {
         yield return null;
       }
       Destroy(enemy);
-      controller.WinLevel();
+      Game.WinLevel();
     }
   }
 
   public override void RemoveAllEnemies() {
-    if (bear != null) Destroy(bear);
+    if (bear != null) Destroy(bear.gameObject);
     bear = null;
+  }
+
+
+  public override void ArrowhitAlert(Vector3 hitPoint) { // Alert the bear if the arrow was close enough
+    if (bear.status != Bear.BearStatus.Waiting && bear.status != Bear.BearStatus.Walking) return; // Not needed
+    if (Vector3.Distance(bear.transform.position, hitPoint) > 5) return; // Too far away
+    bear.StartBuffing();
   }
 
 }

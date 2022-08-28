@@ -45,7 +45,7 @@ public class Snake : Enemy
     protected override void Movement(Transform target)
     {
         //Move
-        rb.MovePosition(transform.position + TargetDirection(target) * speed * Time.fixedDeltaTime);
+        rb.MovePosition(transform.position + speed * Time.fixedDeltaTime * TargetDirection(target));
 
         SetForwardToTarget(target);
 

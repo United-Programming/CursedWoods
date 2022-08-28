@@ -27,7 +27,7 @@ public class Bear : MonoBehaviour {
     startPos = spawnPosition;
     float angle = Random.Range(0, Mathf.PI * 2);
     float dist = 25 + Random.Range(0, 30f);
-    endPos = l.controller.transform.position + Vector3.forward * Mathf.Sin(angle) * dist + Vector3.right * Mathf.Cos(angle) * dist;
+    endPos = l.Center.position + Mathf.Sin(angle) * dist * Vector3.forward + Mathf.Cos(angle) * dist * Vector3.right;
     endPos.y = l.Forest.SampleHeight(endPos);
     transform.position = spawnPosition;
     status = BearStatus.Walking;
@@ -83,15 +83,10 @@ public class Bear : MonoBehaviour {
 
 
       // do we see the player (and are we more far away from the center than the player)?
-      if (Vector3.Distance(level.controller.transform.position, transform.position) > 18) {
+      if (Vector3.Distance(level.Center.position, transform.position) > 18) {
         angle = Vector3.SignedAngle(transform.forward, level.Player.position - transform.position, Vector3.up);
         if (-35f < angle && angle < 35) { // Yes -> roar and run
-          status = BearStatus.Buffing;
-          anim.Play("Buff");
-          anim.SetBool("Run", false);
-          anim.SetBool("Move", false);
-          sounds.clip = RoarSound;
-          sounds.Play();
+          StartBuffing();
         }
       }
     }
@@ -102,7 +97,7 @@ public class Bear : MonoBehaviour {
         float angle = Random.Range(0, Mathf.PI * 2);
         float dist = 25 + Random.Range(0, 30f);
         startPos = endPos;
-        endPos = level.controller.transform.position + Vector3.forward * Mathf.Sin(angle) * dist + Vector3.right * Mathf.Cos(angle) * dist;
+        endPos = level.Center.position + Mathf.Sin(angle) * dist * Vector3.forward + Mathf.Cos(angle) * dist * Vector3.right;
         endPos.y = level.Forest.SampleHeight(endPos);
         status = BearStatus.Walking;
         anim.SetBool("Move", true);
@@ -110,7 +105,7 @@ public class Bear : MonoBehaviour {
     }
 
     if (status == BearStatus.Chasing) {
-      endPos = level.controller.player.position;
+      endPos = level.Center.position;
       float dist;
       Vector3 pos = transform.position;
       pos.y = level.Forest.SampleHeight(pos);
@@ -146,6 +141,14 @@ public class Bear : MonoBehaviour {
     }
   }
 
+  public void StartBuffing() {
+    status = BearStatus.Buffing;
+    anim.Play("Buff");
+    anim.SetBool("Run", false);
+    anim.SetBool("Move", false);
+    sounds.clip = RoarSound;
+    sounds.Play();
+  }
 
   public void StartChasing() {
     status = BearStatus.Chasing;

@@ -79,7 +79,7 @@ public class Controller : MonoBehaviour {
     }
     if (level != null) level.gameObject.SetActive(false);
 
-    currentLevel = 4;
+//FIXME    currentLevel = 4;
 
     level = Levels[currentLevel];
     level.gameObject.SetActive(true);
@@ -395,11 +395,16 @@ public class Controller : MonoBehaviour {
     SetAiming(Aiming.Loading);
     if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {
       Quaternion rot = Quaternion.LookRotation(arrowDir, Vector3.up);
-      arrow.Init(arrowStart, rot, arrowforce * arrowDir, Ground);
+      arrow.Init(arrowStart, rot, arrowforce * arrowDir, Ground, this);
     }
   }
 
-  internal void EnemyKilled(int done, int toWin) {
+  internal void ArrowHit(Vector3 position) {
+    if (level != null) level.ArrowhitAlert(position);
+  }
+
+
+  internal void EnemyKilled(int done) {
     PlayerData.AddAKill();
     LevelProgress.text = $"{level.GetName()}\n{done}/{level.GetToWin()}";
   }
@@ -444,4 +449,5 @@ public class Controller : MonoBehaviour {
       audioBow.Play();
     }
   }
+
 }

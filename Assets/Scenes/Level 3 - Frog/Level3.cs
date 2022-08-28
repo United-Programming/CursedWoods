@@ -11,7 +11,8 @@ public class Level3 : Level {
 
   public int ToWin = 3;
   public Transform Player;
-  public Controller controller;
+  public Transform Center;
+  public Controller Game;
   public Terrain Forest;
   public GameObject FrogPrefab;
   public GameObject BloodPrefab;
@@ -26,8 +27,9 @@ public class Level3 : Level {
       if (frog != null) Destroy(frog);
     if (blood != null) Destroy(blood);
     Forest = forest;
-    this.controller = controller;
-    Player = this.controller.transform.GetChild(1);
+    Game = controller;
+    Center = controller.transform;
+    Player = controller.transform.GetChild(1);
     if (!sameLevel) done = 0;
     SpawnFrogs();
   }
@@ -35,7 +37,7 @@ public class Level3 : Level {
   void SpawnFrogs() {
     for (int i = 0; i < frogs.Length; i++) {
       float angle = Mathf.PI * 2 * i / frogs.Length + Random.Range(-.025f, .025f);
-      Vector3 spawnPosition = controller.transform.position +
+      Vector3 spawnPosition = Center.position +
         new Vector3(Mathf.Sin(angle) * Random.Range(59.5f, 60.5f), 0, Mathf.Cos(angle) * Random.Range(59.5f, 60.5f));
       spawnPosition.y += Forest.SampleHeight(spawnPosition);
       frogs[i] = Instantiate(FrogPrefab, transform);
@@ -48,13 +50,13 @@ public class Level3 : Level {
 
 
   public override void PlayerDeath() {
-    controller.PlayerDeath(true);
+    Game.PlayerDeath(true);
     StartCoroutine(AddBlood());
   }
   IEnumerator AddBlood() {
     if (blood != null) Destroy(blood);
     blood = Instantiate(BloodPrefab, transform);
-    blood.transform.SetPositionAndRotation(controller.player.position, Quaternion.Euler(0, controller.player.localRotation.eulerAngles.y, 0));
+    blood.transform.SetPositionAndRotation(Player.position, Quaternion.Euler(0, Player.localRotation.eulerAngles.y, 0));
     float size = 0;
     while (size < 1) {
       yield return null;
@@ -86,7 +88,7 @@ public class Level3 : Level {
     if (killedByPlayer) {
       yield return new WaitForSeconds(.5f);
       if (ToWin > done) done++;
-      controller.EnemyKilled(done, ToWin);
+      Game.EnemyKilled(done);
       yield return new WaitForSeconds(2f);
     }
     int pos = -1;
@@ -109,7 +111,7 @@ public class Level3 : Level {
         yield return null;
       }
       Destroy(enemy);
-      controller.WinLevel();
+      Game.WinLevel();
     }
     else {
       yield return new WaitForSeconds(Random.Range(2f, 5f));
@@ -134,4 +136,6 @@ public class Level3 : Level {
     blood = null;
   }
 
+  public override void ArrowhitAlert(Vector3 hitPoint) { // Not used here
+  }
 }

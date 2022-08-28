@@ -39,9 +39,9 @@ public class Spider : MonoBehaviour {
       anim.SetBool("Run", false);
       attack = true;
     }
-    else if (level.controller.aiming == Controller.Aiming.ArrowReady) { // Is the player is aiming?
+    else if (level.Game.aiming == Controller.Aiming.ArrowReady) { // Is the player is aiming?
       // Flee
-      Vector3 dir = (transform.position + level.controller.cam.transform.forward * 2f - level.Player.position).normalized;
+      Vector3 dir = (transform.position + level.Game.cam.transform.forward * 2f - level.Player.position).normalized;
       Vector3 pos = transform.position;
       pos += dir;
       pos.y = level.Forest.SampleHeight(pos);
@@ -57,7 +57,7 @@ public class Spider : MonoBehaviour {
     }
     else {
       transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.position - level.Player.position, Vector3.up), 4 * Time.deltaTime);
-      Vector3 dir = (level.Player.position + level.controller.cam.transform.forward * 1.75f - transform.position).normalized;
+      Vector3 dir = (level.Player.position + level.Game.cam.transform.forward * 1.75f - transform.position).normalized;
       Vector3 pos = transform.position;
       pos += dir;
       pos.y = level.Forest.SampleHeight(pos);

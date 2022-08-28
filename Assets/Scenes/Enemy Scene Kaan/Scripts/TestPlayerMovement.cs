@@ -24,7 +24,7 @@ public class TestPlayerMovement : MonoBehaviour
         float inputX = Input.GetAxis("Horizontal");
         float inputZ = Input.GetAxis("Vertical");
 
-        transform.position += new Vector3(inputX, 0, inputZ) * Time.deltaTime * speed;
+        transform.position += speed * Time.deltaTime * new Vector3(inputX, 0, inputZ);
     }
 
 }

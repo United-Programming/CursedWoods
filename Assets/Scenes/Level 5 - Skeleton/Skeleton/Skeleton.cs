@@ -31,7 +31,7 @@ public class Skeleton : MonoBehaviour {
     endPos = spawnPosition + dist * Mathf.Sin(angle) * Vector3.forward + dist * Mathf.Cos(angle) * Vector3.right;
     endPos.y = l.Forest.SampleHeight(endPos);
     transform.position = spawnPosition;
-    transform.LookAt(transform.position - l.controller.transform.position);
+    transform.LookAt(transform.position - l.Center.position);
     status = SkeletonStatus.Walking;
     speed = v;
     level = l;
@@ -82,11 +82,10 @@ public class Skeleton : MonoBehaviour {
 
 
       // do we see the player (and are we more far away from the center than the player)?
-      if (Vector3.Distance(level.controller.player.position, transform.position) < 10) {
+      if (Vector3.Distance(level.Player.position, transform.position) < 10) {
         angle = Vector3.SignedAngle(transform.forward, level.Player.position - transform.position, Vector3.up);
         if (-35f < angle && angle < 35) { // Yes -> chase
-          status = SkeletonStatus.Chasing;
-          chaseTime = 0;
+          StartChasing();
         }
       }
     }
@@ -110,9 +109,10 @@ public class Skeleton : MonoBehaviour {
 
 
       // Check if we are aiming at the skeleton
-      if (level.controller.aiming == Controller.Aiming.ArrowReady) {
+      if (level.Game.aiming == Controller.Aiming.ArrowReady) {
         float angle = Vector3.SignedAngle(level.Player.forward, transform.position - level.Player.position, Vector3.up);
         if (-35f < angle && angle < 35) { // Yes -> defend
+          anim.speed = 1;
           anim.SetTrigger("Defend");
           status = SkeletonStatus.Waiting;
           waitTime = 2;
@@ -123,7 +123,7 @@ public class Skeleton : MonoBehaviour {
       }
 
 
-      endPos = level.controller.player.position;
+      endPos = level.Player.position;
       float dist;
       Vector3 pos = transform.position;
       pos.y = level.Forest.SampleHeight(pos);
@@ -133,16 +133,15 @@ public class Skeleton : MonoBehaviour {
       dist = Vector3.Distance(transform.position, startPos);
       if (dist < 1) walkMultiplier = dist; // If we just started ramp up the speed
       dist = Vector3.Distance(transform.position, endPos);
-      if (dist < 2.1f) { // Attack
+      if (dist < 1.1f) { // Attack
         status = SkeletonStatus.Attack;
         sounds.clip = RoarSound;
         sounds.Play();
-        anim.SetBool("Run", false);
-        anim.SetBool("Move", false);
-        if (Random.Range(0, 2) == 0) anim.Play("Light Attack");
-        else anim.Play("Heavy Attack");
+        anim.speed = 1;
+        if (Random.Range(0, 2) == 0) anim.SetTrigger("AttackL");
+        else anim.SetTrigger("AttackH");
       }
-      if (dist < 2) walkMultiplier = dist * .5f; // If we are close to the target, slow down the speed
+      if (dist < 2f) walkMultiplier = dist * .5f; // If we are close to the target, slow down the speed
       if (walkMultiplier == 0) walkMultiplier = 1;
       anim.speed = walkMultiplier;
 
@@ -152,7 +151,7 @@ public class Skeleton : MonoBehaviour {
     }
 
     if (status == SkeletonStatus.Hitting) {
-      if (Physics.CheckSphere(BodyCenter.position, .5f, PlayerMask)) {
+      if (Physics.CheckSphere(BodyCenter.position, .5f, PlayerMask)) { // FIXME check these values <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         status = SkeletonStatus.Waiting;
         waitTime = 10;
         level.PlayerDeath();
@@ -160,11 +159,12 @@ public class Skeleton : MonoBehaviour {
     }
 
     if (status == SkeletonStatus.Defending) {
-      if (level.controller.aiming != Controller.Aiming.ArrowReady) {
+      if (level.Game.aiming != Controller.Aiming.ArrowReady) {
         startPos = transform.position;
         endPos = transform.position + transform.forward;
         endPos.y = level.Forest.SampleHeight(endPos);
         status = SkeletonStatus.Walking;
+        anim.speed = 1;
         anim.Play("Idle");
         anim.SetBool("Move", true);
       }
@@ -203,7 +203,7 @@ public class Skeleton : MonoBehaviour {
   }
   public void AttackCompleted() {
     status = SkeletonStatus.Waiting;
-    waitTime = 10;
+    waitTime = Random.Range(1.5f, 3f);
   }
 
 
@@ -212,6 +212,7 @@ public class Skeleton : MonoBehaviour {
 
     if (status != SkeletonStatus.Dead && status != SkeletonStatus.Defending && (ArrowMask.value & layer) != 0) { // Have 3 levels of hits, and change the material at every hit
       status = SkeletonStatus.Dead;
+      anim.speed = 1;
       anim.Play("Death");
       Destroy(other.transform.parent.gameObject); // Remove the arrow immediately
       level.KillEnemy(gameObject);

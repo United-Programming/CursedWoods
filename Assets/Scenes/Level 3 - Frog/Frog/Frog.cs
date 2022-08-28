@@ -26,7 +26,7 @@ public class Frog : MonoBehaviour {
   internal void Init(Level3 l, float s, Vector3 spawnPosition) {
     startPos = spawnPosition;
     transform.position = spawnPosition;
-    transform.LookAt(l.controller.transform.position, Vector3.up);
+    transform.LookAt(l.Center.position, Vector3.up);
     speed = s;
     level = l;
     jumpTime = Random.Range(3f, 10f);
@@ -53,7 +53,7 @@ public class Frog : MonoBehaviour {
       status = FrogStatus.Waiting;
       lastStatusChange = 0;
       anim.Play("Idle");
-      transform.LookAt(level.controller.transform.position, Vector3.up);
+      transform.LookAt(level.Center.position, Vector3.up);
     }
 
     // We should jump about randomly, but also if the player is in front of us
@@ -71,7 +71,7 @@ public class Frog : MonoBehaviour {
     }
     if (jumpTime < 0) {
       jumpTime = Random.Range(5f, 10f);
-      Vector3 force = CalculateJumpForce(level.controller.transform.position + (transform.position - level.controller.transform.position).normalized * 21);
+      Vector3 force = CalculateJumpForce(level.Center.position + (transform.position - level.Center.position).normalized * 21);
       rb.AddForce(force, ForceMode.Impulse);
       anim.SetTrigger("Jump");
       sounds.clip = jumpSound;
@@ -81,7 +81,7 @@ public class Frog : MonoBehaviour {
     }
     if (playerCheck < 0) {
       playerCheck = Random.Range(.5f, 2f);
-      float angle = Vector3.SignedAngle(level.controller.transform.position - transform.position, level.Player.position - transform.position, Vector3.up);
+      float angle = Vector3.SignedAngle(level.Center.position - transform.position, level.Player.position - transform.position, Vector3.up);
       float dist = Vector3.Distance(level.Player.position, transform.position);
       if (-7f < angle && angle < 7f && 35 < dist && dist < 45) {
         dd = dist;
@@ -140,7 +140,7 @@ public class Frog : MonoBehaviour {
 
   public void GoBackCompleted() {
     transform.position = startPos;
-    transform.LookAt(level.controller.transform.position, Vector3.up);
+    transform.LookAt(level.Center.position, Vector3.up);
     anim.Play("Start");
     status = FrogStatus.Starting;
     lastStatusChange = 0;
