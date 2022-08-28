@@ -1,6 +1,7 @@
 Bug fix on existing levels
-Level skeleton
 Level owl
 Level ghost
 Level spider
 Level dragon
+Level final boss
+

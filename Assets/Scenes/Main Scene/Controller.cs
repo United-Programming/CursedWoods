@@ -34,6 +34,8 @@ public class Controller : MonoBehaviour {
   public TextMeshProUGUI NumOfAccuracyG;
   public TextMeshProUGUI NumOfAccuracyT;
 
+  public Fog fog;
+
   float playerTargetAngle = 0;
   float movement = 0;
   float angle = 0;
@@ -201,6 +203,11 @@ public class Controller : MonoBehaviour {
   }
 
   private void Update() {
+    if (Input.GetKeyDown(KeyCode.P)) {
+      if (fog.fogEnabled) fog.Disable();
+      else fog.EnableFog(.9f);
+    }
+
     if (Input.GetKeyDown(KeyCode.F11)) {
       bool full = !FullScreenToggle.isOn;
       FullScreenToggle.SetIsOnWithoutNotify(full);
