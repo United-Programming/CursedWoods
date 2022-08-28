@@ -20,7 +20,7 @@ public class Level5 : Level {
   public Skeleton SkeletonPrefab;
 
   public int done = 0;
-  readonly Skeleton[] skeletons = new Skeleton[1];
+  readonly Skeleton[] skeletons = new Skeleton[5];
 
 
   public override void Init(Terrain forest, Controller controller, bool sameLevel) {
@@ -57,7 +57,7 @@ public class Level5 : Level {
   }
 
   public override void DestroyEnemy(GameObject enemy) {
-    // Level 4 will not have bears to be removed automatically
+    // No automatic destroy
   }
 
   IEnumerator DestroyAsync(GameObject enemy, bool killedByPlayer) {
@@ -69,7 +69,7 @@ public class Level5 : Level {
     }
     int pos = -1;
     for (int i = 0; i < skeletons.Length; i++) {
-      if (skeletons[i] == enemy) {
+      if (skeletons[i].gameObject == enemy) {
         pos = i;
         break;
       }
@@ -82,7 +82,7 @@ public class Level5 : Level {
       float stumpTime = 1;
       Vector3 stumpScale = Vector3.one;
       while (stumpTime > 0) {
-        stumpTime -= Time.deltaTime * 2;
+        stumpTime -= Time.deltaTime * 3;
         stumpScale.y = stumpTime;
         enemy.transform.localScale = stumpScale;
         yield return null;
@@ -91,12 +91,11 @@ public class Level5 : Level {
       Game.WinLevel();
     }
     else {
-      Debug.Log(enemy.transform.localScale);
       yield return new WaitForSeconds(Random.Range(1f, 3f));
       float stumpTime = 1;
       Vector3 stumpScale = Vector3.one;
       while (stumpTime > 0) {
-        stumpTime -= Time.deltaTime * 2;
+        stumpTime -= Time.deltaTime * 3;
         stumpScale.y = stumpTime;
         enemy.transform.localScale = stumpScale;
         yield return null;

@@ -11,9 +11,9 @@ public class Skeleton : MonoBehaviour {
   public AudioSource soundsL;
   public AudioSource soundsR;
   public AudioClip[] WalkSounds;
-  public AudioClip RoarSound;
+  public AudioClip SwordSwingSound;
   public AudioClip DeathSound;
-  public AudioClip HitSound;
+  public AudioClip DefendingSound;
   public SkeletonAnimEvents skelAnimEvent;
   Vector3 startPos, endPos, spawnPosition;
 
@@ -35,7 +35,7 @@ public class Skeleton : MonoBehaviour {
     status = SkeletonStatus.Walking;
     speed = v;
     level = l;
-    anim.SetBool("Move", true);
+    anim.SetInteger("Move", 1);
   }
 
 
@@ -60,8 +60,7 @@ public class Skeleton : MonoBehaviour {
         // make the standard wait for a few random seconds
         status = SkeletonStatus.Waiting;
         waitTime = Random.Range(1, 2.5f);
-        anim.SetBool("Move", false);
-        anim.SetBool("Run", false);
+        anim.SetInteger("Move", 0);
         anim.speed = 1;
       }
       Vector3 pos = transform.position;
@@ -99,7 +98,7 @@ public class Skeleton : MonoBehaviour {
         endPos = spawnPosition + dist * Mathf.Sin(angle) * Vector3.forward + dist * Mathf.Cos(angle) * Vector3.right;
         endPos.y = level.Forest.SampleHeight(endPos);
         status = SkeletonStatus.Walking;
-        anim.SetBool("Move", true);
+        anim.SetInteger("Move", 1);
       }
     }
 
@@ -113,11 +112,10 @@ public class Skeleton : MonoBehaviour {
         float angle = Vector3.SignedAngle(level.Player.forward, transform.position - level.Player.position, Vector3.up);
         if (-35f < angle && angle < 35) { // Yes -> defend
           anim.speed = 1;
-          anim.SetTrigger("Defend");
+          anim.SetBool("Defend", true);
           status = SkeletonStatus.Waiting;
           waitTime = 2;
-          anim.SetBool("Run", false);
-          anim.SetBool("Move", false);
+          anim.SetInteger("Move", 0);
           return;
         }
       }
@@ -134,9 +132,8 @@ public class Skeleton : MonoBehaviour {
       if (dist < 1) walkMultiplier = dist; // If we just started ramp up the speed
       dist = Vector3.Distance(transform.position, endPos);
       if (dist < 1.1f) { // Attack
+        anim.SetInteger("Move", 0);
         status = SkeletonStatus.Attack;
-        sounds.clip = RoarSound;
-        sounds.Play();
         anim.speed = 1;
         if (Random.Range(0, 2) == 0) anim.SetTrigger("AttackL");
         else anim.SetTrigger("AttackH");
@@ -160,29 +157,30 @@ public class Skeleton : MonoBehaviour {
 
     if (status == SkeletonStatus.Defending) {
       if (level.Game.aiming != Controller.Aiming.ArrowReady) {
+        defendingDelay -= Time.deltaTime;
+        if (defendingDelay > 0) return;
         startPos = transform.position;
         endPos = transform.position + transform.forward;
         endPos.y = level.Forest.SampleHeight(endPos);
         status = SkeletonStatus.Walking;
         anim.speed = 1;
-        anim.Play("Idle");
-        anim.SetBool("Move", true);
+        anim.SetBool("Defend", false);
       }
     }
   }
 
+  float defendingDelay = 1;
 
   public void StartChasing() {
     status = SkeletonStatus.Chasing;
     chaseTime = 0;
-    anim.SetBool("Run", true);
-    anim.SetBool("Move", false);
+    anim.SetInteger("Move", 2);
   }
 
   public void StartDefending() {
     status = SkeletonStatus.Defending;
-    anim.SetBool("Run", false);
-    anim.SetBool("Move", false);
+    defendingDelay = Random.Range(1f, 2f);
+    anim.SetInteger("Move", 0);
   }
 
   bool soundEmitter = false;
@@ -199,6 +197,8 @@ public class Skeleton : MonoBehaviour {
   }
 
   public void AttackStarted() {
+    sounds.clip = SwordSwingSound;
+    sounds.Play();
     status = SkeletonStatus.Hitting;
   }
   public void AttackCompleted() {
@@ -210,7 +210,17 @@ public class Skeleton : MonoBehaviour {
   private void OnTriggerEnter(Collider other) {
     int layer = 1 << other.gameObject.layer;
 
-    if (status != SkeletonStatus.Dead && status != SkeletonStatus.Defending && (ArrowMask.value & layer) != 0) { // Have 3 levels of hits, and change the material at every hit
+    if (status != SkeletonStatus.Dead && (ArrowMask.value & layer) != 0) {
+      if (status == SkeletonStatus.Defending) { // In case the arrow hits the shiled (skeleton is defending) then make the arrow bounce
+        if (other.transform.parent.parent.TryGetComponent(out Rigidbody rb)) {
+          Vector3 vel = Vector3.Reflect(rb.velocity, transform.forward);
+          rb.velocity = vel * .8f;
+        }
+        sounds.clip = DefendingSound;
+        sounds.Play();
+        return;
+      }
+
       status = SkeletonStatus.Dead;
       anim.speed = 1;
       anim.Play("Death");

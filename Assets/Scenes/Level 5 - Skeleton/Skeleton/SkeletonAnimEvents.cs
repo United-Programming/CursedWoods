@@ -14,4 +14,8 @@ public class SkeletonAnimEvents : MonoBehaviour {
   public void StartDefending() {
     if (skeleton != null) skeleton.StartDefending();
   }
+
+  public void PlayStepSound() {
+    if (skeleton != null) skeleton.PlayStepSound();
+  }
 }

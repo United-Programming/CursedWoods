@@ -172,10 +172,14 @@ MonoBehaviour:
   sounds: {fileID: -3207119378077417900}
   soundsL: {fileID: -5105698121560541231}
   soundsR: {fileID: -6435735825295607980}
-  WalkSounds: []
-  RoarSound: {fileID: 0}
-  DeathSound: {fileID: 0}
-  HitSound: {fileID: 0}
+  WalkSounds:
+  - {fileID: 8300000, guid: b67faa610467125409a367a108bc7070, type: 3}
+  - {fileID: 8300000, guid: 0c8852854fc3a8b47a6c4595eab1bd89, type: 3}
+  - {fileID: 8300000, guid: 74ef71259cc1f094da1466a668833bf4, type: 3}
+  - {fileID: 8300000, guid: d0cc3270cc507094ea5f53361cb83c86, type: 3}
+  SwordSwingSound: {fileID: 8300000, guid: d819198c68c49c24ca5391f619512334, type: 3}
+  DeathSound: {fileID: 8300000, guid: 8240e872f598019428e5018df59c94a6, type: 3}
+  DefendingSound: {fileID: 8300000, guid: ac074324e2582d14396b93ac7c8dac97, type: 3}
   skelAnimEvent: {fileID: 1460298878797152935}
   status: 0
 --- !u!82 &-3207119378077417900
