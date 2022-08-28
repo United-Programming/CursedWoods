@@ -15,6 +15,8 @@ public class Level1 : Level {
   public Controller Game;
   public Terrain Forest;
   public GameObject SpiderPrefab;
+  public Vector3 LevelCenter;
+  public override Vector3 GetLevelCenter() => LevelCenter;
 
   public float Horiz = 5;
   public float Dist = 2f;

@@ -16,6 +16,8 @@ public class Level2 : Level {
   public Controller Game;
   public Terrain Forest;
   public GameObject BeePrefab;
+  public Vector3 LevelCenter;
+  public override Vector3 GetLevelCenter() => LevelCenter;
 
   public int done = 0;
   readonly GameObject[] bees = new GameObject[8];

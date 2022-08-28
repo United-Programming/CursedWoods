@@ -16,6 +16,8 @@ public class Level3 : Level {
   public Terrain Forest;
   public GameObject FrogPrefab;
   public GameObject BloodPrefab;
+  public Vector3 LevelCenter;
+  public override Vector3 GetLevelCenter() => LevelCenter;
 
   public int done = 0;
   readonly GameObject[] frogs = new GameObject[16];

@@ -15,6 +15,8 @@ public class Level4 : Level {
   public Controller Game;
   public Terrain Forest;
   public Bear BearPrefab;
+  public Vector3 LevelCenter;
+  public override Vector3 GetLevelCenter() => LevelCenter;
 
   public int done = 0;
   Bear bear = null;
@@ -84,5 +86,4 @@ public class Level4 : Level {
     if (Vector3.Distance(bear.transform.position, hitPoint) > 5) return; // Too far away
     bear.StartBuffing();
   }
-
 }

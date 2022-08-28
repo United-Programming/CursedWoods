@@ -12,4 +12,6 @@ public abstract class Level : MonoBehaviour {
 
   public abstract void RemoveAllEnemies();
   public abstract void ArrowhitAlert(Vector3 hitPoint);
+
+  public abstract Vector3 GetLevelCenter();
 }

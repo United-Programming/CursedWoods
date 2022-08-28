@@ -82,9 +82,7 @@ public class Controller : MonoBehaviour {
 //FIXME    currentLevel = 4;
 
     level = Levels[currentLevel];
-    level.gameObject.SetActive(true);
-    level.Init(Ground, this, false);
-    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
+    StartCoroutine(FadeToLevel(level));
     return false;
   }
 
@@ -450,4 +448,35 @@ public class Controller : MonoBehaviour {
     }
   }
 
+
+  public TextMeshProUGUI levelText1;
+  public TextMeshProUGUI levelText2;
+  public CanvasGroup canvasGroup;
+
+  IEnumerator FadeToLevel(Level l) {
+    float alpha = 0;
+    canvasGroup.alpha = 0;
+    levelText1.text = l.GetName();
+    levelText2.text = l.GetName();
+    while (alpha < 1) {
+      yield return null;
+      alpha += Time.deltaTime * 2;
+      canvasGroup.alpha = alpha;
+    }
+    yield return new WaitForSeconds(.5f);
+    Vector3 pos = l.GetLevelCenter();
+    pos.y = Ground.SampleHeight(pos);
+    transform.position = pos;
+    level.gameObject.SetActive(true);
+    level.Init(Ground, this, false);
+    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
+    yield return new WaitForSeconds(.5f);
+    while (alpha > 0) {
+      yield return null;
+      alpha -= Time.deltaTime;
+      canvasGroup.alpha = alpha;
+    }
+    yield return null;
+    canvasGroup.alpha = 0;
+  }
 }

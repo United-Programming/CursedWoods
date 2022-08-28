@@ -18,6 +18,8 @@ public class Level5 : Level {
   public Controller Game;
   public Terrain Forest;
   public Skeleton SkeletonPrefab;
+  public Vector3 LevelCenter;
+  public override Vector3 GetLevelCenter() => LevelCenter;
 
   public int done = 0;
   readonly Skeleton[] skeletons = new Skeleton[5];
