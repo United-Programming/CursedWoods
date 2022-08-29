@@ -6,14 +6,43 @@ using UnityEngine.UI;
 
 public class Controller : MonoBehaviour {
 
+  [Header("Player ----------------------")]
   public Transform Player;
   public GameObject ArrowPlayer;
   public Transform ArrowPrefab;
   public Animator anim;
+  public LineRenderer lineRenderer;
+  public int numLives = 3;
+  public Image[] Lives;
+  public float speed = .18f;
+  bool crushed = false;
+  float playerTargetAngle = 0;
+  float movement = 0;
+  float angle = 0;
+
+  [Header("World ----------------------")]
   public Camera cam;
   public GameObject Environmnet;
   public Terrain Ground1;
   public Terrain Ground2;
+  public Fog fog;
+  public Aiming aiming = Aiming.NotAiming;
+  public Transform HandRefR, HandRefL;
+  float aimV;
+  public float arrowforce = 25;
+
+  [Header("UI ----------------------")]
+  public CursorPointer cursorPointer;
+  [SerializeField] GameObject GamePlay, Intro, GameCanvas, PauseMenu;
+  public Toggle FullScreenToggle;
+  public TMP_Dropdown DifficultyDD;
+  public GameObject Fade;
+  public TextMeshProUGUI fadeLevelText1;
+  public TextMeshProUGUI fadeLevelText2;
+  public CanvasGroup fadeCanvasGroup;
+  public CanvasGroup textCanvasGroup;
+
+  [Header("Audio ----------------------")]
   public AudioMixer MasterMixer;
   public AudioSource audioBow;
   public AudioSource audioGlobal;
@@ -21,11 +50,11 @@ public class Controller : MonoBehaviour {
   public AudioClip Crickets;
   public AudioClip BowDraw;
   public AudioClip ThrowArrow;
-  public CursorPointer cursorPointer;
-  public LineRenderer lineRenderer;
+  [SerializeField] private Slider volumeMusic;
+  [SerializeField] private Slider volumeSound;
 
-  public int numLives = 3;
-  public Image[] Lives;
+  [Header("Gameplay ----------------------")]
+  public GameStatus gameStatus = GameStatus.GameOver;
   public GameObject GameOver;
   public TextMeshProUGUI LevelProgress;
   public TextMeshProUGUI NumOfPlay;
@@ -35,30 +64,21 @@ public class Controller : MonoBehaviour {
   public TextMeshProUGUI NumOfShootsT;
   public TextMeshProUGUI NumOfAccuracyG;
   public TextMeshProUGUI NumOfAccuracyT;
-
-  public Fog fog;
-
-  float playerTargetAngle = 0;
-  float movement = 0;
-  float angle = 0;
-  public float speed = .18f;
-
-  // no aiming, loading, aiming with arrow ready
-  public enum Aiming { NotAiming, Loading, ArrowReady };
-  public Aiming aiming = Aiming.NotAiming;
-
-  bool crushed = false;
-
   int currentLevel;
   Level level;
   public Level[] Levels;
 
+  [Header("Debug ----------------------")]
+  public TMP_Dropdown debugStartLevel;
+
+
+
+  // no aiming, loading, aiming with arrow ready
+  public enum Aiming { NotAiming, Loading, ArrowReady };
 
   public enum GameStatus {
     Intro, BeginPlay, Play, Pause, WinDance, Death, GameOver
   }
-  public GameStatus gameStatus = GameStatus.GameOver;
-  [SerializeField] GameObject GamePlay, Intro, GameCanvas, PauseMenu;
 
 
   private IEnumerator Start() {
@@ -401,14 +421,11 @@ public class Controller : MonoBehaviour {
     SetGameStatus(GameStatus.WinDance);
   }
 
-  public Transform HandRefR, HandRefL;
-  public float aimV;
 
   private void OnApplicationFocus(bool focus) {
     Cursor.visible = !focus || gameStatus == GameStatus.Pause || gameStatus == GameStatus.Intro || gameStatus == GameStatus.GameOver;
   }
 
-  public float arrowforce = 100;
 
   public void ArrowLoaded() {
     SetAiming(Aiming.ArrowReady);
@@ -443,8 +460,7 @@ public class Controller : MonoBehaviour {
     SetGameStatus(GameStatus.Play);
   }
 
-  [SerializeField] private Slider volumeMusic;
-  [SerializeField] private Slider volumeSound;
+
   public void AlterVolume(bool music) {
     if (music) {
       MasterMixer.SetFloat("VolumeMusic", volumeMusic.value * 70 - 60);
@@ -455,13 +471,11 @@ public class Controller : MonoBehaviour {
       PlayerPrefs.SetFloat("VolumeSounds", volumeSound.value);
     }
   }
-  public Toggle FullScreenToggle;
   public void ToggleFullScreen() {
     Screen.fullScreen = FullScreenToggle.isOn;
     PlayerPrefs.SetInt("FullScreen", FullScreenToggle.isOn ? 1 : 0);
   }
 
-  public TMP_Dropdown DifficultyDD;
   public void ChangeDifficulty() {
     PlayerData.Difficulty = DifficultyDD.value;
   }
@@ -478,11 +492,6 @@ public class Controller : MonoBehaviour {
     }
   }
 
-  public GameObject Fade;
-  public TextMeshProUGUI fadeLevelText1;
-  public TextMeshProUGUI fadeLevelText2;
-  public CanvasGroup fadeCanvasGroup;
-  public CanvasGroup textCanvasGroup;
 
   IEnumerator FadeToLevel() {
     fadeCanvasGroup.alpha = 0;
@@ -522,6 +531,7 @@ public class Controller : MonoBehaviour {
       Environmnet.SetActive(true);
       GameOver.SetActive(false);
       GamePlay.SetActive(true);
+      SetPlayerHeightPosition();
     }
 
     level.gameObject.SetActive(true);
@@ -551,5 +561,4 @@ public class Controller : MonoBehaviour {
     Fade.SetActive(false);
   }
 
-  public TMP_Dropdown debugStartLevel;
 }
