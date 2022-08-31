@@ -14,7 +14,7 @@ public class ZombieAnimationEvents : MonoBehaviour
         if (zombie != null) zombie.AttackStarted();
     }
     
-    public void PlayStepSound() {
-        if (zombie != null) zombie.PlayStepSound();
+    public void Step() {
+        if (zombie != null) zombie.Step();
     }
 }

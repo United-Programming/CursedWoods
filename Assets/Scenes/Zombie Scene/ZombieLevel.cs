@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ZombieLevel : Level {
     public override string ToString() => "Level - Zombie";
@@ -19,6 +21,10 @@ public class ZombieLevel : Level {
     public int done = 0;
     readonly Zombie[] zombies = new Zombie[5];
 
+    private void Start() {
+        Init(Forest, Game, false);
+    }
+
     public override void Init(Terrain forest, Controller controller, bool sameLevel) {
         foreach (Zombie zombie in zombies) {
             if (zombie != null) Destroy(zombie.gameObject);
@@ -26,7 +32,7 @@ public class ZombieLevel : Level {
 
         Forest = forest;
         Game = controller;
-        Center = controller.transform;
+        Center = Player.transform;
         SpawnZombies();
     }
 
@@ -44,11 +50,11 @@ public class ZombieLevel : Level {
     }
 
     public override void PlayerDeath() {
-        throw new System.NotImplementedException();
+        Destroy(Player.gameObject);
     }
 
     public override void KillEnemy(GameObject enemy) {
-        throw new System.NotImplementedException();
+        
     }
 
     public override void DestroyEnemy(GameObject enemy) {

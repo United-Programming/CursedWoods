@@ -11,6 +11,15 @@ public class Zombie : MonoBehaviour {
     public LayerMask ArrowMask, PlayerMask;
     public ZombieAnimationEvents zombieAnimEvent;
 
+
+    [Header("Sound Section")] 
+    public AudioSource sounds;
+    public AudioSource soundsL;
+    public AudioSource soundsR;
+    public AudioClip[] WalkSounds;
+    public AudioClip AttackSound;
+    public AudioClip DeathSound;
+    
     public enum ZombieStatus {
         Waiting,
         Walking,
@@ -19,7 +28,8 @@ public class Zombie : MonoBehaviour {
         Hitting,
         Dead,
     }
-    public ZombieStatus status = ZombieStatus.Waiting;
+
+    [Header("Status")] public ZombieStatus status = ZombieStatus.Waiting;
 
     private Vector3 startPos, endPos, spawnPosition;
     private float waitTime;
@@ -52,24 +62,24 @@ public class Zombie : MonoBehaviour {
                 StartWalking(endPos);
             }
         }
-        
+
         if (status == ZombieStatus.Chasing) {
             ChasingUpdate();
         }
-        
-        /*if (status == ZombieStatus.Hitting) {
-            if (Physics.CheckSphere(transform.position, .5f, PlayerMask)) { // FIXME check these values <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+        if (status == ZombieStatus.Hitting) {
+            if (Physics.CheckSphere(transform.position, 1.2f, PlayerMask)) { // FIXME check these values <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 status = ZombieStatus.Waiting;
                 waitTime = 10;
                 level.PlayerDeath();
             }
-        }*/
-        
+        }
     }
 
-    private void CheckPlayerIsAimingZombie() {
+    private void CheckPlayerIsAimingZombie() { // TODO: Define if zombie will do something when player is aiming at it.
         if (level.Game.aiming == Controller.Aiming.ArrowReady) {
-            float angle = Vector3.SignedAngle(level.Player.forward, transform.position - level.Player.position, Vector3.up);
+            float angle = Vector3.SignedAngle(level.Player.forward, transform.position - level.Player.position,
+                Vector3.up);
             if (-35f < angle && angle < 35) {
                 // Yes -> defend
                 /*anim.speed = 1;
@@ -78,7 +88,6 @@ public class Zombie : MonoBehaviour {
                     waitTime = 2;
                     anim.SetInteger("Move", 0);
                     return;*/
-                // TODO: Define if zombie will do something when player is aiming at it.
             }
         }
     }
@@ -114,7 +123,7 @@ public class Zombie : MonoBehaviour {
                 2.5f * Time.deltaTime));
 
         // If Zombie see the player (and are we more far away from the center than the player)?
-        if (Vector3.Distance(level.Player.position, transform.position) < 10) {
+        if (Vector3.Distance(level.Player.position, transform.position) < 20) {
             if (IsSeeingThePlayer()) {
                 StartChasing();
             }
@@ -130,10 +139,10 @@ public class Zombie : MonoBehaviour {
     private void ChasingUpdate() {
         chaseTime += Time.deltaTime;
         if (chaseTime > 5) status = ZombieStatus.Waiting;
-            
+
         // Check if we are aiming at the zombie
         // CheckPlayerIsAimingZombie();
-            
+
         endPos = level.Player.position;
         transform.position = SetYPosFromTerrainHeight(transform.position);
 
@@ -141,19 +150,22 @@ public class Zombie : MonoBehaviour {
         float dist = Vector3.Distance(transform.position, startPos);
         if (dist < 1) walkMultiplier = dist; // If we just started ramp up the speed
         dist = Vector3.Distance(transform.position, endPos);
-        if (dist < 1.1f) { // Attack
+        if (dist < 1.1f) {
+            // Attack
             anim.SetInteger("Move", 0);
             status = ZombieStatus.Attack;
             anim.speed = 1;
             anim.SetTrigger("Attack");
         }
+
         if (dist < 2f) walkMultiplier = dist * .5f; // If we are close to the target, slow down the speed
         if (walkMultiplier == 0) walkMultiplier = 1;
         anim.speed = walkMultiplier;
 
         transform.SetPositionAndRotation(
             Vector3.MoveTowards(transform.position, endPos, 2 * walkMultiplier * speed * Time.deltaTime),
-            Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position), 2.5f * Time.deltaTime));
+            Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position),
+                2.5f * Time.deltaTime));
     }
 
     private void SetWaitingStatus(float minWaitingTime, float maxWaitingTime) {
@@ -169,7 +181,7 @@ public class Zombie : MonoBehaviour {
         positionToSet.y = level.Forest.SampleHeight(positionToSet);
         return positionToSet;
     }
-    
+
     private void OnTriggerEnter(Collider other) {
         int layer = 1 << other.gameObject.layer;
 
@@ -190,8 +202,8 @@ public class Zombie : MonoBehaviour {
             else anim.Play("Death 2");
             Destroy(other.transform.parent.gameObject); // Remove the arrow immediately
             level.KillEnemy(gameObject);
-            // sounds.clip = DeathSound;
-            // sounds.Play();
+            sounds.clip = DeathSound;
+            sounds.Play();
         }
     }
 
@@ -199,27 +211,33 @@ public class Zombie : MonoBehaviour {
         float angle = Vector3.SignedAngle(transform.forward, level.Player.position - transform.position, Vector3.up);
         return angle is > -35f and < 35f;
     }
-    
+
     // ANIMATION EVENTS
     public void AttackStarted() {
-        // sounds.clip = SwordSwingSound;
-        // sounds.Play();
+        sounds.clip = AttackSound;
+        sounds.Play();
         status = ZombieStatus.Hitting;
     }
+
     public void AttackCompleted() {
         SetWaitingStatus(1.5f, 3f);
     }
-    
+
+    public void Step() {
+        PlayStepSound();
+    }
+
     bool soundEmitter = false;
-    public void PlayStepSound() {
+
+    private void PlayStepSound() {
         soundEmitter = !soundEmitter;
         if (soundEmitter) {
-            // soundsL.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
-            // soundsL.Play();
+            soundsL.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
+            soundsL.Play();
         }
         else {
-            // soundsR.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
-            // soundsR.Play();
+            soundsR.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
+            soundsR.Play();
         }
     }
 }
