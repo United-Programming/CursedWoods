@@ -1064,7 +1064,7 @@ MonoBehaviour:
   zombieAnimEvent: {fileID: 5901067452247372614}
   slowWalkSpeed: 0
   slowWalkTimer: 0
-  slowWalkMaxTime: 0.2
+  slowWalkMaxTime: 0.5
   sounds: {fileID: 6818848817561820292}
   soundsL: {fileID: 6818848817561820292}
   soundsR: {fileID: 6818848817561820292}

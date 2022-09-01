@@ -14,7 +14,7 @@ public class Zombie : MonoBehaviour {
     public ZombieAnimationEvents zombieAnimEvent;
     public bool slowWalkSpeed;
     public float slowWalkTimer = 0f;
-    public float slowWalkMaxTime = 0.2f;
+    public float slowWalkMaxTime = 0.5f;
     
     [Header("Sound Section")] 
     public AudioSource sounds;
@@ -39,7 +39,7 @@ public class Zombie : MonoBehaviour {
     private float waitTime;
 
     private void Start() {
-        Init(level, 0.75f, transform.position);
+        Init(level, 0.5f, transform.position);
     }
 
     internal void Init(ZombieLevel level, float v, Vector3 spawnPos) {
@@ -137,25 +137,7 @@ public class Zombie : MonoBehaviour {
 
         transform.position = SetYPosFromTerrainHeight(transform.position);
 
-        float walkMultiplier = 1;
-        float distFromStartPos = Vector3.Distance(transform.position, startPos);
-        if (distFromStartPos < 1) walkMultiplier = distFromStartPos; // If we just started ramp up the speed
-        float distToEndPos = Vector3.Distance(transform.position, endPos);
-        if (distToEndPos < 2) walkMultiplier = distToEndPos * .5f; // If we are close to the target, slow down the speed
-        if (walkMultiplier == 0) walkMultiplier = 1;
-        anim.speed = walkMultiplier;
-        
-        // Added to make zombie slow down when making a step.
-        float stepSlowerMultiplier = 1f;
-        if (slowWalkSpeed) {
-            stepSlowerMultiplier = 0.2f;
-            UpdateSlowWalkTimer();
-        }
-        
-        transform.SetPositionAndRotation(
-            Vector3.MoveTowards(transform.position, endPos, walkMultiplier * speed * stepSlowerMultiplier * Time.deltaTime),
-            Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position),
-                2.5f * Time.deltaTime));
+        MoveTransformForward(false);
 
         // If Zombie see the player (and are we more far away from the center than the player)?
         if (Vector3.Distance(level.Player.position, transform.position) < 20) {
@@ -177,14 +159,18 @@ public class Zombie : MonoBehaviour {
 
         endPos = level.Player.position;
         transform.position = SetYPosFromTerrainHeight(transform.position);
+        
+        MoveTransformForward(true);
+    }
 
+    private void MoveTransformForward(bool isChasing) {
         float walkMultiplier = 1;
         float distFromStartPos = Vector3.Distance(transform.position, startPos);
         if (distFromStartPos < 1) walkMultiplier = distFromStartPos; // If we just started ramp up the speed
         
         float distToEndPos = Vector3.Distance(transform.position, endPos);
         
-        if (distToEndPos < thresholdForStartAttackingTarget) {
+        if (isChasing && distToEndPos < thresholdForStartAttackingTarget) {
             // Attack
             StopWalkingAnimToIdle();
             status = ZombieStatus.Attack;
@@ -198,8 +184,8 @@ public class Zombie : MonoBehaviour {
 
         float stepSlowerMultiplier = 1f;
         if (slowWalkSpeed) {
-            stepSlowerMultiplier = 0.2f;
-            UpdateSlowWalkTimer();
+            stepSlowerMultiplier = 0f;
+            UpdateSlowWalkTimer();  
         }
         
         transform.SetPositionAndRotation(
