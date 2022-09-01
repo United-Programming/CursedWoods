@@ -1053,7 +1053,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: {fileID: 0}
   anim: {fileID: 2410354240551668685}
-  speed: 1
+  speed: 0.5
+  thresholdForStartAttackingTarget: 1.1
   ArrowMask:
     serializedVersion: 2
     m_Bits: 128
@@ -1061,6 +1062,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   zombieAnimEvent: {fileID: 5901067452247372614}
+  slowWalkSpeed: 0
+  slowWalkTimer: 0
+  slowWalkMaxTime: 0.2
   sounds: {fileID: 6818848817561820292}
   soundsL: {fileID: 6818848817561820292}
   soundsR: {fileID: 6818848817561820292}

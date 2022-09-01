@@ -5,13 +5,17 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Zombie : MonoBehaviour {
+    
     public ZombieLevel level;
     public Animator anim;
-    public float speed = 5;
+    public float speed = .5f;
+    public float thresholdForStartAttackingTarget = 1.1f;
     public LayerMask ArrowMask, PlayerMask;
     public ZombieAnimationEvents zombieAnimEvent;
-
-
+    public bool slowWalkSpeed;
+    public float slowWalkTimer = 0f;
+    public float slowWalkMaxTime = 0.2f;
+    
     [Header("Sound Section")] 
     public AudioSource sounds;
     public AudioSource soundsL;
@@ -33,10 +37,9 @@ public class Zombie : MonoBehaviour {
 
     private Vector3 startPos, endPos, spawnPosition;
     private float waitTime;
-    private float chaseTime;
 
     private void Start() {
-        Init(level, 1f, transform.position);
+        Init(level, 0.75f, transform.position);
     }
 
     internal void Init(ZombieLevel level, float v, Vector3 spawnPos) {
@@ -75,113 +78,7 @@ public class Zombie : MonoBehaviour {
             }
         }
     }
-
-    private void CheckPlayerIsAimingZombie() { // TODO: Define if zombie will do something when player is aiming at it.
-        if (level.Game.aiming == Controller.Aiming.ArrowReady) {
-            float angle = Vector3.SignedAngle(level.Player.forward, transform.position - level.Player.position,
-                Vector3.up);
-            if (-35f < angle && angle < 35) {
-                // Yes -> defend
-                /*anim.speed = 1;
-                    anim.SetBool("Defend", true);
-                    status = SkeletonStatus.Waiting;
-                    waitTime = 2;
-                    anim.SetInteger("Move", 0);
-                    return;*/
-            }
-        }
-    }
-
-    private void StartWalking(Vector3 startPosition) {
-        startPos = startPosition;
-        float angle = Random.Range(0, Mathf.PI * 2);
-        float dist = Random.Range(5, 10f);
-        endPos = spawnPosition + dist * Mathf.Sin(angle) * Vector3.forward + dist * Mathf.Cos(angle) * Vector3.right;
-        endPos = SetYPosFromTerrainHeight(endPos);
-        status = ZombieStatus.Walking;
-        anim.SetInteger("Move", 1);
-    }
-
-    private void WalkingUpdate() {
-        if (HasArrivedToEndPos()) {
-            SetWaitingStatus(1f, 2.5f);
-        }
-
-        transform.position = SetYPosFromTerrainHeight(transform.position);
-
-        float walkMultiplier = 1;
-        float dist = Vector3.Distance(transform.position, startPos);
-        if (dist < 1) walkMultiplier = dist; // If we just started ramp up the speed
-        dist = Vector3.Distance(transform.position, endPos);
-        if (dist < 2) walkMultiplier = dist * .5f; // If we are close to the target, slow down the speed
-        if (walkMultiplier == 0) walkMultiplier = 1;
-        anim.speed = walkMultiplier;
-
-        transform.SetPositionAndRotation(
-            Vector3.MoveTowards(transform.position, endPos, walkMultiplier * speed * Time.deltaTime),
-            Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position),
-                2.5f * Time.deltaTime));
-
-        // If Zombie see the player (and are we more far away from the center than the player)?
-        if (Vector3.Distance(level.Player.position, transform.position) < 20) {
-            if (IsSeeingThePlayer()) {
-                StartChasing();
-            }
-        }
-    }
-
-    private void StartChasing() {
-        status = ZombieStatus.Chasing;
-        chaseTime = 0;
-        anim.SetInteger("Move", 2);
-    }
-
-    private void ChasingUpdate() {
-        chaseTime += Time.deltaTime;
-        if (chaseTime > 5) status = ZombieStatus.Waiting;
-
-        // Check if we are aiming at the zombie
-        // CheckPlayerIsAimingZombie();
-
-        endPos = level.Player.position;
-        transform.position = SetYPosFromTerrainHeight(transform.position);
-
-        float walkMultiplier = 1;
-        float dist = Vector3.Distance(transform.position, startPos);
-        if (dist < 1) walkMultiplier = dist; // If we just started ramp up the speed
-        dist = Vector3.Distance(transform.position, endPos);
-        if (dist < 1.1f) {
-            // Attack
-            anim.SetInteger("Move", 0);
-            status = ZombieStatus.Attack;
-            anim.speed = 1;
-            anim.SetTrigger("Attack");
-        }
-
-        if (dist < 2f) walkMultiplier = dist * .5f; // If we are close to the target, slow down the speed
-        if (walkMultiplier == 0) walkMultiplier = 1;
-        anim.speed = walkMultiplier;
-
-        transform.SetPositionAndRotation(
-            Vector3.MoveTowards(transform.position, endPos, 2 * walkMultiplier * speed * Time.deltaTime),
-            Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position),
-                2.5f * Time.deltaTime));
-    }
-
-    private void SetWaitingStatus(float minWaitingTime, float maxWaitingTime) {
-        status = ZombieStatus.Waiting;
-        waitTime = Random.Range(minWaitingTime, maxWaitingTime);
-        anim.SetInteger("Move", 0);
-        anim.speed = 1;
-    }
-
-    private bool HasArrivedToEndPos() => Vector3.Distance(transform.position, endPos) < 1;
-
-    private Vector3 SetYPosFromTerrainHeight(Vector3 positionToSet) {
-        positionToSet.y = level.Forest.SampleHeight(positionToSet);
-        return positionToSet;
-    }
-
+    
     private void OnTriggerEnter(Collider other) {
         int layer = 1 << other.gameObject.layer;
 
@@ -207,9 +104,138 @@ public class Zombie : MonoBehaviour {
         }
     }
 
+    private void CheckPlayerIsAimingZombie() { // TODO: Define if zombie will do something when player is aiming at it.
+        if (level.Game.aiming == Controller.Aiming.ArrowReady) {
+            float angle = Vector3.SignedAngle(level.Player.forward, transform.position - level.Player.position,
+                Vector3.up);
+            if (-35f < angle && angle < 35) {
+                // Yes -> defend
+                /*anim.speed = 1;
+                    anim.SetBool("Defend", true);
+                    status = SkeletonStatus.Waiting;
+                    waitTime = 2;
+                    anim.SetInteger("Move", 0);
+                    return;*/
+            }
+        }
+    }
+
+    private void StartWalking(Vector3 startPosition) {
+        startPos = startPosition;
+        float angle = Random.Range(0, Mathf.PI * 2);
+        float dist = Random.Range(5, 10f);
+        endPos = spawnPosition + dist * Mathf.Sin(angle) * Vector3.forward + dist * Mathf.Cos(angle) * Vector3.right;
+        endPos = SetYPosFromTerrainHeight(endPos);
+        status = ZombieStatus.Walking;
+        StartWalkingAnimation();
+    }
+
+    private void WalkingUpdate() {
+        if (HasArrivedToEndPos()) {
+            SetWaitingStatus(1f, 2.5f);
+        }
+
+        transform.position = SetYPosFromTerrainHeight(transform.position);
+
+        float walkMultiplier = 1;
+        float distFromStartPos = Vector3.Distance(transform.position, startPos);
+        if (distFromStartPos < 1) walkMultiplier = distFromStartPos; // If we just started ramp up the speed
+        float distToEndPos = Vector3.Distance(transform.position, endPos);
+        if (distToEndPos < 2) walkMultiplier = distToEndPos * .5f; // If we are close to the target, slow down the speed
+        if (walkMultiplier == 0) walkMultiplier = 1;
+        anim.speed = walkMultiplier;
+        
+        // Added to make zombie slow down when making a step.
+        float stepSlowerMultiplier = 1f;
+        if (slowWalkSpeed) {
+            stepSlowerMultiplier = 0.2f;
+            UpdateSlowWalkTimer();
+        }
+        
+        transform.SetPositionAndRotation(
+            Vector3.MoveTowards(transform.position, endPos, walkMultiplier * speed * stepSlowerMultiplier * Time.deltaTime),
+            Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position),
+                2.5f * Time.deltaTime));
+
+        // If Zombie see the player (and are we more far away from the center than the player)?
+        if (Vector3.Distance(level.Player.position, transform.position) < 20) {
+            if (IsSeeingThePlayer()) {
+                StartChasing();
+            }
+        }
+    }
+
+    private void StartChasing() {
+        status = ZombieStatus.Chasing;
+        StartWalkingAnimation();
+    }
+
+    private void StartWalkingAnimation() => anim.SetInteger("Move", 1);
+
+    private void ChasingUpdate() {
+        // Zombie chases player at the same speed as it walks. 
+
+        endPos = level.Player.position;
+        transform.position = SetYPosFromTerrainHeight(transform.position);
+
+        float walkMultiplier = 1;
+        float distFromStartPos = Vector3.Distance(transform.position, startPos);
+        if (distFromStartPos < 1) walkMultiplier = distFromStartPos; // If we just started ramp up the speed
+        
+        float distToEndPos = Vector3.Distance(transform.position, endPos);
+        
+        if (distToEndPos < thresholdForStartAttackingTarget) {
+            // Attack
+            StopWalkingAnimToIdle();
+            status = ZombieStatus.Attack;
+            anim.speed = 1;
+            anim.SetTrigger("Attack");
+        }
+
+        if (distToEndPos < 2f) walkMultiplier = distToEndPos * .5f; // If we are close to the target, slow down the speed
+        if (walkMultiplier == 0) walkMultiplier = 1;
+        anim.speed = walkMultiplier;
+
+        float stepSlowerMultiplier = 1f;
+        if (slowWalkSpeed) {
+            stepSlowerMultiplier = 0.2f;
+            UpdateSlowWalkTimer();
+        }
+        
+        transform.SetPositionAndRotation(
+            Vector3.MoveTowards(transform.position, endPos, stepSlowerMultiplier * walkMultiplier * speed * Time.deltaTime),
+            Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position),
+                2.5f * Time.deltaTime));
+    }
+
+    private void StopWalkingAnimToIdle() => anim.SetInteger("Move", 0);
+
+    private void SetWaitingStatus(float minWaitingTime, float maxWaitingTime) {
+        status = ZombieStatus.Waiting;
+        waitTime = Random.Range(minWaitingTime, maxWaitingTime);
+        StopWalkingAnimToIdle();
+        anim.speed = 1;
+    }
+
+    private bool HasArrivedToEndPos() => Vector3.Distance(transform.position, endPos) < 1;
+
+    private Vector3 SetYPosFromTerrainHeight(Vector3 positionToSet) {
+        positionToSet.y = level.Forest.SampleHeight(positionToSet);
+        return positionToSet;
+    }
+
     private bool IsSeeingThePlayer() {
         float angle = Vector3.SignedAngle(transform.forward, level.Player.position - transform.position, Vector3.up);
         return angle is > -35f and < 35f;
+    }
+
+    private void UpdateSlowWalkTimer() {
+        slowWalkTimer += Time.deltaTime;
+        
+        if (slowWalkTimer > slowWalkMaxTime) {
+            slowWalkSpeed = false;
+            slowWalkTimer = 0f;
+        }
     }
 
     // ANIMATION EVENTS
@@ -224,6 +250,7 @@ public class Zombie : MonoBehaviour {
     }
 
     public void Step() {
+        slowWalkSpeed = true;
         PlayStepSound();
     }
 

@@ -19,7 +19,7 @@ public class ZombieLevel : Level {
     public Vector3 LevelCenter;
     public override Vector3 GetLevelCenter() => LevelCenter;
     public int done = 0;
-    readonly Zombie[] zombies = new Zombie[5];
+    readonly Zombie[] zombies = new Zombie[30];
 
     private void Start() {
         Init(Forest, Game, false);
