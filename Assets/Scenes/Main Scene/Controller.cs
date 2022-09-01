@@ -543,6 +543,13 @@ public class Controller : MonoBehaviour {
     SetGameStatus(GameStatus.Play);
   }
 
+  public void ExitGame() {
+    PauseMenu.SetActive(false);
+    Time.timeScale = 1;
+    if (level != null) level.gameObject.SetActive(false);
+    SetGameStatus(GameStatus.Intro);
+  }
+
 
   public void AlterVolume(bool music) {
     if (music) {

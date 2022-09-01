@@ -1072,6 +1072,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 333e88bfe3508ff41a1ce41dc39a0b7d, type: 3}
   AttackSound: {fileID: 8300000, guid: d819198c68c49c24ca5391f619512334, type: 3}
   DeathSound: {fileID: 8300000, guid: 8240e872f598019428e5018df59c94a6, type: 3}
+  FistsL: {fileID: 285705861010239878}
+  FistsR: {fileID: 6448394360796715542}
   status: 0
 --- !u!135 &5416705682818213383
 SphereCollider:
@@ -1158,7 +1160,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1254,7 +1256,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1350,7 +1352,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

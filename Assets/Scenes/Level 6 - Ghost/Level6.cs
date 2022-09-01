@@ -59,13 +59,13 @@ public class Level6 : Level {
       else if (targetValue == .3f) targetValue = .5f;
       else if (targetValue == .5f) targetValue = .7f;
       else {
-        Game.PlayerDeath(true);
+        Game.PlayerDeath();
         targetValue = 0;
       }
       StartCoroutine(FadeEffectValue(targetValue));
     }
     else
-      Game.PlayerDeath(true);
+      Game.PlayerDeath();
   }
   IEnumerator FadeEffectValue(float targetValue) {
     float time = 0;
