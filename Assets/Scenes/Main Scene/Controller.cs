@@ -81,34 +81,135 @@ public class Controller : MonoBehaviour {
   }
 
 
+  static Controller _c;
+  public TextMeshProUGUI DbgTxt;
+
+  public static void Dbg(string txt) {
+    if (_c == null) return;
+    _c.DbgTxt.text = txt;
+  }
+
   private IEnumerator Start() {
+    _c = this;
     yield return new WaitForSeconds(.2f);
     SetGameStatus(GameStatus.Intro);
+    Dbg("ready");
   }
 
-  public void StartNewGame() { // Called by the button in the Intro panel
-    PlayerData.ResetStats();
-    PlayerData.PlayAnotherGame();
-    SetGameStatus(GameStatus.BeginPlay);
-  }
 
-  bool GoNextlevel() {
-    currentLevel++;
-    if (currentLevel >= Levels.Length) {
-      LevelProgress.text = $"No more available levels!";
-      SetGameStatus(GameStatus.Intro);
-      Debug.Log("--------------------------------------- No more available levels!");
-      return true;
+  public void StartNewGame() {
+    StartLevel(true);
+  }
+  private void StartLevel(bool begin) {
+    gameStatus = GameStatus.BeginPlay;
+    if (begin) {
+      PlayerData.ResetStats();
+      PlayerData.PlayAnotherGame();
+      numLives = 3;
+      currentLevel = -1;
+      if (debugStartLevel.value != 0) currentLevel = debugStartLevel.value;
     }
+    StartCoroutine(StartingLevel());
+  }
+
+  IEnumerator StartingLevel() {
+    yield return null;
+
+    // Find what level to load and load it
+    if (currentLevel == -1) currentLevel = 0;
+    else {
+      if (debugStartLevel.value != 0) currentLevel = debugStartLevel.value;
+      else {
+        currentLevel++;
+        if (currentLevel >= Levels.Length) {
+          LevelProgress.text = $"No more available levels!";
+          SetGameStatus(GameStatus.Intro);
+          Debug.Log("--------------------------------------- No more available levels!");
+          yield break;
+        }
+      }
+    }
+
+    // Fade to black
+    fadeCanvasGroup.alpha = 0;
+    textCanvasGroup.alpha = 0;
+    Fade.SetActive(true);
+    Level l = Levels[currentLevel];
+    fadeLevelText1.text = l.GetName();
+    fadeLevelText2.text = l.GetName();
+    yield return null;
+
+    float alpha = 0;
+    while (alpha < 1) {
+      alpha += Time.deltaTime * 4.5f;
+      fadeCanvasGroup.alpha = alpha;
+      yield return null;
+    }
+    fadeCanvasGroup.alpha = 1;
+    yield return null;
+    alpha = 0;
+    while (alpha < 1) {
+      alpha += Time.deltaTime * 3f;
+      textCanvasGroup.alpha = alpha;
+      yield return null;
+    }
+    textCanvasGroup.alpha = 1;
+
+    // Disable intro, just in case
+    Intro.SetActive(false);
+
+    // reset level and aiming
+    if (currentLevel == 0 || /* FIXME */ currentLevel == debugStartLevel.value) {
+      SetAiming(Aiming.NotAiming);
+      GameCanvas.SetActive(true);
+      PauseMenu.SetActive(false);
+      Player.gameObject.SetActive(true);
+      Environmnet.SetActive(true);
+      GameOver.SetActive(false);
+      GamePlay.SetActive(true);
+      SetPlayerHeightPosition();
+    }
+
+    // Set the level
     if (level != null) level.gameObject.SetActive(false);
-
-//FIXME    currentLevel = 4;
-
-    if (debugStartLevel.value !=0) currentLevel= debugStartLevel.value;
-
     level = Levels[currentLevel];
-    StartCoroutine(FadeToLevel());
-    return false;
+    level.gameObject.SetActive(true);
+    level.Init(GetTerrainForLevel(level), this, false);
+    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
+    transform.position = level.GetLevelCenter();
+    SetPlayerHeightPosition();
+
+    // wait a few if necessary
+    float delay = 0;
+    while (delay < 3) {
+      delay += Time.deltaTime;
+      yield return null;
+      if (Input.GetMouseButtonUp(0)) delay = 5;
+    }
+
+    // Fade to visible
+    yield return null;
+    alpha = 1;
+    while (alpha > 0) {
+      yield return null;
+      alpha -= Time.deltaTime * 1.5f;
+      fadeCanvasGroup.alpha = alpha;
+      textCanvasGroup.alpha = alpha;
+    }
+    yield return null;
+    fadeCanvasGroup.alpha = 0;
+    textCanvasGroup.alpha = 0;
+    fadeLevelText1.text = "";
+    fadeLevelText2.text = "";
+    Fade.SetActive(false);
+
+    // Play
+    SetGameStatus(GameStatus.Play);
+  }
+
+  IEnumerator RestartLevel() {
+    yield return new WaitForSeconds(4);
+    SetGameStatus(GameStatus.Play);
   }
 
   private void SetGameStatus(GameStatus status) {
@@ -132,8 +233,6 @@ public class Controller : MonoBehaviour {
       case GameStatus.BeginPlay:
         Cursor.visible = false;
         lineRenderer.enabled = false;
-        StartCoroutine(StartGame());
-        gameStatus = GameStatus.Play;
         break;
 
       case GameStatus.Play:
@@ -229,17 +328,6 @@ public class Controller : MonoBehaviour {
     transform.position = pos;
   }
 
-  private IEnumerator StartGame() {
-    SetAiming(Aiming.NotAiming);
-    yield return new WaitForSeconds(.2f);
-
-    for (int i = 0; i < Lives.Length; i++) {
-      Lives[i].enabled = i < numLives;
-    }
-    currentLevel = -1;
-    GoNextlevel();
-  }
-
   private void Update() {
     if (Input.GetKeyDown(KeyCode.P)) {
       if (fog.fogEnabled) fog.Disable();
@@ -271,8 +359,7 @@ public class Controller : MonoBehaviour {
           audioGlobal.clip = Crickets;
           audioGlobal.loop = true;
           audioGlobal.Play();
-          if (GoNextlevel()) return; // No more levels if the return is true
-          SetGameStatus(GameStatus.Play);
+          StartLevel(false);
         }
         break;
 
@@ -412,10 +499,6 @@ public class Controller : MonoBehaviour {
     SetGameStatus(GameStatus.Death);
   }
 
-  IEnumerator RestartLevel() {
-    yield return new WaitForSeconds(4);
-    SetGameStatus(GameStatus.Play);
-  }
 
   public void WinLevel() {
     SetGameStatus(GameStatus.WinDance);
@@ -493,72 +576,25 @@ public class Controller : MonoBehaviour {
   }
 
 
-  IEnumerator FadeToLevel() {
-    fadeCanvasGroup.alpha = 0;
-    textCanvasGroup.alpha = 0;
-    Fade.SetActive(true);
-    Level l = Levels[currentLevel];
-    fadeLevelText1.text = l.GetName();
-    fadeLevelText2.text = l.GetName();
-    yield return null;
 
-    float alpha = 0;
-    while (alpha < 1) {
-      alpha += Time.deltaTime * 3.5f;
-      fadeCanvasGroup.alpha = alpha;
-      yield return null;
-    }
-    fadeCanvasGroup.alpha = 1;
-    yield return null;
-    alpha = 0;
-    while (alpha < 1) {
-      alpha += Time.deltaTime * 2f;
-      textCanvasGroup.alpha = alpha;
-      yield return null;
-    }
-    textCanvasGroup.alpha = 1;
-
-    yield return new WaitForSeconds(.5f);
-    Vector3 pos = l.GetLevelCenter();
-    pos.y = pos.z < 500 ? Ground1.SampleHeight(pos) : Ground2.SampleHeight(pos);
-    transform.position = pos;
-
-    if (currentLevel == 0 || /* FIXME */ currentLevel == debugStartLevel.value) {
-      Intro.SetActive(false);
-      GameCanvas.SetActive(true);
-      PauseMenu.SetActive(false);
-      Player.gameObject.SetActive(true);
-      Environmnet.SetActive(true);
-      GameOver.SetActive(false);
-      GamePlay.SetActive(true);
-      SetPlayerHeightPosition();
-    }
-
-    level.gameObject.SetActive(true);
-    level.Init(GetTerrainForLevel(level), this, false);
-    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
-
-    float delay = 0;
-    while (delay < 3) {
-      delay += Time.deltaTime;
-      yield return null;
-      if (Input.GetMouseButtonUp(0)) delay = 5;
-    }
-
-    yield return null;
-    alpha = 1;
-    while (alpha > 0) {
-      yield return null;
-      alpha -= Time.deltaTime * 1.5f;
-      fadeCanvasGroup.alpha = alpha;
-      textCanvasGroup.alpha = alpha;
-    }
-    yield return null;
-    fadeCanvasGroup.alpha = 0;
-    textCanvasGroup.alpha = 0;
-    fadeLevelText1.text = "";
-    fadeLevelText2.text = "";
-    Fade.SetActive(false);
+  public void ShakeCamera(float amount) {
+    StartCoroutine(ShakeCameraCR(amount));
   }
 
-}
+  IEnumerator ShakeCameraCR(float amount) {
+    Transform camPos = Camera.main.transform;
+    Vector3 pos = camPos.localPosition;
+    yield return null;
+
+    float time = 0;
+    while (time < 1.5f) {
+      time += Time.deltaTime;
+
+      float step = Mathf.Sin(time * Mathf.PI * .6f) * amount;
+
+      camPos.localPosition = pos + step * Random.Range(-1f, 1f) * Vector3.up + step * Random.Range(-1f, 1f) * Vector3.right + step * Random.Range(-1f, 1f) * Vector3.forward;
+      yield return null;
+    }
+    camPos.localPosition = pos;
+  }
+} 
