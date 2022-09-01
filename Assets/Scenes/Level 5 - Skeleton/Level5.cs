@@ -71,12 +71,13 @@ public class Level5 : Level {
     }
     int pos = -1;
     for (int i = 0; i < skeletons.Length; i++) {
-      if (skeletons[i].gameObject == enemy) {
+      if (skeletons[i] != null && skeletons[i].gameObject == enemy) {
         pos = i;
         break;
       }
     }
     if (pos == -1 || enemy == null) yield break; // Should never happen
+    skeletons[pos] = null;
 
     if (ToWin == done && killedByPlayer) {
       Debug.Log(enemy.transform.localScale);

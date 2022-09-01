@@ -6,12 +6,43 @@ using UnityEngine.UI;
 
 public class Controller : MonoBehaviour {
 
-  public Transform player;
+  [Header("Player ----------------------")]
+  public Transform Player;
   public GameObject ArrowPlayer;
   public Transform ArrowPrefab;
   public Animator anim;
+  public LineRenderer lineRenderer;
+  public int numLives = 3;
+  public Image[] Lives;
+  public float speed = .18f;
+  bool crushed = false;
+  float playerTargetAngle = 0;
+  float movement = 0;
+  float angle = 0;
+
+  [Header("World ----------------------")]
   public Camera cam;
-  public Terrain Ground;
+  public GameObject Environmnet;
+  public Terrain Ground1;
+  public Terrain Ground2;
+  public Fog fog;
+  public Aiming aiming = Aiming.NotAiming;
+  public Transform HandRefR, HandRefL;
+  float aimV;
+  public float arrowforce = 25;
+
+  [Header("UI ----------------------")]
+  public CursorPointer cursorPointer;
+  [SerializeField] GameObject GamePlay, Intro, GameCanvas, PauseMenu;
+  public Toggle FullScreenToggle;
+  public TMP_Dropdown DifficultyDD;
+  public GameObject Fade;
+  public TextMeshProUGUI fadeLevelText1;
+  public TextMeshProUGUI fadeLevelText2;
+  public CanvasGroup fadeCanvasGroup;
+  public CanvasGroup textCanvasGroup;
+
+  [Header("Audio ----------------------")]
   public AudioMixer MasterMixer;
   public AudioSource audioBow;
   public AudioSource audioGlobal;
@@ -19,11 +50,11 @@ public class Controller : MonoBehaviour {
   public AudioClip Crickets;
   public AudioClip BowDraw;
   public AudioClip ThrowArrow;
-  public CursorPointer cursorPointer;
-  public LineRenderer lineRenderer;
+  [SerializeField] private Slider volumeMusic;
+  [SerializeField] private Slider volumeSound;
 
-  public int numLives = 3;
-  public Image[] Lives;
+  [Header("Gameplay ----------------------")]
+  public GameStatus gameStatus = GameStatus.GameOver;
   public GameObject GameOver;
   public TextMeshProUGUI LevelProgress;
   public TextMeshProUGUI NumOfPlay;
@@ -33,59 +64,152 @@ public class Controller : MonoBehaviour {
   public TextMeshProUGUI NumOfShootsT;
   public TextMeshProUGUI NumOfAccuracyG;
   public TextMeshProUGUI NumOfAccuracyT;
-
-  public Fog fog;
-
-  float playerTargetAngle = 0;
-  float movement = 0;
-  float angle = 0;
-  public float speed = .18f;
-
-  // no aiming, loading, aiming with arrow ready
-  public enum Aiming { NotAiming, Loading, ArrowReady };
-  public Aiming aiming = Aiming.NotAiming;
-
-  bool crushed = false;
-
   int currentLevel;
   Level level;
   public Level[] Levels;
 
+  [Header("Debug ----------------------")]
+  public TMP_Dropdown debugStartLevel;
+
+
+
+  // no aiming, loading, aiming with arrow ready
+  public enum Aiming { NotAiming, Loading, ArrowReady };
 
   public enum GameStatus {
-    Intro, Play, Pause, WinDance, Death, GameOver
+    Intro, BeginPlay, Play, Pause, WinDance, Death, GameOver
   }
-  public GameStatus gameStatus = GameStatus.GameOver;
-  [SerializeField] GameObject GamePlay, Intro, GameCanvas, PauseMenu;
 
+
+  static Controller _c;
+  public TextMeshProUGUI DbgTxt;
+
+  public static void Dbg(string txt) {
+    if (_c == null) return;
+    _c.DbgTxt.text = txt;
+  }
 
   private IEnumerator Start() {
+    _c = this;
     yield return new WaitForSeconds(.2f);
-    if (Ground == null) Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
     SetGameStatus(GameStatus.Intro);
+    Dbg("ready");
   }
 
+
   public void StartNewGame() {
-    PlayerData.ResetStats();
-    PlayerData.PlayAnotherGame();
+    StartLevel(true);
+  }
+  private void StartLevel(bool begin) {
+    gameStatus = GameStatus.BeginPlay;
+    if (begin) {
+      PlayerData.ResetStats();
+      PlayerData.PlayAnotherGame();
+      numLives = 3;
+      currentLevel = -1;
+      if (debugStartLevel.value != 0) currentLevel = debugStartLevel.value;
+    }
+    StartCoroutine(StartingLevel());
+  }
+
+  IEnumerator StartingLevel() {
+    yield return null;
+
+    // Find what level to load and load it
+    if (currentLevel == -1) currentLevel = 0;
+    else {
+      if (debugStartLevel.value != 0) currentLevel = debugStartLevel.value;
+      else {
+        currentLevel++;
+        if (currentLevel >= Levels.Length) {
+          LevelProgress.text = $"No more available levels!";
+          SetGameStatus(GameStatus.Intro);
+          Debug.Log("--------------------------------------- No more available levels!");
+          yield break;
+        }
+      }
+    }
+
+    // Fade to black
+    fadeCanvasGroup.alpha = 0;
+    textCanvasGroup.alpha = 0;
+    Fade.SetActive(true);
+    Level l = Levels[currentLevel];
+    fadeLevelText1.text = l.GetName();
+    fadeLevelText2.text = l.GetName();
+    yield return null;
+
+    float alpha = 0;
+    while (alpha < 1) {
+      alpha += Time.deltaTime * 4.5f;
+      fadeCanvasGroup.alpha = alpha;
+      yield return null;
+    }
+    fadeCanvasGroup.alpha = 1;
+    yield return null;
+    alpha = 0;
+    while (alpha < 1) {
+      alpha += Time.deltaTime * 3f;
+      textCanvasGroup.alpha = alpha;
+      yield return null;
+    }
+    textCanvasGroup.alpha = 1;
+
+    // Disable intro, just in case
+    Intro.SetActive(false);
+
+    // reset level and aiming
+    if (currentLevel == 0 || /* FIXME */ currentLevel == debugStartLevel.value) {
+      SetAiming(Aiming.NotAiming);
+      GameCanvas.SetActive(true);
+      PauseMenu.SetActive(false);
+      Player.gameObject.SetActive(true);
+      Environmnet.SetActive(true);
+      GameOver.SetActive(false);
+      GamePlay.SetActive(true);
+      SetPlayerHeightPosition();
+    }
+
+    // Set the level
+    if (level != null) level.gameObject.SetActive(false);
+    level = Levels[currentLevel];
+    level.gameObject.SetActive(true);
+    level.Init(GetTerrainForLevel(level), this, false);
+    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
+    transform.position = level.GetLevelCenter();
+    SetPlayerHeightPosition();
+
+    // wait a few if necessary
+    float delay = 0;
+    while (delay < 3) {
+      delay += Time.deltaTime;
+      yield return null;
+      if (Input.GetMouseButtonUp(0)) delay = 5;
+    }
+
+    // Fade to visible
+    yield return null;
+    alpha = 1;
+    while (alpha > 0) {
+      yield return null;
+      alpha -= Time.deltaTime * 1.5f;
+      fadeCanvasGroup.alpha = alpha;
+      textCanvasGroup.alpha = alpha;
+    }
+    yield return null;
+    fadeCanvasGroup.alpha = 0;
+    textCanvasGroup.alpha = 0;
+    fadeLevelText1.text = "";
+    fadeLevelText2.text = "";
+    Fade.SetActive(false);
+
+    // Play
     SetGameStatus(GameStatus.Play);
   }
 
-  bool GoNextlevel() {
-    currentLevel++;
-    if (currentLevel >= Levels.Length) {
-      LevelProgress.text = $"No more available levels!";
-      SetGameStatus(GameStatus.Intro);
-      Debug.Log("--------------------------------------- No more available levels!");
-      return true;
-    }
-    if (level != null) level.gameObject.SetActive(false);
-
-//FIXME    currentLevel = 4;
-
-    level = Levels[currentLevel];
-    StartCoroutine(FadeToLevel(level));
-    return false;
+  IEnumerator RestartLevel() {
+    yield return new WaitForSeconds(4);
+    SetGameStatus(GameStatus.Play);
   }
 
   private void SetGameStatus(GameStatus status) {
@@ -93,39 +217,41 @@ public class Controller : MonoBehaviour {
 
     switch (status) {
       case GameStatus.Intro:
-        lineRenderer.enabled = false;
-        player.gameObject.SetActive(false);
-        GamePlay.SetActive(false);
-        GameCanvas.SetActive(false);
         Intro.SetActive(true);
+        GameCanvas.SetActive(false);
         PauseMenu.SetActive(false);
-        Ground.gameObject.SetActive(false);
+        Fade.SetActive(false);
+        Player.gameObject.SetActive(false);
+        Environmnet.SetActive(false);
         GameOver.SetActive(false);
-        gameStatus = GameStatus.Intro;
+        GamePlay.SetActive(false);
+        lineRenderer.enabled = false;
         Cursor.visible = true;
+        gameStatus = GameStatus.Intro;
+        break;
+
+      case GameStatus.BeginPlay:
+        Cursor.visible = false;
+        lineRenderer.enabled = false;
         break;
 
       case GameStatus.Play:
-        Cursor.visible = false;
-        lineRenderer.enabled = false;
-        player.gameObject.SetActive(true);
-        GamePlay.SetActive(true);
-        GameCanvas.SetActive(true);
         Intro.SetActive(false);
+        GameCanvas.SetActive(true);
         PauseMenu.SetActive(false);
-        Ground.gameObject.SetActive(true);
+        Fade.SetActive(false);
+        Player.gameObject.SetActive(true);
+        Environmnet.SetActive(true);
         GameOver.SetActive(false);
-        if (gameStatus == GameStatus.Pause) {
-          PauseMenu.SetActive(false);
-          Time.timeScale = 1;
-        }
-        else if (gameStatus == GameStatus.Death) {
+        GamePlay.SetActive(true);
+        lineRenderer.enabled = false;
+        Cursor.visible = false;
+        Time.timeScale = 1;
+        if (gameStatus == GameStatus.Death) {
           anim.Play("Idle");
-          level.Init(Ground, this, true);
+          level.Init(GetTerrainForLevel(level), this, true);
         }
-        else if (gameStatus == GameStatus.Intro) {
-          StartCoroutine(StartGame());
-        }
+        SetPlayerHeightPosition();
         gameStatus = GameStatus.Play;
         break;
 
@@ -190,16 +316,16 @@ public class Controller : MonoBehaviour {
     }
   }
 
-  private IEnumerator StartGame() {
-    SetAiming(Aiming.NotAiming);
-    yield return new WaitForSeconds(.2f);
-    Ground = GameObject.FindObjectOfType<Terrain>(); // FIXME, remove it when the scenes will be merged
+  private Terrain GetTerrainForLevel(Level level) {
+    if (level.GetLevelCenter().z < 500) return Ground1;
+    else return Ground2;
+  }
 
-    for (int i = 0; i < Lives.Length; i++) {
-      Lives[i].enabled = i < numLives;
-    }
-    currentLevel = -1;
-    GoNextlevel();
+  private void SetPlayerHeightPosition() {
+    Vector3 pos = transform.position;
+    Terrain g = Player.position.z < 500? Ground1 : Ground2;
+    pos.y = g.SampleHeight(Player.position) + .01f; // Find if we need Ground1 or 2
+    transform.position = pos;
   }
 
   private void Update() {
@@ -233,8 +359,7 @@ public class Controller : MonoBehaviour {
           audioGlobal.clip = Crickets;
           audioGlobal.loop = true;
           audioGlobal.Play();
-          if (GoNextlevel()) return; // No more levels if the return is true
-          SetGameStatus(GameStatus.Play);
+          StartLevel(false);
         }
         break;
 
@@ -258,6 +383,8 @@ public class Controller : MonoBehaviour {
       SetGameStatus(GameStatus.Pause);
       return;
     }
+
+    if (!Player.gameObject.activeSelf) return;
 
     if (Input.GetMouseButtonDown(1)) { // Change aiming/no-aiming if we press the right mouse buton
       if (aiming == Aiming.NotAiming) SetAiming(Aiming.Loading);
@@ -291,9 +418,11 @@ public class Controller : MonoBehaviour {
     else { // Moving, change first player rotation, then move the camera
       // Align the local rotation of the player to the movement
       playerTargetAngle = Mathf.LerpAngle(playerTargetAngle, x > 0 ? 90 : -90, 6 * Time.deltaTime);
-      float playerCurrentAngle = player.localEulerAngles.y;
+      float playerCurrentAngle = Player.localEulerAngles.y;
       float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
-      player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 10 * Time.deltaTime), 0);
+      Player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 10 * Time.deltaTime), 0);
+      SetPlayerHeightPosition();
+
 
       // Depending on the angle magnitude, set the movement anim
       float absPAngle = Mathf.Abs(playerTargetAngle);
@@ -321,9 +450,9 @@ public class Controller : MonoBehaviour {
 
       // When aiming, the local rotation of the player should be looking to the center, and move pretty quick
       playerTargetAngle = Mathf.LerpAngle(playerTargetAngle, aimH * 85, 8 * Time.deltaTime);
-      float playerCurrentAngle = player.localEulerAngles.y;
+      float playerCurrentAngle = Player.localEulerAngles.y;
       float dist = Mathf.Abs(playerTargetAngle - playerCurrentAngle);
-      player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
+      Player.localRotation = Quaternion.Euler(0, Mathf.Lerp(playerCurrentAngle, playerTargetAngle, dist * 15 * Time.deltaTime), 0);
 
       if (aiming == Aiming.ArrowReady) {
         Vector3 pos = HandRefR.position;
@@ -341,13 +470,14 @@ public class Controller : MonoBehaviour {
             pos += vel * dt;
             t += dt;
           }
-          if (pos.y < Ground.SampleHeight(pos) + .1f) {
+          float groundHeight = pos.z < 500 ? Ground1.SampleHeight(pos) : Ground2.SampleHeight(pos);
+          if (pos.y < groundHeight + .1f) {
             for (int j = i + 1; j < aimLine.Length; j++) {
               aimLine[j] = pos;
             }
             break;
           }
-          if (cursor == Vector3.zero && (Vector3.Distance(pos, HandRefR.position) > 2 || pos.y < Ground.SampleHeight(pos) + .2f)) cursor = pos;
+          if (cursor == Vector3.zero && (Vector3.Distance(pos, HandRefR.position) > 2 || pos.y < groundHeight + .2f)) cursor = pos;
         }
         if (PlayerData.Difficulty == 0) {
           lineRenderer.enabled = aiming == Aiming.ArrowReady;
@@ -369,23 +499,16 @@ public class Controller : MonoBehaviour {
     SetGameStatus(GameStatus.Death);
   }
 
-  IEnumerator RestartLevel() {
-    yield return new WaitForSeconds(4);
-    SetGameStatus(GameStatus.Play);
-  }
 
   public void WinLevel() {
     SetGameStatus(GameStatus.WinDance);
   }
 
-  public Transform HandRefR, HandRefL;
-  public float aimV;
 
   private void OnApplicationFocus(bool focus) {
     Cursor.visible = !focus || gameStatus == GameStatus.Pause || gameStatus == GameStatus.Intro || gameStatus == GameStatus.GameOver;
   }
 
-  public float arrowforce = 100;
 
   public void ArrowLoaded() {
     SetAiming(Aiming.ArrowReady);
@@ -400,7 +523,7 @@ public class Controller : MonoBehaviour {
     SetAiming(Aiming.Loading);
     if (Instantiate(ArrowPrefab).GetChild(0).TryGetComponent(out Arrow arrow)) {
       Quaternion rot = Quaternion.LookRotation(arrowDir, Vector3.up);
-      arrow.Init(arrowStart, rot, arrowforce * arrowDir, Ground, this);
+      arrow.Init(arrowStart, rot, arrowforce * arrowDir, arrowStart.z < 500 ? Ground1 : Ground2, this);
     }
   }
 
@@ -420,8 +543,7 @@ public class Controller : MonoBehaviour {
     SetGameStatus(GameStatus.Play);
   }
 
-  [SerializeField] private Slider volumeMusic;
-  [SerializeField] private Slider volumeSound;
+
   public void AlterVolume(bool music) {
     if (music) {
       MasterMixer.SetFloat("VolumeMusic", volumeMusic.value * 70 - 60);
@@ -432,13 +554,11 @@ public class Controller : MonoBehaviour {
       PlayerPrefs.SetFloat("VolumeSounds", volumeSound.value);
     }
   }
-  public Toggle FullScreenToggle;
   public void ToggleFullScreen() {
     Screen.fullScreen = FullScreenToggle.isOn;
     PlayerPrefs.SetInt("FullScreen", FullScreenToggle.isOn ? 1 : 0);
   }
 
-  public TMP_Dropdown DifficultyDD;
   public void ChangeDifficulty() {
     PlayerData.Difficulty = DifficultyDD.value;
   }
@@ -447,7 +567,7 @@ public class Controller : MonoBehaviour {
     aiming = a;
     lineRenderer.enabled = false;
     cursorPointer.aimingCursor = (PlayerData.Difficulty < 2 && aiming == Aiming.ArrowReady);
-    anim.SetBool("Aim", a != Aiming.NotAiming);
+    if (Player.gameObject.activeSelf) anim.SetBool("Aim", a != Aiming.NotAiming);
     ArrowPlayer.SetActive(a == Aiming.ArrowReady);
     if (a == Aiming.Loading) {
       audioBow.clip = BowDraw;
@@ -456,34 +576,25 @@ public class Controller : MonoBehaviour {
   }
 
 
-  public TextMeshProUGUI levelText1;
-  public TextMeshProUGUI levelText2;
-  public CanvasGroup canvasGroup;
 
-  IEnumerator FadeToLevel(Level l) {
-    float alpha = 0;
-    canvasGroup.alpha = 0;
-    levelText1.text = l.GetName();
-    levelText2.text = l.GetName();
-    while (alpha < 1) {
-      yield return null;
-      alpha += Time.deltaTime * 2;
-      canvasGroup.alpha = alpha;
-    }
-    yield return new WaitForSeconds(.5f);
-    Vector3 pos = l.GetLevelCenter();
-    pos.y = Ground.SampleHeight(pos);
-    transform.position = pos;
-    level.gameObject.SetActive(true);
-    level.Init(Ground, this, false);
-    LevelProgress.text = $"{level.GetName()}\n0/{level.GetToWin()}";
-    yield return new WaitForSeconds(.5f);
-    while (alpha > 0) {
-      yield return null;
-      alpha -= Time.deltaTime;
-      canvasGroup.alpha = alpha;
-    }
-    yield return null;
-    canvasGroup.alpha = 0;
+  public void ShakeCamera(float amount) {
+    StartCoroutine(ShakeCameraCR(amount));
   }
-}
+
+  IEnumerator ShakeCameraCR(float amount) {
+    Transform camPos = Camera.main.transform;
+    Vector3 pos = camPos.localPosition;
+    yield return null;
+
+    float time = 0;
+    while (time < 1.5f) {
+      time += Time.deltaTime;
+
+      float step = Mathf.Sin(time * Mathf.PI * .6f) * amount;
+
+      camPos.localPosition = pos + step * Random.Range(-1f, 1f) * Vector3.up + step * Random.Range(-1f, 1f) * Vector3.right + step * Random.Range(-1f, 1f) * Vector3.forward;
+      yield return null;
+    }
+    camPos.localPosition = pos;
+  }
+} 

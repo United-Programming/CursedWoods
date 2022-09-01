@@ -1,6 +1,6 @@
 using UnityEngine;
 
-
+[ExecuteInEditMode]
 public class Moon : MonoBehaviour {
   Transform cam;
   public Vector3 direction;
