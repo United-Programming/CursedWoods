@@ -767,6 +767,11 @@ PrefabInstance:
       propertyPath: speed
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: -1668504069841962709, guid: 938c5e476f3731b428822b6d55f3ca45,
+        type: 3}
+      propertyPath: AttackSound
+      value: 
+      objectReference: {fileID: 8300000, guid: baba74a2468f6d748a4ef53726b86684, type: 3}
     - target: {fileID: 2778379890460268180, guid: 938c5e476f3731b428822b6d55f3ca45,
         type: 3}
       propertyPath: m_RootOrder

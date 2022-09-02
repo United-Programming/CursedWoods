@@ -6,6 +6,8 @@ using Random = UnityEngine.Random;
 
 public class Zombie : MonoBehaviour {
     
+    // Create a folder called Zombies inside the Music scene/Enemies folder put all files there.
+    
     public ZombieLevel level;
     public Animator anim;
     public float speed = .5f;
@@ -13,16 +15,23 @@ public class Zombie : MonoBehaviour {
     public LayerMask ArrowMask, PlayerMask;
     public ZombieAnimationEvents zombieAnimEvent;
     public bool slowWalkSpeed;
-    public float slowWalkTimer = 0f;
+    public float slowWalkTimer;
     public float slowWalkMaxTime = 0.5f;
+    public bool playGrowlSFX;
+    public float playGrowlSFXTimeMin = 5f, playGrowlSFXTimeMax = 10f;
+    public float playGrowlSFXTime;
+    public float playGrowlSFXTimer;
     
     [Header("Sound Section")] 
     public AudioSource sounds;
     public AudioSource soundsL;
     public AudioSource soundsR;
-    public AudioClip[] WalkSounds;
-    public AudioClip AttackSound;
-    public AudioClip DeathSound;
+    public AudioClip[] walkSounds;
+    public AudioClip[] attackSounds;
+    public AudioClip hitSound;
+    public AudioClip deathSound01;
+    public AudioClip deathSound02;
+    public AudioClip[] growlSounds;
     
     public enum ZombieStatus {
         Waiting,
@@ -32,7 +41,7 @@ public class Zombie : MonoBehaviour {
         Hitting,
         Dead,
     }
-
+    
     [Header("Status")] public ZombieStatus status = ZombieStatus.Waiting;
 
     private Vector3 startPos, endPos, spawnPosition;
@@ -77,31 +86,32 @@ public class Zombie : MonoBehaviour {
                 level.PlayerDeath();
             }
         }
+
+        CheckGrowlSFX();
     }
     
     private void OnTriggerEnter(Collider other) {
         int layer = 1 << other.gameObject.layer;
 
         if (status != ZombieStatus.Dead && (ArrowMask.value & layer) != 0) {
-            /*if (status == SkeletonStatus.Defending) { // In case the arrow hits the shiled (skeleton is defending) then make the arrow bounce
-                if (other.transform.parent.parent.TryGetComponent(out Rigidbody rb)) {
-                    Vector3 vel = Vector3.Reflect(rb.velocity, transform.forward);
-                    rb.velocity = vel * .8f;
-                }
-                sounds.clip = DefendingSound;
-                sounds.Play();
-                return;
-            }*/ // Zombie can't defend (yet?)
-
             status = ZombieStatus.Dead;
-            anim.speed = 1;
-            if (Random.Range(0, 2) == 0) anim.Play("Death");
-            else anim.Play("Death 2");
+            StartDeathAnimSounds();
             Destroy(other.transform.parent.gameObject); // Remove the arrow immediately
             level.KillEnemy(gameObject);
-            sounds.clip = DeathSound;
-            sounds.Play();
         }
+    }
+
+    private void StartDeathAnimSounds() {
+        anim.speed = 1;
+        if (Random.Range(0, 2) == 0) {
+            anim.Play("Death");
+            sounds.clip = deathSound01;
+        }
+        else {
+            anim.Play("Death 2");
+            sounds.clip = deathSound02;
+        }
+        sounds.Play();
     }
 
     private void CheckPlayerIsAimingZombie() { // TODO: Define if zombie will do something when player is aiming at it.
@@ -173,6 +183,7 @@ public class Zombie : MonoBehaviour {
         if (isChasing && distToEndPos < thresholdForStartAttackingTarget) {
             // Attack
             StopWalkingAnimToIdle();
+            PlayAttackSound();
             status = ZombieStatus.Attack;
             anim.speed = 1;
             anim.SetTrigger("Attack");
@@ -196,6 +207,11 @@ public class Zombie : MonoBehaviour {
 
     private void StopWalkingAnimToIdle() => anim.SetInteger("Move", 0);
 
+    private void PlayAttackSound() {
+        sounds.clip = attackSounds[Random.Range(0, attackSounds.Length)];
+        sounds.Play();
+    }
+    
     private void SetWaitingStatus(float minWaitingTime, float maxWaitingTime) {
         status = ZombieStatus.Waiting;
         waitTime = Random.Range(minWaitingTime, maxWaitingTime);
@@ -224,9 +240,32 @@ public class Zombie : MonoBehaviour {
         }
     }
 
+    private void CheckGrowlSFX() {
+        playGrowlSFXTimer += Time.deltaTime;
+        if (ShouldReproduceGrowlSFX()) {
+            sounds.clip = growlSounds[Random.Range(0, growlSounds.Length)];
+            sounds.Play();
+            
+        }
+    }
+
+    private bool ShouldReproduceGrowlSFX() {
+        if (playGrowlSFX) {
+            playGrowlSFX = false;
+            return true;
+        }
+        if (playGrowlSFXTimer > playGrowlSFXTime) {
+            playGrowlSFXTimer = 0f;
+            playGrowlSFXTime = Random.Range(playGrowlSFXTimeMin, playGrowlSFXTimeMax);
+            return true;
+        }
+
+        return false;
+    }
+
     // ANIMATION EVENTS
     public void AttackStarted() {
-        sounds.clip = AttackSound;
+        sounds.clip = hitSound;
         sounds.Play();
         status = ZombieStatus.Hitting;
     }
@@ -245,11 +284,11 @@ public class Zombie : MonoBehaviour {
     private void PlayStepSound() {
         soundEmitter = !soundEmitter;
         if (soundEmitter) {
-            soundsL.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
+            soundsL.clip = walkSounds[Random.Range(0, walkSounds.Length)];
             soundsL.Play();
         }
         else {
-            soundsR.clip = WalkSounds[Random.Range(0, WalkSounds.Length)];
+            soundsR.clip = walkSounds[Random.Range(0, walkSounds.Length)];
             soundsR.Play();
         }
     }
