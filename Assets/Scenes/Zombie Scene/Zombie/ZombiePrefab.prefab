@@ -1065,13 +1065,35 @@ MonoBehaviour:
   slowWalkSpeed: 0
   slowWalkTimer: 0
   slowWalkMaxTime: 0.5
+  playGrowlSFX: 0
+  playGrowlSFXTimeMin: 5
+  playGrowlSFXTimeMax: 10
+  playGrowlSFXTime: 0
+  playGrowlSFXTimer: 0
   sounds: {fileID: 6818848817561820292}
-  soundsL: {fileID: 6818848817561820292}
-  soundsR: {fileID: 6818848817561820292}
-  WalkSounds:
-  - {fileID: 8300000, guid: 333e88bfe3508ff41a1ce41dc39a0b7d, type: 3}
-  AttackSound: {fileID: 8300000, guid: d819198c68c49c24ca5391f619512334, type: 3}
-  DeathSound: {fileID: 8300000, guid: 8240e872f598019428e5018df59c94a6, type: 3}
+  soundsL: {fileID: 666076204956487071}
+  soundsR: {fileID: 9222707060532370574}
+  walkSounds:
+  - {fileID: 8300000, guid: b88d5f11768a3490aa9196b58ba2eed7, type: 3}
+  - {fileID: 8300000, guid: 5db384edf49854815a75692ffd0e3aa0, type: 3}
+  - {fileID: 8300000, guid: 09048be894f384811be94e03b298ca85, type: 3}
+  - {fileID: 8300000, guid: 2a78a3ba48b044d678f32df37b65e823, type: 3}
+  - {fileID: 8300000, guid: 3b41dc39582734542b444ce08246bcfc, type: 3}
+  - {fileID: 8300000, guid: 96b59693f84004b86baed05847c550a0, type: 3}
+  - {fileID: 8300000, guid: 90575ecdacac9451cbb0bf74c3f5ea37, type: 3}
+  - {fileID: 8300000, guid: 618282105289149a9a2e7ddc4afcafa6, type: 3}
+  attackSounds:
+  - {fileID: 8300000, guid: bf00753d3e82e428ab0440b3c416af73, type: 3}
+  - {fileID: 8300000, guid: 2320512e878274b1f8e13837f111ebf7, type: 3}
+  hitSound: {fileID: 8300000, guid: cb3b4dbb22c3943f1909001dc6bf4c65, type: 3}
+  deathSound01: {fileID: 8300000, guid: 4773b84ce818c4ecdb3a341f42ad04c3, type: 3}
+  deathSound02: {fileID: 8300000, guid: 0dee27531ffcc4ebe8048b184ab01f43, type: 3}
+  growlSounds:
+  - {fileID: 8300000, guid: d2001f201f3b042cb88a314276ac22c4, type: 3}
+  - {fileID: 8300000, guid: f1fcae46fef4f49c5b2188cda78f31ae, type: 3}
+  - {fileID: 8300000, guid: 9f47fc6f063414a139cf429c55187964, type: 3}
+  - {fileID: 8300000, guid: 3024be86933a74c30b82a8631f4c354d, type: 3}
+  - {fileID: 8300000, guid: c38b21f418d1d48faae2ed6f048bf69b, type: 3}
   FistsL: {fileID: 285705861010239878}
   FistsR: {fileID: 6448394360796715542}
   status: 0
