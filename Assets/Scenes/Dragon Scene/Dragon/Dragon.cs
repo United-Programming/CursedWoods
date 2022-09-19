@@ -1,32 +1,35 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using Unity.Mathematics;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
+using Vector3 = UnityEngine.Vector3;
 
 public class Dragon : MonoBehaviour {
-    
-    
     public DragonLevel level;
+
     // public Animator anim;
     public float speed = 5f;
     public float minFlyingAltitude; // make the wings won't clip with the terrain.
     public float maxFlyingAltitude; // make the dragon be inside the camera.
     public float defaultFlyingAltitude = 12f;
     public float flyingAltitude;
-    
+
     public float angleTarget;
     public float radiusTarget;
     public Transform circleCenter;
 
     public float turnRightAngle = 180;
-    public float turnRightInitAngle;
     public float turnRightOffset = 15f;
-    public bool setUpTransitionTurnRight;
 
     public float flyingAroundTimer;
+    public float flyingMinTime = 10f;
+    public float flyingMaxTime = 25f;
+
     public enum DragonStatus {
         Init,
         Waiting,
@@ -41,14 +44,12 @@ public class Dragon : MonoBehaviour {
     }
 
     public DragonStatus status = DragonStatus.Init;
-    
+
     public Vector3 startPos, endPos, spawnPosition;
 
     private void Awake() {
-#if UNITY_EDITOR
-        UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
-#endif
-        if (maxFlyingAltitude < minFlyingAltitude) throw new Exception("Min altitude cannot be greater than max altitude. Using default altitude");
+        if (maxFlyingAltitude < minFlyingAltitude)
+            throw new Exception("Min altitude cannot be greater than max altitude. Using default altitude");
     }
 
     public void Init(DragonLevel dragonLevel, float f, Vector3 spawnPosition) {
@@ -60,19 +61,17 @@ public class Dragon : MonoBehaviour {
     private void Start() {
         startPos = transform.position;
         SetFlyAroundTimer();
-        setUpTransitionTurnRight = true;
     }
 
     private void Update() {
-
         if (status == DragonStatus.FlyingAroundTargetCcw || status == DragonStatus.FlyingAroundTargetCw) {
             flyingAroundTimer -= Time.deltaTime;
             if (flyingAroundTimer <= 0) {
-                setUpTransitionTurnRight = true;
                 status = DragonStatus.TransitionTurnRight;
+                SetUpTurnRight();
             }
         }
-        
+
         if (status == DragonStatus.FlyingAroundTargetCcw) {
             circleCenter.position = level.Player.position;
             MoveTransformCircle(false);
@@ -90,17 +89,8 @@ public class Dragon : MonoBehaviour {
         }
 
         if (status == DragonStatus.TransitionTurnRight) {
-            if (setUpTransitionTurnRight) {
-                circleCenter.position = transform.position + transform.right * turnRightOffset;
-                UpdateAngleFrom();
-                turnRightInitAngle = angleTarget; 
-                turnRightAngle = turnRightInitAngle - 180;
-                if (turnRightAngle < 0) turnRightAngle += 360;
-            }
-
-            setUpTransitionTurnRight = false;
             MoveTransformCircle(true);
-            
+
             if (angleTarget > turnRightAngle - 2f && angleTarget < turnRightAngle + 2f) {
                 SetFlyAroundTimer();
                 Vector3 heading = level.Player.position - transform.position;
@@ -114,8 +104,15 @@ public class Dragon : MonoBehaviour {
             }
         }
     }
-    
-    private void MoveTransformForward() {
+
+    private void SetUpTurnRight() {
+        circleCenter.position = transform.position + transform.right * turnRightOffset;
+        UpdateAngleFrom();
+        turnRightAngle = angleTarget - 180;
+        if (turnRightAngle < 0) turnRightAngle += 360;
+    }
+
+    private void MoveTransformForward(bool isCw = true) {
         // float walkMultiplier = 1;
         // float distFromStartPos = Vector3.Distance(transform.position, startPos);
         // if (distFromStartPos < 1) walkMultiplier = distFromStartPos; // If we just started ramp up the speed
@@ -125,10 +122,14 @@ public class Dragon : MonoBehaviour {
         // if (walkMultiplier == 0) walkMultiplier = 1;
         // // anim.speed = walkMultiplier;
 
-        transform.SetPositionAndRotation(
-            Vector3.MoveTowards(transform.position, endPos, speed * Time.deltaTime),
-            Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(endPos - transform.position),
-                2f * Time.deltaTime));
+        float targetRotationZEuler = RotateZAxis(isCw);
+        Quaternion targetRotation = Quaternion.LookRotation(endPos - transform.position);
+        float targetRotationY = Mathf.LerpAngle(transform.rotation.eulerAngles.y, targetRotation.eulerAngles.y, 2f * Time.deltaTime);
+        Quaternion nextRotation = Quaternion.Euler(0,targetRotationY, targetRotationZEuler);
+        
+        Vector3 nextPosition = Vector3.MoveTowards(transform.position, endPos, speed * Time.deltaTime);
+        
+        transform.SetPositionAndRotation(nextPosition, nextRotation);
     }
 
     private void MoveTransformCircle(bool isCw) {
@@ -138,7 +139,19 @@ public class Dragon : MonoBehaviour {
 
         endPos = circleCenter.position + ComputePositionOffset(angleTarget);
         endPos.y = transform.position.y;
-        MoveTransformForward();
+        
+        MoveTransformForward(isCw);
+    }
+
+    private float RotateZAxis(bool isCw) {
+        if (isCw && transform.rotation.eulerAngles.z is > 335 - 1f and <= 335 + 1f) return -25f;
+        if (!isCw && transform.rotation.eulerAngles.z is >= 25f - 1f and <= 25 + 1f) return 25f;
+
+        float targetAngle = isCw ? -25f : 25f;
+        float signedAngle = (transform.rotation.eulerAngles.z + 180f) % 360f - 180f;
+        float nextAngle = Mathf.Lerp(signedAngle, targetAngle, Time.deltaTime);
+
+        return nextAngle;
     }
 
     private void UpdateAngleFrom() {
@@ -152,12 +165,12 @@ public class Dragon : MonoBehaviour {
     private Vector3 ComputePositionOffset(float angle) {
         UpdateRadiusTarget();
         angle *= Mathf.Deg2Rad;
-        
+
         Vector3 positionOffset = new Vector3(
             Mathf.Cos(angle) * radiusTarget,
             0,
             Mathf.Sin(angle) * radiusTarget
-            );
+        );
 
         return positionOffset;
     }
@@ -167,11 +180,11 @@ public class Dragon : MonoBehaviour {
         float z = transform.position.z - circleCenter.position.z;
         radiusTarget = Mathf.Sqrt(x * x + z * z);
     }
-    
+
     private float AngleDir(Vector3 fwd, Vector3 targetDir, Vector3 up) {
         Vector3 perp = Vector3.Cross(fwd, targetDir);
         float dir = Vector3.Dot(perp, up);
-		
+
         if (dir > 0f) {
             return 1f;
         }
@@ -184,56 +197,6 @@ public class Dragon : MonoBehaviour {
     }
 
     private bool HasArrivedToEndPos() => Vector3.Distance(transform.position, endPos) < 1;
-    
-    private void SetFlyAroundTimer() => flyingAroundTimer = Random.Range(20, 50);
-    
-/*#if UNITY_EDITOR
- 
-    [SerializeField]
-    private bool drawGizmos = true;
- 
-    private void OnDrawGizmosSelected()
-    {
-        if ( !drawGizmos )
-            return;
- 
-        // Draw an arc around the target
-        Vector3 position = Target != null ? Target.position : Vector3.zero;
-        Vector3 normal = Vector3.up;
-        Vector3 forward = Vector3.forward;
-        Vector3 labelPosition;
- 
-        Vector3 positionOffset = ComputePositionOffset( StartAngle );
-        Vector3 verticalOffset;
- 
- 
-        if ( Target != null && UseTargetCoordinateSystem )
-        {
-            normal = Target.up;
-            forward = Target.forward;
-        }
-        verticalOffset = positionOffset.y * normal;
- 
-        // Draw label to indicate elevation
-        if( Mathf.Abs( positionOffset.y ) > 0.1 )
-        {
-            UnityEditor.Handles.DrawDottedLine( position, position + verticalOffset, 5 );
-            labelPosition = position + verticalOffset * 0.5f;
-            labelPosition += Vector3.Cross( verticalOffset.normalized, Target != null && UseTargetCoordinateSystem ? Target.forward : Vector3.forward ) * 0.25f;
-            UnityEditor.Handles.Label( labelPosition, ElevationOffset.ToString( "0.00" ) );
-        }
- 
-        position += verticalOffset;
-        positionOffset -= verticalOffset;
- 
-        UnityEditor.Handles.DrawWireArc( position, normal, forward, 360, CircleRadius );
- 
-        // Draw label to indicate radius
-        UnityEditor.Handles.DrawLine( position, position + positionOffset );
-        labelPosition = position + positionOffset * 0.5f;
-        labelPosition += Vector3.Cross( positionOffset.normalized, Target != null && UseTargetCoordinateSystem ? Target.up : Vector3.up ) * 0.25f;
-        UnityEditor.Handles.Label( labelPosition, CircleRadius.ToString( "0.00" ) );
-    }
- 
-#endif*/
+
+    private void SetFlyAroundTimer() => flyingAroundTimer = Random.Range(flyingMinTime, flyingMaxTime);
 }

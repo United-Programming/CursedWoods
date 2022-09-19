@@ -1410,6 +1410,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6e4dbb9c1f234d5f92a3c586c89d116, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: {fileID: 0}
+  speed: 5
+  minFlyingAltitude: 0
+  maxFlyingAltitude: 0
+  defaultFlyingAltitude: 12
+  flyingAltitude: 0
+  angleTarget: 0
+  radiusTarget: 0
+  circleCenter: {fileID: 0}
+  turnRightAngle: 180
+  turnRightOffset: 20
+  flyingAroundTimer: 0
+  flyingMinTime: 10
+  flyingMaxTime: 25
+  status: 0
+  startPos: {x: 0, y: 0, z: 0}
+  endPos: {x: 0, y: 0, z: 0}
+  spawnPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &1353037216030104691
 GameObject:
   m_ObjectHideFlags: 0
