@@ -1,9 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Numerics;
-using Unity.Mathematics;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
@@ -30,6 +25,21 @@ public class Dragon : MonoBehaviour {
     public float flyingMinTime = 10f;
     public float flyingMaxTime = 25f;
 
+    public float attackingTimer;
+    public float attackingMinTime = 5f;
+    public float attackingMaxTime = 10f;
+    public Fireball fireballPrefab;
+    public Transform fireballStartLocation;
+    public int fireballAmount = 3;
+    public float fireballIntervalTime = .5f;
+    public int fireballShoot = 0;
+    public float lastShootTime;
+
+    // TODO: Collider on eyes, get ontrigger is an arrow it count as a hit.
+    // TODO: Death when the dragon is killed it will fly away and ¿disappear?
+    // TODO: Put events on flying anim: 2 for moving transform up and down. another for the static anim when transitioning.
+    // TODO: Evaluate some logic for the init state to the flying status (distance to center, angle of turning, etc.)
+    
     public enum DragonStatus {
         Init,
         Waiting,
@@ -64,7 +74,9 @@ public class Dragon : MonoBehaviour {
     }
 
     private void Update() {
-        if (status == DragonStatus.FlyingAroundTargetCcw || status == DragonStatus.FlyingAroundTargetCw) {
+        if (status == DragonStatus.Init) return;
+        
+        if (status is DragonStatus.FlyingAroundTargetCcw or DragonStatus.FlyingAroundTargetCw) {
             flyingAroundTimer -= Time.deltaTime;
             if (flyingAroundTimer <= 0) {
                 status = DragonStatus.TransitionTurnRight;
@@ -74,12 +86,12 @@ public class Dragon : MonoBehaviour {
 
         if (status == DragonStatus.FlyingAroundTargetCcw) {
             circleCenter.position = level.Player.position;
-            MoveTransformCircle(false);
+            MoveInCircles(false);
         }
 
         if (status == DragonStatus.FlyingAroundTargetCw) {
             circleCenter.position = level.Player.position;
-            MoveTransformCircle(true);
+            MoveInCircles(true);
         }
 
         if (status == DragonStatus.FlyingStraight) {
@@ -89,18 +101,42 @@ public class Dragon : MonoBehaviour {
         }
 
         if (status == DragonStatus.TransitionTurnRight) {
-            MoveTransformCircle(true);
+            TurnRightTransitionUpdate();
+        }
 
-            if (angleTarget > turnRightAngle - 2f && angleTarget < turnRightAngle + 2f) {
-                SetFlyAroundTimer();
-                Vector3 heading = level.Player.position - transform.position;
-                float dirNum = AngleDir(transform.forward, heading, transform.up);
-                if (dirNum < 0) {
-                    status = DragonStatus.FlyingAroundTargetCcw;
-                }
-                else {
-                    status = DragonStatus.FlyingAroundTargetCw;
-                }
+        ShootFireballUpdate();
+    }
+
+    private void ShootFireballUpdate() {
+        if (attackingTimer <= 0f) {
+            if (fireballShoot == 0 || attackingTimer <= lastShootTime - fireballIntervalTime) {
+                lastShootTime = attackingTimer;
+                Fireball fireball = Instantiate(fireballPrefab, fireballStartLocation.position, Quaternion.identity);
+                fireball.SetTarget(level.Player.position);
+                fireballShoot++;
+            }
+
+            if (fireballShoot >= fireballAmount) {
+                attackingTimer = Random.Range(attackingMinTime, attackingMaxTime);
+                fireballShoot = 0;
+            }
+        }
+
+        attackingTimer -= Time.deltaTime;
+    }
+
+    private void TurnRightTransitionUpdate() {
+        MoveInCircles(true);
+
+        if (angleTarget > turnRightAngle - 2f && angleTarget < turnRightAngle + 2f) {
+            SetFlyAroundTimer();
+            Vector3 heading = level.Player.position - transform.position;
+            float dirNum = AngleDir(transform.forward, heading, transform.up);
+            if (dirNum < 0) {
+                status = DragonStatus.FlyingAroundTargetCcw;
+            }
+            else {
+                status = DragonStatus.FlyingAroundTargetCw;
             }
         }
     }
@@ -124,22 +160,23 @@ public class Dragon : MonoBehaviour {
 
         float targetRotationZEuler = RotateZAxis(isCw);
         Quaternion targetRotation = Quaternion.LookRotation(endPos - transform.position);
-        float targetRotationY = Mathf.LerpAngle(transform.rotation.eulerAngles.y, targetRotation.eulerAngles.y, 2f * Time.deltaTime);
-        Quaternion nextRotation = Quaternion.Euler(0,targetRotationY, targetRotationZEuler);
-        
+        float targetRotationY = Mathf.LerpAngle(transform.rotation.eulerAngles.y, targetRotation.eulerAngles.y,
+            2f * Time.deltaTime);
+        Quaternion nextRotation = Quaternion.Euler(0, targetRotationY, targetRotationZEuler);
+
         Vector3 nextPosition = Vector3.MoveTowards(transform.position, endPos, speed * Time.deltaTime);
-        
+
         transform.SetPositionAndRotation(nextPosition, nextRotation);
     }
 
-    private void MoveTransformCircle(bool isCw) {
+    private void MoveInCircles(bool isCw) {
         UpdateAngleFrom();
         angleTarget += Time.deltaTime * speed * (isCw ? -1 : 1);
         if (angleTarget < 0) angleTarget += 360;
 
         endPos = circleCenter.position + ComputePositionOffset(angleTarget);
         endPos.y = transform.position.y;
-        
+
         MoveTransformForward(isCw);
     }
 
@@ -155,8 +192,7 @@ public class Dragon : MonoBehaviour {
     }
 
     private void UpdateAngleFrom() {
-        Vector3 sameHeightCenter = circleCenter.position;
-        sameHeightCenter.y = transform.position.y;
+        Vector3 sameHeightCenter = new Vector3(circleCenter.position.x, transform.position.y, circleCenter.position.z);
         Vector3 targetDir = transform.position - sameHeightCenter;
         angleTarget = Vector3.SignedAngle(targetDir, Vector3.right, Vector3.up);
         if (angleTarget < 0) angleTarget += 360;
