@@ -8,24 +8,26 @@ public class Dragon : MonoBehaviour {
     public DragonLevel level;
 
     // public Animator anim;
+    public LayerMask arrow;
+
     public float speed = 5f;
     public float minFlyingAltitude; // make the wings won't clip with the terrain.
-    public float maxFlyingAltitude; // make the dragon be inside the camera.
-    public float defaultFlyingAltitude = 12f;
     public float flyingAltitude;
 
+    [Header("Flying Section")] 
     public float angleTarget;
     public float radiusTarget;
     public Transform circleCenter;
 
-    public float turnRightAngle = 180;
-    public float turnRightOffset = 15f;
-
+    public float transitionTurnAngle;
+    public float transitionTurnOffset = 15f;
+    public TurnDirection transitionTurnDirection;
+    
     public float flyingAroundTimer;
     public float flyingMinTime = 10f;
     public float flyingMaxTime = 25f;
 
-    public float attackingTimer;
+    [Header("Attacking Section")] public float attackingTimer;
     public float attackingMinTime = 5f;
     public float attackingMaxTime = 10f;
     public Fireball fireballPrefab;
@@ -35,18 +37,25 @@ public class Dragon : MonoBehaviour {
     public int fireballShoot = 0;
     public float lastShootTime;
 
-    // TODO: Collider on eyes, get ontrigger is an arrow it count as a hit.
-    // TODO: Death when the dragon is killed it will fly away and ¿disappear?
+    [Header("Hit Status Section")] public int dragonHitPoints = 3;
+    public bool hasBeenHit;
+    public GameObject eyesGameObject;
+    public Material normalEyeMaterial;
+    public Material hitEyeMaterial;
+    public float hitStatusTime = 5f;
+    public float hitStatusTimer;
+
     // TODO: Put events on flying anim: 2 for moving transform up and down. another for the static anim when transitioning.
     // TODO: Evaluate some logic for the init state to the flying status (distance to center, angle of turning, etc.)
-    
+
     public enum DragonStatus {
         Init,
         Waiting,
         FlyingAroundTargetCcw,
         FlyingAroundTargetCw,
-        TransitionTurnRight,
+        TransitionTurn,
         FlyingStraight,
+        FlyingAway,
         Chasing,
         Attack,
         Hitting,
@@ -55,11 +64,11 @@ public class Dragon : MonoBehaviour {
 
     public DragonStatus status = DragonStatus.Init;
 
-    public Vector3 startPos, endPos, spawnPosition;
+    private Vector3 startPos, endPos, spawnPosition;
 
-    private void Awake() {
-        if (maxFlyingAltitude < minFlyingAltitude)
-            throw new Exception("Min altitude cannot be greater than max altitude. Using default altitude");
+    public enum TurnDirection {
+        Right,
+        Left,
     }
 
     public void Init(DragonLevel dragonLevel, float f, Vector3 spawnPosition) {
@@ -71,16 +80,18 @@ public class Dragon : MonoBehaviour {
     private void Start() {
         startPos = transform.position;
         SetFlyAroundTimer();
+        SetHitStatusTimer();
     }
 
     private void Update() {
         if (status == DragonStatus.Init) return;
-        
+
         if (status is DragonStatus.FlyingAroundTargetCcw or DragonStatus.FlyingAroundTargetCw) {
             flyingAroundTimer -= Time.deltaTime;
             if (flyingAroundTimer <= 0) {
-                status = DragonStatus.TransitionTurnRight;
-                SetUpTurnRight();
+                status = DragonStatus.TransitionTurn;
+                transitionTurnDirection = TurnDirection.Right;
+                SetUpTurn(180);
             }
         }
 
@@ -100,11 +111,32 @@ public class Dragon : MonoBehaviour {
             }
         }
 
-        if (status == DragonStatus.TransitionTurnRight) {
-            TurnRightTransitionUpdate();
+        if (status == DragonStatus.FlyingAway) {
+            if (!HasArrivedToEndPos()) {
+                MoveTransformForward();
+            }
+            else {
+                Destroy(this.gameObject);
+            }
+        }
+
+        if (status == DragonStatus.TransitionTurn) {
+            TurnTransitionUpdate();
+        }
+
+        if (status == DragonStatus.Dead) {
+            // MoveInCircles(true);
+            // if (angleTarget > transitionTurnAngle - 2f && angleTarget < transitionTurnAngle + 2f) {
+                endPos = transform.position + transform.forward * 500f;
+                status = DragonStatus.FlyingAway;
+            // }
         }
 
         ShootFireballUpdate();
+
+        if (hasBeenHit) {
+            CountDownHitStatusTimer();
+        }
     }
 
     private void ShootFireballUpdate() {
@@ -125,13 +157,12 @@ public class Dragon : MonoBehaviour {
         attackingTimer -= Time.deltaTime;
     }
 
-    private void TurnRightTransitionUpdate() {
-        MoveInCircles(true);
+    private void TurnTransitionUpdate() {
+        MoveInCircles(transitionTurnDirection == TurnDirection.Right);
 
-        if (angleTarget > turnRightAngle - 2f && angleTarget < turnRightAngle + 2f) {
+        if (angleTarget > transitionTurnAngle - 2f && angleTarget < transitionTurnAngle + 2f) {
             SetFlyAroundTimer();
-            Vector3 heading = level.Player.position - transform.position;
-            float dirNum = AngleDir(transform.forward, heading, transform.up);
+            float dirNum = AngleDir();
             if (dirNum < 0) {
                 status = DragonStatus.FlyingAroundTargetCcw;
             }
@@ -141,23 +172,17 @@ public class Dragon : MonoBehaviour {
         }
     }
 
-    private void SetUpTurnRight() {
-        circleCenter.position = transform.position + transform.right * turnRightOffset;
-        UpdateAngleFrom();
-        turnRightAngle = angleTarget - 180;
-        if (turnRightAngle < 0) turnRightAngle += 360;
+    private void SetUpTurn(float angle) {
+        Vector3 sideOffset = transitionTurnDirection == TurnDirection.Right ? transform.right : transform.right * -1;
+        circleCenter.position = transform.position + sideOffset * transitionTurnOffset;
+        UpdateNextAngleTarget();
+        transitionTurnAngle = angleTarget - angle;
+        if (transitionTurnAngle < 0) transitionTurnAngle += 360;
     }
 
     private void MoveTransformForward(bool isCw = true) {
-        // float walkMultiplier = 1;
-        // float distFromStartPos = Vector3.Distance(transform.position, startPos);
-        // if (distFromStartPos < 1) walkMultiplier = distFromStartPos; // If we just started ramp up the speed
-        //
-        // float distToEndPos = Vector3.Distance(transform.position, endPos);
-        // if (distToEndPos < 2f) walkMultiplier = distToEndPos * .5f; // If we are close to the target, slow down the speed
-        // if (walkMultiplier == 0) walkMultiplier = 1;
-        // // anim.speed = walkMultiplier;
-
+        endPos.y = level.Forest.SampleHeight(endPos) + minFlyingAltitude;
+        
         float targetRotationZEuler = RotateZAxis(isCw);
         Quaternion targetRotation = Quaternion.LookRotation(endPos - transform.position);
         float targetRotationY = Mathf.LerpAngle(transform.rotation.eulerAngles.y, targetRotation.eulerAngles.y,
@@ -170,7 +195,7 @@ public class Dragon : MonoBehaviour {
     }
 
     private void MoveInCircles(bool isCw) {
-        UpdateAngleFrom();
+        UpdateNextAngleTarget();
         angleTarget += Time.deltaTime * speed * (isCw ? -1 : 1);
         if (angleTarget < 0) angleTarget += 360;
 
@@ -191,7 +216,7 @@ public class Dragon : MonoBehaviour {
         return nextAngle;
     }
 
-    private void UpdateAngleFrom() {
+    private void UpdateNextAngleTarget() {
         Vector3 sameHeightCenter = new Vector3(circleCenter.position.x, transform.position.y, circleCenter.position.z);
         Vector3 targetDir = transform.position - sameHeightCenter;
         angleTarget = Vector3.SignedAngle(targetDir, Vector3.right, Vector3.up);
@@ -217,9 +242,10 @@ public class Dragon : MonoBehaviour {
         radiusTarget = Mathf.Sqrt(x * x + z * z);
     }
 
-    private float AngleDir(Vector3 fwd, Vector3 targetDir, Vector3 up) {
-        Vector3 perp = Vector3.Cross(fwd, targetDir);
-        float dir = Vector3.Dot(perp, up);
+    private float AngleDir() {
+        Vector3 targetDir = level.Player.position - transform.position;
+        Vector3 perp = Vector3.Cross(transform.forward, targetDir);
+        float dir = Vector3.Dot(perp, transform.up);
 
         if (dir > 0f) {
             return 1f;
@@ -232,7 +258,55 @@ public class Dragon : MonoBehaviour {
         return 0f;
     }
 
+    public void EyeShoot() {
+        if (hasBeenHit) return;
+        if (status is DragonStatus.Dead or DragonStatus.Init) return;
+
+        dragonHitPoints--;
+        hasBeenHit = true;
+        eyesGameObject.GetComponent<SkinnedMeshRenderer>().material = hitEyeMaterial;
+        CheckIfDragonIsDead();
+    }
+
+    private void CountDownHitStatusTimer() {
+        hitStatusTimer -= Time.deltaTime;
+
+        if (hitStatusTimer <= 0f) {
+            ResetEyeHitStatus();
+        }
+    }
+
+    private void ResetEyeHitStatus() {
+        eyesGameObject.GetComponent<SkinnedMeshRenderer>().material = normalEyeMaterial;
+        hasBeenHit = false;
+        SetHitStatusTimer();
+    }
+
+    private void CheckIfDragonIsDead() {
+        if (dragonHitPoints <= 0) {
+            
+            SetUpDeadStatus();
+        }
+    }
+
+    private void SetUpDeadStatus() {
+        status = DragonStatus.Dead;
+        transitionTurnDirection = AngleDir() > 0 ? TurnDirection.Left : TurnDirection.Right;
+        float angle = GetFlyAwayAngle();
+        Debug.Log(angle);
+        SetUpTurn(90);
+    }
+
+    private float GetFlyAwayAngle() {
+        Vector3 dragonForwardVector = transform.position + transform.forward;
+        Vector3 playerVector = level.Player.position;
+        return Vector3.Angle(dragonForwardVector, playerVector);
+    }
+
     private bool HasArrivedToEndPos() => Vector3.Distance(transform.position, endPos) < 1;
 
     private void SetFlyAroundTimer() => flyingAroundTimer = Random.Range(flyingMinTime, flyingMaxTime);
+    private void SetHitStatusTimer() => hitStatusTimer = Random.Range(hitStatusTime - 1f, hitStatusTime + 1f);
+
+    public LayerMask GetArrowLayerMask() => arrow;
 }
