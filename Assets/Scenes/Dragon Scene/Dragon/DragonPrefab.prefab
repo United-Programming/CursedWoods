@@ -1445,11 +1445,9 @@ MonoBehaviour:
   arrow:
     serializedVersion: 2
     m_Bits: 128
+  dragonAnimationEvents: {fileID: 1393425467236064761}
   speed: 5
   minFlyingAltitude: 17
-  maxFlyingAltitude: 0
-  defaultFlyingAltitude: 12
-  flyingAltitude: 0
   angleTarget: 0
   radiusTarget: 0
   circleCenter: {fileID: 0}
@@ -1459,6 +1457,13 @@ MonoBehaviour:
   flyingAroundTimer: 0
   flyingMinTime: 10
   flyingMaxTime: 25
+  wingsEffectHeightDelta: 1.5
+  wingsEffectUpDuration: 0.5
+  wingsEffectUpTimer: 0
+  wingsEffectDownDuration: 1
+  wingsEffectDownTimer: 0
+  applyWingUpEffect: 0
+  applyWingDownEffect: 0
   attackingTimer: 0
   attackingMinTime: 5
   attackingMaxTime: 10
@@ -8962,6 +8967,7 @@ GameObject:
   - component: {fileID: 7884824699573557029}
   - component: {fileID: 7360947659604921756}
   - component: {fileID: 7360947659604921754}
+  - component: {fileID: 1393425467236064761}
   m_Layer: 0
   m_Name: Dragon
   m_TagString: Untagged
@@ -9004,7 +9010,7 @@ Animator:
   m_GameObject: {fileID: 7360947659604921759}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: da84aab163ca201479bb17a9469106bb, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1f81df7d0960a814ca82c252cd9c0ce9, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7ddd7f79d864d4bd89ef329e1d63947d, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -9030,6 +9036,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1393425467236064761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360947659604921759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4857c1235d51b4283807167cb6cf5ef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7375634146633378638
 GameObject:
   m_ObjectHideFlags: 0

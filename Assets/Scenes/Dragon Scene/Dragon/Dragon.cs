@@ -6,26 +6,34 @@ using Vector3 = UnityEngine.Vector3;
 
 public class Dragon : MonoBehaviour {
     public DragonLevel level;
-
     // public Animator anim;
+
     public LayerMask arrow;
+    public DragonAnimationEvents dragonAnimationEvents;
 
     public float speed = 5f;
     public float minFlyingAltitude; // make the wings won't clip with the terrain.
-    public float flyingAltitude;
 
-    [Header("Flying Section")] 
-    public float angleTarget;
+    [Header("Flying Section")] public float angleTarget;
     public float radiusTarget;
     public Transform circleCenter;
 
     public float transitionTurnAngle;
     public float transitionTurnOffset = 15f;
     public TurnDirection transitionTurnDirection;
-    
+
     public float flyingAroundTimer;
     public float flyingMinTime = 10f;
     public float flyingMaxTime = 25f;
+
+    [Header("Flying Wings Effect Section")]
+    public float wingsEffectHeightDelta = 5f;
+    public float wingsEffectUpDuration = .5f;
+    public float wingsEffectUpTimer;
+    public float wingsEffectDownDuration = 1.5f;
+    public float wingsEffectDownTimer;
+    public bool applyWingUpEffect;
+    public bool applyWingDownEffect;
 
     [Header("Attacking Section")] public float attackingTimer;
     public float attackingMinTime = 5f;
@@ -75,9 +83,11 @@ public class Dragon : MonoBehaviour {
         level = dragonLevel;
         speed = f;
         this.spawnPosition = spawnPosition;
+        dragonAnimationEvents.SetDragon(this);
     }
 
     private void Start() {
+        Init(level, 15, transform.position);
         startPos = transform.position;
         SetFlyAroundTimer();
         SetHitStatusTimer();
@@ -127,13 +137,15 @@ public class Dragon : MonoBehaviour {
         if (status == DragonStatus.Dead) {
             // MoveInCircles(true);
             // if (angleTarget > transitionTurnAngle - 2f && angleTarget < transitionTurnAngle + 2f) {
-                endPos = transform.position + transform.forward * 500f;
-                status = DragonStatus.FlyingAway;
+            endPos = transform.position + transform.forward * 500f;
+            status = DragonStatus.FlyingAway;
             // }
         }
 
         ShootFireballUpdate();
-
+        UpdateWingUpEffectTimer();
+        UpdateWingDownEffectTimer();
+        
         if (hasBeenHit) {
             CountDownHitStatusTimer();
         }
@@ -181,8 +193,8 @@ public class Dragon : MonoBehaviour {
     }
 
     private void MoveTransformForward(bool isCw = true) {
-        endPos.y = level.Forest.SampleHeight(endPos) + minFlyingAltitude;
-        
+        endPos.y = CalculateNextPositionYAxis();
+
         float targetRotationZEuler = RotateZAxis(isCw);
         Quaternion targetRotation = Quaternion.LookRotation(endPos - transform.position);
         float targetRotationY = Mathf.LerpAngle(transform.rotation.eulerAngles.y, targetRotation.eulerAngles.y,
@@ -192,6 +204,20 @@ public class Dragon : MonoBehaviour {
         Vector3 nextPosition = Vector3.MoveTowards(transform.position, endPos, speed * Time.deltaTime);
 
         transform.SetPositionAndRotation(nextPosition, nextRotation);
+    }
+
+    private float CalculateNextPositionYAxis() {
+        float baseHeight = level.Forest.SampleHeight(endPos) + minFlyingAltitude;
+
+        if (applyWingUpEffect) {
+            return Mathf.Lerp(baseHeight, baseHeight + wingsEffectHeightDelta, wingsEffectUpTimer / wingsEffectUpDuration);
+        }
+
+        if (applyWingDownEffect) {
+            return Mathf.Lerp(baseHeight + wingsEffectHeightDelta, baseHeight, wingsEffectDownTimer / wingsEffectDownDuration);
+        }
+
+        return baseHeight;
     }
 
     private void MoveInCircles(bool isCw) {
@@ -284,7 +310,6 @@ public class Dragon : MonoBehaviour {
 
     private void CheckIfDragonIsDead() {
         if (dragonHitPoints <= 0) {
-            
             SetUpDeadStatus();
         }
     }
@@ -309,4 +334,35 @@ public class Dragon : MonoBehaviour {
     private void SetHitStatusTimer() => hitStatusTimer = Random.Range(hitStatusTime - 1f, hitStatusTime + 1f);
 
     public LayerMask GetArrowLayerMask() => arrow;
+
+    public void MovingWingsDown() {
+        if (status == DragonStatus.Init) return;
+        
+        applyWingUpEffect = true;
+    }
+
+    private void UpdateWingUpEffectTimer() {
+        if (!applyWingUpEffect) return;
+
+        wingsEffectUpTimer += Time.deltaTime;
+        if (wingsEffectUpTimer >= wingsEffectUpDuration) {
+            wingsEffectUpTimer = 0f;
+            applyWingUpEffect = false;
+            
+            applyWingDownEffect = true;
+        }
+    }
+
+    private void UpdateWingDownEffectTimer() {
+        if (!applyWingDownEffect) return;
+        wingsEffectDownTimer += Time.deltaTime;
+        if (wingsEffectDownTimer >= wingsEffectDownDuration) {
+            applyWingDownEffect = false;
+            wingsEffectDownTimer = 0f;
+        }
+    }
+
+    public void ReachGlideWingPosition() {
+        throw new NotImplementedException();
+    }
 }
