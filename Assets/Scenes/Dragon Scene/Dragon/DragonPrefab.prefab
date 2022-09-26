@@ -1442,6 +1442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 0}
+  anim: {fileID: 7360947659604921756}
   arrow:
     serializedVersion: 2
     m_Bits: 128

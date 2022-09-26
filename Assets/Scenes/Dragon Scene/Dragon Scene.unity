@@ -395,6 +395,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 2, z: 0.5}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &451002328 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4912311898375123592, guid: a90626ac55f8e444695970d09f6b69d7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1238620206}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2932b74a65a5642c4b719ded57cb26d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &462430612 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4401276300218352119, guid: b5991b8efe7e0044888b9058f6d3119f,
@@ -1322,9 +1334,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4407100140505674835, guid: a90626ac55f8e444695970d09f6b69d7,
         type: 3}
+      propertyPath: arrowPrefab
+      value: 
+      objectReference: {fileID: 1125379090}
+    - target: {fileID: 4407100140505674835, guid: a90626ac55f8e444695970d09f6b69d7,
+        type: 3}
       propertyPath: circleCenter
       value: 
       objectReference: {fileID: 1325404253}
+    - target: {fileID: 4407100140505674835, guid: a90626ac55f8e444695970d09f6b69d7,
+        type: 3}
+      propertyPath: dragonHitPlace
+      value: 
+      objectReference: {fileID: 451002328}
     - target: {fileID: 4407100140505674835, guid: a90626ac55f8e444695970d09f6b69d7,
         type: 3}
       propertyPath: dragonHitPoints
@@ -1353,7 +1375,7 @@ PrefabInstance:
     - target: {fileID: 8778627890001189823, guid: a90626ac55f8e444695970d09f6b69d7,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 112.16
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 8778627890001189823, guid: a90626ac55f8e444695970d09f6b69d7,
         type: 3}
