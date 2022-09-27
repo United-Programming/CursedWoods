@@ -1446,8 +1446,11 @@ MonoBehaviour:
   arrow:
     serializedVersion: 2
     m_Bits: 128
+  arrowPrefab: {fileID: 0}
+  dragonHitPlace: {fileID: 0}
   dragonAnimationEvents: {fileID: 1393425467236064761}
   speed: 5
+  flyingAwayMultiplier: 2
   minFlyingAltitude: 17
   angleTarget: 0
   radiusTarget: 0
@@ -1482,6 +1485,8 @@ MonoBehaviour:
   hitEyeMaterial: {fileID: 2100000, guid: 2847b10594620458db05cc6ed6fedc50, type: 2}
   hitStatusTime: 5
   hitStatusTimer: 0
+  playerPositionOnDead: {x: 0, y: 0, z: 0}
+  debugHitPoint: 0
   status: 0
 --- !u!1 &1353037216030104691
 GameObject:

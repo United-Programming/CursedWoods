@@ -6,10 +6,10 @@ using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
 
 public class Dragon : MonoBehaviour {
-    // TODO: Evaluate some logic for the init state to the flying status (distance to center, angle of turning, etc.)
     /*
-     *  
+     *  TODO: Evaluate some logic for the init state to the flying status (distance to center, angle of turning, etc.)
      */
+
     public DragonLevel level;
     public Animator anim;
 
@@ -19,6 +19,7 @@ public class Dragon : MonoBehaviour {
     public DragonAnimationEvents dragonAnimationEvents;
 
     public float speed = 5f;
+    public float flyingAwayMultiplier = 2f;
     public float minFlyingAltitude; // make the wings won't clip with the terrain.
 
     [Header("Flying Section")] public float angleTarget;
@@ -61,9 +62,9 @@ public class Dragon : MonoBehaviour {
     public float hitStatusTime = 5f;
     public float hitStatusTimer;
     public Vector3 playerPositionOnDead;
-    
+
     [Header("Debugging")] public bool debugHitPoint;
-    
+
     public enum DragonStatus {
         Init,
         Waiting,
@@ -72,9 +73,6 @@ public class Dragon : MonoBehaviour {
         TransitionTurn,
         FlyingStraight,
         FlyingAway,
-        Chasing,
-        Attack,
-        Hitting,
         Dead,
     }
 
@@ -85,6 +83,7 @@ public class Dragon : MonoBehaviour {
     public enum TurnDirection {
         Right,
         Left,
+        None,
     }
 
     public void Init(DragonLevel dragonLevel, float f, Vector3 spawnPosition) {
@@ -121,23 +120,23 @@ public class Dragon : MonoBehaviour {
 
         if (status == DragonStatus.FlyingAroundTargetCcw) {
             circleCenter.position = level.Player.position;
-            MoveInCircles(false);
+            MoveInCircles(TurnDirection.Left);
         }
 
         if (status == DragonStatus.FlyingAroundTargetCw) {
             circleCenter.position = level.Player.position;
-            MoveInCircles(true);
+            MoveInCircles(TurnDirection.Right);
         }
 
         if (status == DragonStatus.FlyingStraight) {
             if (!HasArrivedToEndPos()) {
-                MoveTransformForward();
+                MoveForward(TurnDirection.None);
             }
         }
 
         if (status == DragonStatus.FlyingAway) {
             if (!HasArrivedToEndPos()) {
-                MoveTransformForward();
+                MoveForward(TurnDirection.None);
             }
             else {
                 Destroy(gameObject);
@@ -149,8 +148,8 @@ public class Dragon : MonoBehaviour {
         }
 
         if (status == DragonStatus.Dead) {
-            MoveInCircles(IsCw());
-            float angleToTarget = GetFlyAwayAngle();
+            MoveInCircles(transitionTurnDirection);
+            float angleToTarget = GetPlayerPositionAngle();
             if (angleToTarget is < 1f and > -1f) {
                 endPos = transform.position + transform.forward * 500f;
                 status = DragonStatus.FlyingAway;
@@ -164,7 +163,7 @@ public class Dragon : MonoBehaviour {
         UpdateWingUpEffectTimer();
         UpdateWingDownEffectTimer();
 
-        if (hasBeenHit) {
+        if (hasBeenHit && status is not (DragonStatus.Dead or DragonStatus.FlyingAway)) {
             CountDownHitStatusTimer();
         }
     }
@@ -188,8 +187,7 @@ public class Dragon : MonoBehaviour {
     }
 
     private void TurnTransitionUpdate() {
-        MoveInCircles(IsCw());
-
+        MoveInCircles(transitionTurnDirection);
         if (angleTarget > transitionTurnAngle - 2f && angleTarget < transitionTurnAngle + 2f) {
             SetFlyAroundTimer();
             status = AngleDir() < 0 ? DragonStatus.FlyingAroundTargetCcw : DragonStatus.FlyingAroundTargetCw;
@@ -197,7 +195,7 @@ public class Dragon : MonoBehaviour {
             anim.speed = 1;
         }
     }
-    
+
     private void SetUpTurn(float angle) {
         Vector3 sideOffset = transitionTurnDirection == TurnDirection.Right ? transform.right : transform.right * -1;
         circleCenter.position = transform.position + sideOffset * transitionTurnOffset;
@@ -206,10 +204,10 @@ public class Dragon : MonoBehaviour {
         if (transitionTurnAngle < 0) transitionTurnAngle += 360;
     }
 
-    private void MoveTransformForward(bool isCw = true) {
+    private void MoveForward(TurnDirection turnDirection) {
         endPos.y = CalculateNextPositionYAxis();
 
-        float targetRotationZEuler = RotateZAxis(isCw);
+        float targetRotationZEuler = RotateZAxis(turnDirection);
         Quaternion targetRotation = Quaternion.LookRotation(endPos - transform.position);
         float targetRotationY = Mathf.LerpAngle(transform.rotation.eulerAngles.y, targetRotation.eulerAngles.y,
             2f * Time.deltaTime);
@@ -236,26 +234,42 @@ public class Dragon : MonoBehaviour {
         return baseHeight;
     }
 
-    private void MoveInCircles(bool isCw) {
+    private void MoveInCircles(TurnDirection turnDirection) {
         UpdateNextAngleTarget();
-        angleTarget += Time.deltaTime * speed * (isCw ? -1 : 1);
+        float angleDirectionMultiplier = 0;
+        if (turnDirection == TurnDirection.Right) angleDirectionMultiplier = -1f;
+        if (turnDirection == TurnDirection.Left) angleDirectionMultiplier = 1f;
+        
+        angleTarget += Time.deltaTime * speed * angleDirectionMultiplier;
         if (angleTarget < 0) angleTarget += 360;
 
         endPos = circleCenter.position + ComputePositionOffset(angleTarget);
         endPos.y = transform.position.y;
 
-        MoveTransformForward(isCw);
+        MoveForward(turnDirection);
     }
 
-    private float RotateZAxis(bool isCw) {
-        if (isCw && transform.rotation.eulerAngles.z is > 335 - 1f and <= 335 + 1f) return -25f;
-        if (!isCw && transform.rotation.eulerAngles.z is >= 25f - 1f and <= 25 + 1f) return 25f;
+    private float RotateZAxis(TurnDirection turnDirection) {
+        float targetAngle = 0;
+        if (turnDirection == TurnDirection.Right) {
+            targetAngle = -25f;
+        }
 
-        float targetAngle = isCw ? -25f : 25f;
-        float signedAngle = (transform.rotation.eulerAngles.z + 180f) % 360f - 180f;
-        float nextAngle = Mathf.Lerp(signedAngle, targetAngle, Time.deltaTime);
+        if (turnDirection == TurnDirection.Left) {
+            targetAngle = 25f;
+        }
 
-        return nextAngle;
+        if (turnDirection == TurnDirection.Right && transform.rotation.eulerAngles.z is > 335 - 1f and <= 335 + 1f)
+            return targetAngle;
+        if (turnDirection == TurnDirection.Left && transform.rotation.eulerAngles.z is >= 25f - 1f and <= 25 + 1f)
+            return targetAngle;
+        if (turnDirection == TurnDirection.None && transform.rotation.eulerAngles.z is > -1f and <= 1f)
+            return targetAngle;
+
+        float signedZRotationEuler = (transform.rotation.eulerAngles.z + 180f) % 360f - 180f;
+        float nextZRotationEuler = Mathf.Lerp(signedZRotationEuler, targetAngle, Time.deltaTime);
+
+        return nextZRotationEuler;
     }
 
     private void UpdateNextAngleTarget() {
@@ -335,9 +349,12 @@ public class Dragon : MonoBehaviour {
         transitionTurnDirection = AngleDir() > 0 ? TurnDirection.Right : TurnDirection.Left;
         playerPositionOnDead = level.Player.position;
         SetUpTurn(360);
+        // TODO lerp it to get a smooth transition (not here on the flyingaway status).
+        speed *= flyingAwayMultiplier;
+        anim.speed *= flyingAwayMultiplier;
     }
 
-    private float GetFlyAwayAngle() {
+    private float GetPlayerPositionAngle() {
         Vector3 playerVector = playerPositionOnDead - transform.position;
         return Vector2.SignedAngle(
             new Vector2(transform.forward.x, transform.forward.z),
@@ -349,7 +366,7 @@ public class Dragon : MonoBehaviour {
 
     private void SetFlyAroundTimer() => flyingAroundTimer = Random.Range(flyingMinTime, flyingMaxTime);
     private void SetHitStatusTimer() => hitStatusTimer = Random.Range(hitStatusTime - 1f, hitStatusTime + 1f);
-    private bool IsCw() => transitionTurnDirection == TurnDirection.Right;
+    
     public LayerMask GetArrowLayerMask() => arrow;
 
     public void MovingWingsDown() {
